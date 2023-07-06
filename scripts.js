@@ -196,6 +196,7 @@ function generateCombinedSchedules() {
         combinedSchedulesContainer.appendChild(headerDiv);
         combinedSchedulesContainer.appendChild(table);
     });
+    toggleConflictSchedules();
 }
 
 
@@ -284,10 +285,19 @@ function populateScheduleTable(table, schedules) {
 
 function toggleConflictSchedules() {
     const showConflicts = document.getElementById('toggleConflicts').checked;
-    const conflictSchedules = document.querySelectorAll('.hasConflict');
+    const combinedSchedulesContainer = document.getElementById('combinedSchedulesContainer');
+    const tables = combinedSchedulesContainer.getElementsByTagName('table');
 
-    for (let schedule of conflictSchedules) {
-        schedule.style.display = showConflicts ? 'table' : 'none';
+    for (let table of tables) {
+        if (table.classList.contains('hasConflict') && !showConflicts) {
+            table.style.display = 'none';
+            // Ocultar el encabezado y el botón de descarga asociado
+            table.previousSibling.style.display = 'none';
+        } else {
+            table.style.display = '';
+            // Mostrar el encabezado y el botón de descarga asociado
+            table.previousSibling.style.display = '';
+        }
     }
 }
 
