@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planificador de Horarios</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h2>Guarda o carga un archivo con tu horario</h2>
+
+    <div>
+        <button onclick="saveToFile()">Guardar a Archivo</button>
+        <input type="file" id="fileInput" onchange="loadFromFile()" accept=".json" style="display:none;">
+        <label for="fileInput" id="fileInputLabel">Cargar archivo</label>
+        <span id="fileName"></span>
+    </div>
+
+    <hr>
+
+    <h2>Crea las asignaturas</h2>
+    <div id="createNewSubject">
+        
+        <label for="newSubjectName">Nombre de la Asignatura:</label>
+        <input type="text" id="newSubjectName">
+
+        <label for="numberOfSchedules">Número de Horarios:</label>
+        <input type="number" id="numberOfSchedules" value="1">
+
+        <button onclick="createSubject()">Crear Asignatura</button>
+    </div>
+
+    <hr>
+    
+    <h2>Escoge el horario de cada asignatura dando click en las casillas de la tabla</h2>
+    <div id="chooseSchedule">
+        
+        <label for="subjectSelect">Seleccionar Asignatura:</label>
+        <select id="subjectSelect" onchange="updateScheduleSelect()"></select>
+
+        <label for="scheduleSelect">Seleccionar Horario:</label>
+        <select id="scheduleSelect" onchange="loadSchedule()"></select>
+
+        <button onclick="saveSchedule()">Guardar Horario</button>
+    </div>
+
+    <hr>
+
+    <h2>Genera las combinaciones de horario posibles</h2>
+    
+    <div>
+        <button onclick="generateCombinedSchedules()">Generar Horarios Combinados</button>
+    </div>
+
+    <table id="scheduleTable">
+        <!-- El contenido de la tabla se generará con JavaScript -->
+    </table>
+
+    <div id="combinedSchedulesContainer">
+        <!-- Aquí se insertarán las tablas de horarios combinados -->
+    </div>
+
+    <script src="scripts.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
+</body>
+</html>
