@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,6 +8,7 @@
     <title>Planificador de Horarios</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <h2>Guarda o carga un archivo con tu horario</h2>
 
@@ -21,7 +23,7 @@
 
     <h2>Crea las asignaturas</h2>
     <div id="createNewSubject">
-        
+
         <label for="newSubjectName">Nombre de la Asignatura:</label>
         <input type="text" id="newSubjectName">
 
@@ -32,10 +34,10 @@
     </div>
 
     <hr>
-    
+
     <h2>Escoge el horario de cada asignatura dando click en las casillas de la tabla</h2>
     <div id="chooseSchedule">
-        
+
         <label for="subjectSelect">Seleccionar Asignatura:</label>
         <select id="subjectSelect" onchange="updateScheduleSelect()"></select>
 
@@ -48,9 +50,12 @@
     <hr>
 
     <h2>Genera las combinaciones de horario posibles</h2>
-    
-    <div>
+
+    <div id="generateCombinedSchedules">
         <button onclick="generateCombinedSchedules()">Generar Horarios Combinados</button>
+        <!-- Switch para mostrar/ocultar horarios con conflictos -->
+        <label for="toggleConflicts">Mostrar horarios con conflictos:</label>
+        <input type="checkbox" id="toggleConflicts" onchange="toggleConflictSchedules()">
     </div>
 
     <table id="scheduleTable">
@@ -64,4 +69,5 @@
     <script src="scripts.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
 </body>
+
 </html>

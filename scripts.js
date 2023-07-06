@@ -168,6 +168,10 @@ function generateCombinedSchedules() {
         const table = createScheduleTable();
         const hasConflict = populateScheduleTable(table, combinedSchedule);
 
+        if (hasConflict) {
+            table.classList.add('hasConflict');
+        }
+
         const header = document.createElement("h3");
         header.textContent = `Horario Combinado ${index + 1}${hasConflict ? ' (Cruce de Horarios)' : ''}`;
         
@@ -276,6 +280,15 @@ function populateScheduleTable(table, schedules) {
         }
     }
     return hasScheduleConflict;
+}
+
+function toggleConflictSchedules() {
+    const showConflicts = document.getElementById('toggleConflicts').checked;
+    const conflictSchedules = document.querySelectorAll('.hasConflict');
+
+    for (let schedule of conflictSchedules) {
+        schedule.style.display = showConflicts ? 'table' : 'none';
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {

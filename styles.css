@@ -7,6 +7,11 @@ div {
     margin-bottom: 2em;
 }
 
+/* Estilo para etiquetas */
+label {
+    margin: 0 2em;
+}
+
 /* Estilo para campos de entrada (texto y número) */
 input[type="text"], input[type="number"], select {
     margin: 0.5em;
@@ -64,9 +69,15 @@ button:hover {
 }
 
 #createNewSubject, #chooseSchedule{
-    padding: 0 10em 0 10em;
+    padding: 0 6em;
     display: flex;
     justify-content: space-between;
+    align-items: center;
+}
+
+#generateCombinedSchedules{
+    display: flex;
+    justify-content: start;
     align-items: center;
 }
 
@@ -83,7 +94,7 @@ button:hover {
     margin-bottom: 1em;
 }
 
-/* Estilo para las tablas */
+/* Estilo para las tablas en general */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -102,6 +113,8 @@ td.selected {
     color: white;
 }
 
+/* Tabla de selección de horarios */
+
 /* Estilo específico para la tabla scheduleTable */
 #scheduleTable {
     width: auto;
@@ -115,4 +128,40 @@ td.selected {
 
 #scheduleTable td:hover {
     background-color: rgba(85, 220, 89, 0.5);
+}
+
+/* Estilos con conflictos */
+
+/* Estilos para el switch */
+#toggleConflicts {
+    position: relative;
+    width: 2.5em;
+    height: 1.25em;
+    appearance: none;
+    margin: 1em;
+    background-color: #ccc;
+    outline: none;
+    cursor: pointer;
+    border-radius: 1.25em;
+    transition: background-color 0.3s;
+}
+
+#toggleConflicts:before {
+    content: '';
+    position: absolute;
+    top: 0.125em;
+    left: 0.125em;
+    width: 1em;
+    height: 1em;
+    background-color: white;
+    border-radius: 50%;
+    transition: left 0.3s;
+}
+
+#toggleConflicts:checked {
+    background-color: #4CAF50;
+}
+
+#toggleConflicts:checked:before {
+    left: 1.375em;
 }
