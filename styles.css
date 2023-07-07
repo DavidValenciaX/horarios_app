@@ -108,23 +108,28 @@ td, th {
     padding: 0.5em;
 }
 
-td.selected {
-    background-color: #4CAF50;
-    color: white;
-}
-
 /* Tabla de selección de horarios */
 
 /* Estilo específico para la tabla scheduleTable */
+
 #scheduleTable {
     width: auto;
+    max-height: 90vh; /* Set a max height as a percentage of the viewport height */
     margin: 0 auto;
+    font-size: 0.75em; /* Reduce the font size */
+    overflow-y: auto; /* Add a scrollbar if the content is too tall */
 }
 
 /* Efecto hover para las celdas de la tabla scheduleTable */
 #scheduleTable td {
     cursor: pointer;
     user-select: none;
+    padding: 0.25em 0.5em; /* Reduce the padding */
+}
+
+#scheduleTable td.selected {
+    background-color: #4CAF50;
+    color: white;
 }
 
 #scheduleTable td:hover {
@@ -133,6 +138,7 @@ td.selected {
 
 #scheduleTable th {
     user-select: none;
+    padding: 0.25em 0.5em; /* Reduce the padding */
 }
 
 /* Estilos con conflictos */
