@@ -124,10 +124,15 @@ td.selected {
 /* Efecto hover para las celdas de la tabla scheduleTable */
 #scheduleTable td {
     cursor: pointer;
+    user-select: none;
 }
 
 #scheduleTable td:hover {
     background-color: rgba(85, 220, 89, 0.5);
+}
+
+#scheduleTable th {
+    user-select: none;
 }
 
 /* Estilos con conflictos */

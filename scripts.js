@@ -1,18 +1,3 @@
-const days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
-const timeSlots = [
-    '6:00AM - 6:45AM', '7:00AM - 7:45AM', '8:00AM - 8:45AM', '9:00AM - 9:45AM',
-    '10:00AM - 10:45AM', '11:00AM - 11:45AM', '12:00PM - 12:45PM', '1:00PM - 1:45PM',
-    '2:00PM - 2:45PM', '3:00PM - 3:45PM', '4:00PM - 4:45PM', '5:00PM - 5:45PM',
-    '5:45PM - 6:30PM', '6:30PM - 7:15PM', '7:15PM - 8:00PM', '8:15PM - 9:00PM',
-    '9:00PM - 9:45PM', '9:45PM - 10:30PM'
-];
-
-const horarios = { asignaturas: [] };
-
-function toggleCell(cell) {
-    cell.classList.toggle('selected');
-}
-
 function createSubject() {
     const newSubjectName = document.getElementById('newSubjectName').value;
     const numberOfSchedules = document.getElementById('numberOfSchedules').value;
@@ -301,22 +286,71 @@ function toggleConflictSchedules() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+const days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+const timeSlots = [
+    '6:00AM - 6:45AM', '7:00AM - 7:45AM', '8:00AM - 8:45AM', '9:00AM - 9:45AM',
+    '10:00AM - 10:45AM', '11:00AM - 11:45AM', '12:00PM - 12:45PM', '1:00PM - 1:45PM',
+    '2:00PM - 2:45PM', '3:00PM - 3:45PM', '4:00PM - 4:45PM', '5:00PM - 5:45PM',
+    '5:45PM - 6:30PM', '6:30PM - 7:15PM', '7:15PM - 8:00PM', '8:15PM - 9:00PM',
+    '9:00PM - 9:45PM', '9:45PM - 10:30PM'
+];
+
+const horarios = { asignaturas: [] };
+
+function toggleCell(cell) {
+    cell.classList.toggle('selected');
+}
+
+let isDragging = false;
+
+function createTable() {
     const table = document.getElementById('scheduleTable');
 
     // Encabezado de la tabla
-    let header = '<tr><th>Horas/días</th>';
+    let header = '<thead><tr><th>Horas/días</th>';
     for (let day of days) {
         header += `<th>${day}</th>`;
     }
-    header += '</tr>';
+    header += '</thead></tr>';
     table.innerHTML = header;
+
+    let body = '<tbody>';
+    let row = '';
     for (let time of timeSlots) {
-        let row = `<tr><th>${time}</th>`;
+        row += `<tr><th>${time}</th>`;
         for (let day of days) {
-            row += `<td onclick="toggleCell(this)"></td>`;
+            row += `<td></td>`;
         }
         row += '</tr>';
-        table.innerHTML += row;
     }
+    body += row + '</tbody>';
+
+    table.innerHTML += body;
+
+    // Agrega los listeners a las celdas
+    for (let i = 1; i < table.rows.length; i++) {
+        const row = table.rows[i];
+        for (let j = 1; j < row.cells.length; j++) {
+            const cell = row.cells[j];
+
+            cell.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                toggleCell(e.target);
+            });
+
+            cell.addEventListener('mouseover', (e) => {
+                if (isDragging) {
+                    toggleCell(e.target);
+                }
+            });
+
+            cell.addEventListener('mouseup', (e) => {
+                isDragging = false;
+            });
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    createTable();
 });
