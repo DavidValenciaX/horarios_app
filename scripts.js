@@ -1,3 +1,7 @@
+//parte de anadir asignaturas y horarios
+
+const horarios = { asignaturas: [] };
+
 function createSubject() {
     const newSubjectName = document.getElementById('newSubjectName').value;
     const numberOfSchedules = document.getElementById('numberOfSchedules').value;
@@ -111,6 +115,8 @@ function loadSchedule() {
     }
 }
 
+//parte de guardar y cargar archivos
+
 function saveToFile() {
     const dataStr = JSON.stringify(horarios);
     const dataBlob = new Blob([dataStr], { type: 'application/json;charset=utf-8' });
@@ -161,6 +167,7 @@ function loadFromFile() {
     }
 }
 
+//parte de generar las combinaciones de horarios
 
 let subjectColors = {};
 
@@ -227,25 +234,7 @@ function getAllCombinations(subjects, index, currentSchedule = [], allCombinatio
 
 function createScheduleTable() {
     const table = document.createElement('table');
-    let header = '<thead><tr><th>Horas/días</th>';
-    for (let day of days) {
-        header += `<th>${day}</th>`;
-    }
-    header += '</thead></tr>';
-    table.innerHTML = header;
-
-    let body = '<tbody>';
-    let row = '';
-    for (let time of timeSlots) {
-        row += `<tr><td>${time}</td>`;
-        for (let day of days) {
-            row += `<td></td>`;
-        }
-        row += '</tr>';
-    }
-    body += row + '</tbody>';
-    table.innerHTML += body;
-
+    createTable(table);
     return table;
 }
 
@@ -294,6 +283,8 @@ function populateScheduleTable(table, schedules) {
     return hasScheduleConflict;
 }
 
+//codigo que muestra u oculta los cruces de horarios
+
 function toggleConflictSchedules() {
     const showConflicts = document.getElementById('toggleConflicts').checked;
     const combinedSchedulesContainer = document.getElementById('combinedSchedulesContainer');
@@ -312,6 +303,8 @@ function toggleConflictSchedules() {
     }
 }
 
+//codigo para crear las tablas
+
 const days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 const timeSlots = [
     '6:00AM - 6:45AM', '7:00AM - 7:45AM', '8:00AM - 8:45AM', '9:00AM - 9:45AM',
@@ -321,18 +314,7 @@ const timeSlots = [
     '9:00PM - 9:45PM', '9:45PM - 10:30PM'
 ];
 
-const horarios = { asignaturas: [] };
-
-function toggleCell(cell) {
-    cell.classList.toggle('selected');
-}
-
-let isDragging = false;
-
-function createTable() {
-    const table = document.getElementById('scheduleTable');
-
-    // Encabezado de la tabla
+function createTable(table) {
     let header = '<thead><tr><th>Horas/días</th>';
     for (let day of days) {
         header += `<th>${day}</th>`;
@@ -350,8 +332,19 @@ function createTable() {
         row += '</tr>';
     }
     body += row + '</tbody>';
-
     table.innerHTML += body;
+}
+
+function toggleCell(cell) {
+    cell.classList.toggle('selected');
+}
+
+let isDragging = false;
+
+function createInitialTable() {
+    const table = document.getElementById('scheduleTable');
+
+    createTable(table);
 
     // Agrega los listeners a las celdas
     for (let i = 1; i < table.rows.length; i++) {
@@ -378,7 +371,7 @@ function createTable() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    createTable();
+    createInitialTable();
 });
 
 document.getElementById('numberOfSchedules').addEventListener('change', function() {
