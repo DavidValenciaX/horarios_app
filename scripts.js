@@ -45,6 +45,13 @@ function updateScheduleSelect() {
 function saveSchedule() {
     const selectedSubjectIndex = document.getElementById('subjectSelect').value;
     const selectedScheduleIndex = document.getElementById('scheduleSelect').value;
+
+    // Comprueba si hay una asignatura seleccionada
+    if (selectedSubjectIndex == "" || horarios.asignaturas[selectedSubjectIndex] === undefined) {
+        alert('Crea primero una asignatura');
+        return;
+    }
+
     const selectedSchedule = horarios.asignaturas[selectedSubjectIndex].schedules[selectedScheduleIndex];
 
     const table = document.getElementById('scheduleTable');
@@ -367,4 +374,10 @@ function createTable() {
 
 document.addEventListener('DOMContentLoaded', () => {
     createTable();
+});
+
+document.getElementById('numberOfSchedules').addEventListener('change', function() {
+    if (this.value < 1) {
+        this.value = 1;
+    }
 });
