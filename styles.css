@@ -2,14 +2,12 @@
     font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Estilo básico de los contenedores div */
-div {
-    margin-bottom: 2em;
-}
-
 /* Estilo para etiquetas */
 label {
-    margin: 0 2em;
+    /* margin: 0 auto; */
+    margin: 0.5em;
+    padding: 0.5em;
+    margin-left: 0;
 }
 
 /* Estilo para campos de entrada (texto y número) */
@@ -28,10 +26,40 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
     box-shadow: 0 0 0.5em rgba(76, 175, 80, 0.25);
 }
 
+/* Estilo para botones */
+button {
+    margin: 0.5em;
+    padding: 0.5em;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 0.3em;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* Estilo para las tablas en general */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    margin-bottom: 2em;
+}
+
+td, th {
+    border: 1px solid black;
+    text-align: center;
+    padding: 0.5em;
+}
+
 /* Estilo para el label que se usa como botón de carga de archivo */
 #fileInputLabel {
     margin: 0.5em;
-    padding: 0.5em 1em;
+    padding: 0.5em;
     background-color: #4CAF50;
     color: white;
     border: none;
@@ -52,27 +80,8 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
     font-size: 1em;
 }
 
-/* Estilo para botones */
-button {
-    margin: 0.5em;
-    padding: 0.5em 1em;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 0.3em;
-    font-size: 1em;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #45a049;
-}
-
-#createNewSubject, #chooseSchedule{
-    padding: 0 6em;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+#fileInput {
+    display: none;
 }
 
 #generateCombinedSchedules{
@@ -94,28 +103,34 @@ button:hover {
     margin-bottom: 1em;
 }
 
-/* Estilo para las tablas en general */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: white;
-    margin-bottom: 2em;
+#layoutSubjectSchedule{
+    display:flex;
 }
 
-td, th {
-    border: 1px solid black;
-    text-align: center;
-    padding: 0.5em;
+#layoutSubjectSchedule > div {
+    flex: 1; /* Hace que cada hijo directo de #layoutSubjectSchedule ocupe la mitad del espacio disponible */
+}
+
+.createNewSubject{
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}
+
+.createNewSubject input, .createNewSubject select {
+    width: 25%; 
+}
+
+.createNewSubject button {
+    width: 35%;
 }
 
 /* Tabla de selección de horarios */
 
-/* Estilo específico para la tabla scheduleTable */
-
 #scheduleTable {
     width: auto;
     max-height: 90vh; /* Set a max height as a percentage of the viewport height */
-    margin: 0 auto;
+    margin: 1em auto;
     font-size: 0.75em; /* Reduce the font size */
     overflow-y: auto; /* Add a scrollbar if the content is too tall */
 }
@@ -143,13 +158,13 @@ td, th {
 
 /* Estilos con conflictos */
 
-/* Estilos para el switch */
+/* Estilos para el switch para ver los horarios con cruces */
 #toggleConflicts {
     position: relative;
     width: 2.5em;
     height: 1.25em;
+    margin: 0.5em;
     appearance: none;
-    margin: 1em;
     background-color: #ccc;
     outline: none;
     cursor: pointer;
