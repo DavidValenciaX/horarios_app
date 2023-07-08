@@ -215,7 +215,7 @@ function getAllCombinations(subjects, index, currentSchedule = [], allCombinatio
     for (let i = 0; i < subjects[index].schedules.length; i++) {
         let scheduleWithSubjectName = {
             ...subjects[index].schedules[i],
-            subjectName: subjects[index].subjectName  // Agregamos subjectName aquí
+            subjectName: subjects[index].subjectName
         };
         currentSchedule.push(scheduleWithSubjectName);
         getAllCombinations(subjects, index + 1, currentSchedule, allCombinations);
@@ -227,20 +227,25 @@ function getAllCombinations(subjects, index, currentSchedule = [], allCombinatio
 
 function createScheduleTable() {
     const table = document.createElement('table');
-    let header = '<tr><th>Horas/días</th>';
+    let header = '<thead><tr><th>Horas/días</th>';
     for (let day of days) {
         header += `<th>${day}</th>`;
     }
-    header += '</tr>';
+    header += '</thead></tr>';
     table.innerHTML = header;
+
+    let body = '<tbody>';
+    let row = '';
     for (let time of timeSlots) {
-        let row = `<tr><td>${time}</td>`;
+        row += `<tr><td>${time}</td>`;
         for (let day of days) {
             row += `<td></td>`;
         }
         row += '</tr>';
-        table.innerHTML += row;
     }
+    body += row + '</tbody>';
+    table.innerHTML += body;
+
     return table;
 }
 
@@ -265,7 +270,7 @@ function populateScheduleTable(table, schedules) {
 
             schedules.forEach((schedule) => {
                 if (schedule.days[day] && schedule.days[day][timeSlot] === 'x') {
-                    cellContent.push(schedule.subjectName); // Agregar nombre a cellContent como arreglo
+                    cellContent.push(schedule.subjectName);
                     subjectsInCell++;
 
                     // Asignar un color si no se ha asignado antes
@@ -277,7 +282,7 @@ function populateScheduleTable(table, schedules) {
 
             if (subjectsInCell > 1) {
                 hasScheduleConflict = true;
-                row.cells[j].style.backgroundColor = 'red'; // Color rojo intenso para conflictos
+                row.cells[j].style.backgroundColor = 'red';
                 row.cells[j].innerHTML = cellContent.join(' - '); // Unir nombres con guion
             } else if (cellContent.length > 0) {
                 let subjectName = cellContent[0];

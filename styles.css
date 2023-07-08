@@ -56,6 +56,10 @@ td, th {
     padding: 0.5em;
 }
 
+tr:nth-child(even) {
+    background-color: #ddd;
+}
+
 /* Estilo para el label que se usa como botón de carga de archivo */
 #fileInputLabel {
     margin: 0.5em;
