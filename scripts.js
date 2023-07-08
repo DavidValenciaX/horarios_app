@@ -67,6 +67,20 @@ function saveSchedule() {
     }
     
     loadSchedule();
+
+    // Cuando todo está hecho, muestra el icono de verificación.
+    const scheduleSavedIcon = document.getElementById('scheduleSavedIcon');
+    scheduleSavedIcon.textContent = '✔';
+
+    // Eliminar el icono después de 1 segundos
+    setTimeout(function() {
+        scheduleSavedIcon.style.opacity = '0';
+    }, 500);
+
+    setTimeout(function() {
+        scheduleSavedIcon.textContent = '';
+        scheduleSavedIcon.style.opacity = '1';
+    }, 1500);
 }
 
 function loadSchedule() {

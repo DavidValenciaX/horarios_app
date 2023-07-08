@@ -112,6 +112,7 @@ td, th {
 }
 
 .createNewSubject{
+    position: relative;
     display: flex;
     justify-content: start;
     align-items: center;
@@ -123,6 +124,17 @@ td, th {
 
 .createNewSubject button {
     width: 35%;
+}
+
+#scheduleSavedIcon {
+    position: absolute;
+    right: -1em;
+    font-size: 1.5em;
+    transition: opacity 1s ease-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
 }
 
 /* Tabla de selección de horarios */
@@ -138,6 +150,7 @@ td, th {
 /* Efecto hover para las celdas de la tabla scheduleTable */
 #scheduleTable td {
     cursor: pointer;
+    -webkit-user-select: none;
     user-select: none;
     padding: 0.25em 0.5em; /* Reduce the padding */
 }
@@ -152,6 +165,7 @@ td, th {
 }
 
 #scheduleTable th {
+    -webkit-user-select: none;
     user-select: none;
     padding: 0.25em 0.5em; /* Reduce the padding */
 }
