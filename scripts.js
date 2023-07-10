@@ -357,9 +357,9 @@ function loadFromFile() {
         horarios.asignaturas = data.asignaturas;
 
         // Actualizar el selector de asignaturas
-        updateSubjectSelect();
+        updateSubjectsAndSchedules();
       } catch (error) {
-        alert("El archivo no tiene el formato adecuado.");
+        alert("Error al subir el archivo: "+ error.message);
       }
     };
 
