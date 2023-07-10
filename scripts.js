@@ -640,10 +640,3 @@ function createInitialTable() {
 document.addEventListener("DOMContentLoaded", () => {
   createInitialTable();
 });
-
-/* document.getElementById('numberOfSchedules').addEventListener('change', function() {
-    if (this.value < 1) {
-        this.value = 1;
-    }
-});
- */
