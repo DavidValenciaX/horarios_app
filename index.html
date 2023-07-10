@@ -24,39 +24,24 @@
         <div>
             <h3>Crea las asignaturas</h3>
             <div class="createNewSubject">
-
                 <label for="newSubjectName">Nombre de la Asignatura:</label>
                 <input type="text" id="newSubjectName">
-
-                <label for="numberOfSchedules">Cantidad de Horarios:</label>
-                <input type="number" id="numberOfSchedules" value="1">
-
                 <button type="button"  onclick="createSubject()">Crear Asignatura</button>
             </div>
-
             <hr>
-
-            <h3>Escoge el horario de cada asignatura creada dando click en las casillas de la tabla</h3>
+            <h3>Asignaturas y Horarios:</h3>
             <div class="createNewSubject">
-
-                <label for="subjectSelect">Seleccionar Asignatura:</label>
-                <select id="subjectSelect" onchange="updateScheduleSelect()"></select>
-
-                <label for="scheduleSelect">Seleccionar Horario:</label>
-                <select id="scheduleSelect" onchange="loadSchedule()"></select>
-
-                <button type="button"  onclick="saveSchedule()">Guardar Horario</button>
-                <span id="scheduleSavedIcon"></span>
+                <div id="subjectsAndSchedules"></div>
             </div>
-
         </div>
         <div>
+            <div class="createNewSubject">
+                <span id="scheduleSavedIcon"></span>
+            </div>
             <table id="scheduleTable">
                 <!-- El contenido de la tabla se generará con JavaScript -->
             </table>
         </div>
-
-
     </div>
 
     <hr>
@@ -70,9 +55,7 @@
         <input type="checkbox" id="toggleConflicts" onchange="toggleConflictSchedules()">
     </div>
 
-    <div id="combinedSchedulesContainer">
-        <!-- Aquí se insertarán las tablas de horarios combinados -->
-    </div>
+    <div id="combinedSchedulesContainer"></div>
 
     <script src="scripts.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>

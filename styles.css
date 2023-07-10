@@ -112,7 +112,7 @@ tr:nth-child(even) {
 }
 
 #layoutSubjectSchedule > div {
-    flex: 1; /* Hace que cada hijo directo de #layoutSubjectSchedule ocupe la mitad del espacio disponible */
+    flex: 1;
 }
 
 .createNewSubject{
@@ -122,18 +122,16 @@ tr:nth-child(even) {
     align-items: center;
 }
 
-.createNewSubject input, .createNewSubject select {
-    width: 25%; 
-}
-
-.createNewSubject button {
-    width: 35%;
+.createNewSubject > div {
+    flex: 1;
 }
 
 #scheduleSavedIcon {
     position: absolute;
-    right: -1em;
+    top: 2em;
+    left: 2em;
     font-size: 1.5em;
+    color:#45a049;
     transition: opacity 1s ease-out;
     display: flex;
     align-items: center;
@@ -145,10 +143,10 @@ tr:nth-child(even) {
 
 #scheduleTable {
     width: auto;
-    max-height: 90vh; /* Set a max height as a percentage of the viewport height */
+    max-height: 90vh;
     margin: 1em auto;
-    font-size: 0.75em; /* Reduce the font size */
-    overflow-y: auto; /* Add a scrollbar if the content is too tall */
+    font-size: 0.75em;
+    overflow-y: auto; 
 }
 
 /* Efecto hover para las celdas de la tabla scheduleTable */
@@ -209,3 +207,68 @@ tr:nth-child(even) {
 #toggleConflicts:checked:before {
     left: 1.375em;
 }
+
+/* chips */
+.chip {
+    position: relative;
+    display: inline-block;
+    margin: 0.5em;
+    padding: 0.5em;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 0.3em;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.chip:hover {
+    background-color: #45a049;
+}
+
+.chip .close-icon,
+.chip .disable-icon {
+    position: absolute;
+    right: -1.3em;
+    cursor: pointer;
+    background-color: grey;
+    width: 1em;
+    height: 1em;
+    z-index: 1;
+    display: none;
+    font-size: 0.7em;
+    padding: 0.15em;
+    border: 0.1em dashed #444;
+}
+
+.chip .close-icon {
+    top: 0;
+}
+
+.chip .disable-icon {
+    top: 50%;
+}
+
+.chip:hover .close-icon,
+.chip:hover .disable-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.chip.inactive {
+    background-color: grey;
+}
+
+.chip.editing {
+    background-color: #087f23;
+}
+
+/* .createNewSubject input, {
+    width: 25%; 
+}
+
+.createNewSubject button {
+    width: 35%;
+} */
