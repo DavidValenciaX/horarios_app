@@ -158,7 +158,6 @@ tr:nth-child(even) {
 }
 
 #scheduleTable td.selected {
-    background-color: #4CAF50;
     color: white;
 }
 
@@ -230,7 +229,7 @@ tr:nth-child(even) {
 .chip .close-icon,
 .chip .disable-icon {
     position: absolute;
-    right: -1.3em;
+    right: -1.25em;
     cursor: pointer;
     background-color: grey;
     width: 1em;
@@ -239,7 +238,7 @@ tr:nth-child(even) {
     display: none;
     font-size: 0.7em;
     padding: 0.15em;
-    border: 0.1em dashed #444;
+    border: 1px solid #444;
 }
 
 .chip .close-icon {
@@ -265,10 +264,8 @@ tr:nth-child(even) {
     background-color: #087f23;
 }
 
-/* .createNewSubject input, {
-    width: 25%; 
-}
-
-.createNewSubject button {
-    width: 35%;
-} */
+.chip.add-schedule {
+    background-color: white;
+    color: gray;
+    border: 2px dotted gray;
+  }

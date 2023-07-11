@@ -3,18 +3,6 @@
 const horarios = { asignaturas: [] };
 
 function saveSchedule() {
-  if (
-    selectedSubjectIndex == null ||
-    selectedScheduleIndex == null ||
-    horarios.asignaturas[selectedSubjectIndex] === undefined ||
-    horarios.asignaturas[selectedSubjectIndex].schedules[
-      selectedScheduleIndex
-    ] === undefined
-  ) {
-    alert("Selecciona primero una asignatura y un horario");
-    return;
-  }
-
   const selectedSchedule =
     horarios.asignaturas[selectedSubjectIndex].schedules[selectedScheduleIndex];
 
@@ -70,6 +58,8 @@ function loadSchedule() {
   const selectedSchedule =
     horarios.asignaturas[selectedSubjectIndex].schedules[selectedScheduleIndex];
 
+  const selectedColor = horarios.asignaturas[selectedSubjectIndex].color;
+
   const table = document.getElementById("scheduleTable");
 
   for (let i = 1; i < table.rows.length; i++) {
@@ -82,8 +72,10 @@ function loadSchedule() {
         selectedSchedule.days[day][timeSlot] === "x"
       ) {
         row.cells[j].classList.add("selected");
+        row.cells[j].style.backgroundColor = selectedColor;
       } else {
         row.cells[j].classList.remove("selected");
+        row.cells[j].style.backgroundColor = "";
       }
     }
   }
@@ -102,8 +94,9 @@ function createSubject() {
 
   const subject = {
     subjectName: newSubjectName,
-    schedules: [{ days: {} }],
+    schedules: [{ days: {}, isActive: true }],
     color: generatePastelColor(),
+    isActive: true,
   };
 
   horarios.asignaturas.push(subject);
@@ -113,9 +106,6 @@ function createSubject() {
   // Poner el nuevo horario en estado de edición
   editingSchedule(horarios.asignaturas.length - 1, 0);
 
-  // Cargar el nuevo horario
-  loadSchedule();
-
   document.getElementById("newSubjectName").value = "";
 }
 
@@ -124,6 +114,10 @@ function updateSubjectsAndSchedules() {
     "subjectsAndSchedules"
   );
   subjectsAndSchedulesDiv.innerHTML = "";
+
+  const inactiveIcon = "🛇";
+  const activeIcon = "✓";
+
   horarios.asignaturas.forEach((subject, subjectIndex) => {
     const parentDiv = document.createElement("div");
     const subjectChip = document.createElement("div");
@@ -143,7 +137,14 @@ function updateSubjectsAndSchedules() {
 
     const disableIcon = document.createElement("span");
     disableIcon.classList.add("disable-icon");
-    disableIcon.textContent = "🛇";
+
+    if (!subject.isActive) {
+      subjectChip.classList.add("inactive");
+      disableIcon.textContent = activeIcon;
+    } else {
+      disableIcon.textContent = inactiveIcon;
+    }
+    
     disableIcon.addEventListener("click", (e) => {
       e.stopPropagation();
       deactivateSubject(subjectIndex);
@@ -160,7 +161,6 @@ function updateSubjectsAndSchedules() {
       scheduleChip.id = `scheduleChip-${subjectIndex}-${scheduleIndex}`;
       scheduleChip.addEventListener("click", () => {
         editingSchedule(subjectIndex, scheduleIndex);
-        loadSchedule();
       });
 
       const closeIcon = document.createElement("span");
@@ -173,7 +173,14 @@ function updateSubjectsAndSchedules() {
 
       const disableIcon = document.createElement("span");
       disableIcon.classList.add("disable-icon");
-      disableIcon.textContent = "🛇";
+
+      if (!schedule.isActive) {
+        scheduleChip.classList.add("inactive");
+        disableIcon.textContent = activeIcon;
+      } else {
+        disableIcon.textContent = inactiveIcon;
+      }
+
       disableIcon.addEventListener("click", (e) => {
         e.stopPropagation();
         deactivateSchedule(subjectIndex, scheduleIndex);
@@ -186,7 +193,8 @@ function updateSubjectsAndSchedules() {
 
     const addScheduleChip = document.createElement("div");
     addScheduleChip.classList.add("chip");
-    addScheduleChip.textContent = "Añadir Horario";
+    addScheduleChip.classList.add("add-schedule");
+    addScheduleChip.textContent = "+ Añadir Horario";
     addScheduleChip.addEventListener("click", () => {
       addSchedule(subjectIndex);
     });
@@ -200,15 +208,47 @@ function updateSubjectsAndSchedules() {
 function deleteSubject(subjectIndex) {
   horarios.asignaturas.splice(subjectIndex, 1);
   updateSubjectsAndSchedules();
+
+  if (horarios.asignaturas.length == 0) {
+    // Si no hay más asignaturas, no hacemos nada más.
+    createInitialTable();
+    return;
+  }
+
+  // Escogemos una nueva asignatura para editar.
+  // Si la asignatura eliminada no era la primera, editamos la anterior.
+  // Si la asignatura eliminada era la primera, editamos la siguiente (ahora la primera asignatura en la lista).
+  let newSubjectIndex = subjectIndex > 0 ? subjectIndex - 1 : 0;
+
+  // Ahora que tenemos la nueva asignatura, vamos a editar su primer horario.
+  // Si no hay horarios para esta asignatura, no hacemos nada más.
+  if (horarios.asignaturas[newSubjectIndex].schedules.length == 0) {
+    return;
+  }
+
+  editingSchedule(newSubjectIndex, 0);
 }
 
 function deleteSchedule(subjectIndex, scheduleIndex) {
   horarios.asignaturas[subjectIndex].schedules.splice(scheduleIndex, 1);
+
   updateSubjectsAndSchedules();
+
+  if (horarios.asignaturas[subjectIndex].schedules.length == 0) {
+    // Si no hay más horarios para esta asignatura, la eliminamos.
+    deleteSubject(subjectIndex);
+  } else {
+    // Escogemos un nuevo horario para editar.
+    // Si el horario eliminado no era el primero, editamos el horario anterior.
+    // Si el horario eliminado era el primero, editamos el siguiente (ahora el primer horario en la lista).
+    let newScheduleIndex = scheduleIndex > 0 ? scheduleIndex - 1 : 0;
+
+    editingSchedule(subjectIndex, newScheduleIndex);
+  }
 }
 
 function addSchedule(subjectIndex) {
-  horarios.asignaturas[subjectIndex].schedules.push({ days: {} });
+  horarios.asignaturas[subjectIndex].schedules.push({ days: {}, isActive: true });
 
   updateSubjectsAndSchedules();
 
@@ -217,10 +257,6 @@ function addSchedule(subjectIndex) {
     subjectIndex,
     horarios.asignaturas[subjectIndex].schedules.length - 1
   );
-
-  // Cargar el nuevo horario
-  loadSchedule();
-  
 }
 
 function editingSchedule(subjectIndex, scheduleIndex) {
@@ -234,87 +270,77 @@ function editingSchedule(subjectIndex, scheduleIndex) {
     `#scheduleChip-${subjectIndex}-${scheduleIndex}`
   );
 
-  // Verifica si el chip seleccionado está inactivo
-  if (
-    selectedScheduleChip &&
-    selectedScheduleChip.classList.contains("inactive")
-  ) {
-    return; // Si el chip está inactivo, retorna y no hagas nada más
+  // Verifica si el horario seleccionado está inactivo
+  if (!horarios.asignaturas[subjectIndex].schedules[scheduleIndex].isActive) {
+    return; // Si el horario está inactivo, retorna y no hagas nada más
   }
 
   selectedSubjectIndex = subjectIndex;
   selectedScheduleIndex = scheduleIndex;
+  editingSubjectIndex = subjectIndex; // Guarda el horario que está siendo editado
+  editingScheduleIndex = scheduleIndex;
 
   if (selectedScheduleChip) {
     selectedScheduleChip.classList.add("editing");
   }
+
+  loadSchedule();
 }
 
+let editingSubjectIndex = null;
+let editingScheduleIndex = null;
+
 function deactivateSubject(subjectIndex) {
+  selectedSubjectIndex = subjectIndex;
+  selectedScheduleIndex = null;
+
   const selectedSubjectChip = document.querySelector(
     `#subjectChip-${subjectIndex}`
   );
 
-  selectedSubjectIndex = subjectIndex;
-  selectedScheduleIndex = null;
-
   if (selectedSubjectChip) {
-    if (selectedSubjectChip.classList.contains("inactive")) {
-      selectedSubjectChip.classList.remove("inactive");
+    // Cambia el estado de la asignatura
+    horarios.asignaturas[subjectIndex].isActive = !horarios.asignaturas[subjectIndex].isActive;
 
-      // Desactivar todos los horarios de esta asignatura
-      horarios.asignaturas[subjectIndex].schedules.forEach(
-        (_, scheduleIndex) => {
-          const selectedScheduleChip = document.querySelector(
-            `#scheduleChip-${subjectIndex}-${scheduleIndex}`
-          );
-          if (selectedScheduleChip) {
-            selectedScheduleChip.classList.remove("inactive");
-          }
-        }
-      );
-    } else {
-      selectedSubjectChip.classList.add("inactive");
+    // Cambia el estado de todos los horarios de esta asignatura
+    horarios.asignaturas[subjectIndex].schedules.forEach((schedule) => {
+      schedule.isActive = horarios.asignaturas[subjectIndex].isActive;
+    });
 
-      horarios.asignaturas[subjectIndex].schedules.forEach(
-        (_, scheduleIndex) => {
-          const selectedScheduleChip = document.querySelector(
-            `#scheduleChip-${subjectIndex}-${scheduleIndex}`
-          );
-          if (selectedScheduleChip) {
-            selectedScheduleChip.classList.add("inactive");
-          }
-        }
-      );
+    updateSubjectsAndSchedules();
+    // Regresa al horario que estaba siendo editado si existe
+    if (editingSubjectIndex !== null && editingScheduleIndex !== null) {
+      editingSchedule(editingSubjectIndex, editingScheduleIndex);
+    } else if(horarios.asignaturas[subjectIndex].isActive && horarios.asignaturas[subjectIndex].schedules.length > 0) { // verifica si la asignatura está activa y tiene horarios
+      editingSchedule(subjectIndex, 0); // edita el primer horario
     }
   }
 }
 
 function deactivateSchedule(subjectIndex, scheduleIndex) {
-  const selectedScheduleChip = document.querySelector(
-    `#scheduleChip-${subjectIndex}-${scheduleIndex}`
-  );
-
   selectedSubjectIndex = subjectIndex;
   selectedScheduleIndex = scheduleIndex;
 
-  if (selectedScheduleChip) {
-    if (selectedScheduleChip.classList.contains("editing")) {
-      selectedScheduleChip.classList.remove("editing");
-    }
-    if (selectedScheduleChip.classList.contains("inactive")) {
-      selectedScheduleChip.classList.remove("inactive");
-    } else {
-      selectedScheduleChip.classList.add("inactive");
-    }
-  }
+  // Cambia el estado del horario
+  horarios.asignaturas[subjectIndex].schedules[scheduleIndex].isActive = !horarios.asignaturas[subjectIndex].schedules[scheduleIndex].isActive;
+
   const combinedSchedulesContainer = document.getElementById(
     "combinedSchedulesContainer"
   );
   if (combinedSchedulesContainer.innerHTML !== "") {
     generateCombinedSchedules();
   }
+
+  updateSubjectsAndSchedules();
+
+  // Regresa al horario que estaba siendo editado si existe y no es el que se acaba de desactivar
+  if (editingSubjectIndex !== null && editingScheduleIndex !== null && !(editingSubjectIndex === subjectIndex && editingScheduleIndex === scheduleIndex)) {
+    editingSchedule(editingSubjectIndex, editingScheduleIndex);
+  } else if(horarios.asignaturas[subjectIndex].schedules[scheduleIndex].isActive) { // verifica si el horario está activo
+    editingSchedule(subjectIndex, scheduleIndex); // edita este horario
+  }
 }
+
 
 //parte de guardar y cargar archivos json
 
@@ -359,7 +385,7 @@ function loadFromFile() {
         // Actualizar el selector de asignaturas
         updateSubjectsAndSchedules();
       } catch (error) {
-        alert("Error al subir el archivo: "+ error.message);
+        alert("Error al subir el archivo: " + error.message);
       }
     };
 
@@ -372,19 +398,26 @@ function loadFromFile() {
 
 //parte de generar las combinaciones de horarios
 
+function isScheduleEmpty(schedule) {
+  for (let day in schedule.days) {
+    for (let timeSlot in schedule.days[day]) {
+      if (schedule.days[day][timeSlot] === "x") {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
 let subjectColors = {};
 
 function getActiveSubjectsAndSchedules() {
   let activeSubjects = [];
   horarios.asignaturas.forEach((subject, subjectIndex) => {
     let activeSchedules = [];
-    const subjectChip = document.querySelector(`#subjectChip-${subjectIndex}`);
-    if (!subjectChip.classList.contains("inactive")) {
+    if (subject.isActive) {
       subject.schedules.forEach((schedule, scheduleIndex) => {
-        const scheduleChip = document.querySelector(
-          `#scheduleChip-${subjectIndex}-${scheduleIndex}`
-        );
-        if (!scheduleChip.classList.contains("inactive")) {
+        if (schedule.isActive && !isScheduleEmpty(schedule)) {
           activeSchedules.push(schedule);
         }
       });
@@ -407,6 +440,12 @@ function generateCombinedSchedules() {
   combinedSchedulesContainer.innerHTML = "";
 
   const activeSubjects = getActiveSubjectsAndSchedules();
+
+  // Si no hay asignaturas activas, detén la ejecución de la función
+  if (activeSubjects.length === 0) {
+    return;
+  }
+
   const combinedSchedules = getAllCombinations(activeSubjects, 0);
 
   combinedSchedules.forEach((combinedSchedule, index) => {
@@ -458,7 +497,6 @@ function getAllCombinations(
   }
 
   for (let i = 0; i < subjects[index].schedules.length; i++) {
-    console.log(subjects[index].color);
     let scheduleWithSubjectName = {
       ...subjects[index].schedules[i],
       subjectName: subjects[index].subjectName,
@@ -501,12 +539,6 @@ function populateScheduleTable(table, schedules) {
         if (schedule.days[day] && schedule.days[day][timeSlot] === "x") {
           cellContent.push(schedule.subjectName);
           subjectsInCell++;
-
-          // Asignar un color si no se ha asignado antes
-          /* if (!subjectColors[schedule.subjectName]) {
-            subjectColors[schedule.subjectName] = generatePastelColor();
-          } */
-          console.log(schedule.color);
           cellColor = schedule.color; // Usar el color de la asignatura
         }
       });
@@ -601,9 +633,33 @@ function createTable(table) {
 }
 
 function toggleCell(cell) {
+  if (
+    selectedSubjectIndex == null ||
+    selectedScheduleIndex == null ||
+    horarios.asignaturas[selectedSubjectIndex] === undefined ||
+    horarios.asignaturas[selectedSubjectIndex].schedules[
+      selectedScheduleIndex
+    ] === undefined
+  ) {
+    alert("Selecciona primero una asignatura y un horario");
+    return;
+  }
+
+  const selectedColor = horarios.asignaturas[selectedSubjectIndex].color;
+
   cell.classList.toggle("selected");
+
+  cell.style.backgroundColor = cell.style.backgroundColor ? "" : selectedColor;
+
   //guardar horario
   saveSchedule();
+
+  const combinedSchedulesContainer = document.getElementById(
+    "combinedSchedulesContainer"
+  );
+  if (combinedSchedulesContainer.innerHTML !== "") {
+    generateCombinedSchedules();
+  }
 }
 
 let isDragging = false;
@@ -629,12 +685,13 @@ function createInitialTable() {
           toggleCell(e.target);
         }
       });
-
-      cell.addEventListener("mouseup", (e) => {
-        isDragging = false;
-      });
     }
   }
+
+  // Escucha el evento mouseup en el objeto window
+  window.addEventListener("mouseup", (e) => {
+    isDragging = false;
+  });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
