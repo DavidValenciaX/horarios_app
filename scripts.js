@@ -142,6 +142,7 @@ function updateSubjectsAndSchedules() {
       subjectChip.classList.add("inactive");
       disableIcon.textContent = activeIcon;
     } else {
+      subjectChip.classList.remove("inactive");
       disableIcon.textContent = inactiveIcon;
     }
     
