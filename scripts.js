@@ -11,11 +11,11 @@ class Schedule {
     this.isActive = !this.isActive;
   }
 
-  edit() { // Agrega este método
+  edit() {
     this.isEditing = true;
   }
 
-  stopEditing() { // Agrega este método
+  stopEditing() {
     this.isEditing = false;
   }
 
@@ -42,7 +42,6 @@ class Subject {
   }
 }
 
-
 class TimeTable {
   constructor() {
     this.subjects = [];
@@ -57,12 +56,9 @@ class TimeTable {
     this.subjects.push(new Subject(name, color));
   }
   
-
   deleteSubject(index) {
     this.subjects.splice(index, 1);
   }
-
-  // Aquí puedes agregar más métodos que modifiquen o accedan a los atributos de la clase
 }
 
 const horarios = new TimeTable();
@@ -265,28 +261,22 @@ function editingSchedule(subjectIndex, scheduleIndex) {
   loadSchedule();
 }
 
-
 let editingSubjectIndex = null;
 let editingScheduleIndex = null;
 
 function deactivateSubject(subjectIndex) {
-  selectedSubjectIndex = subjectIndex;
-  selectedScheduleIndex = null;
+  // No hay necesidad de buscar y manipular el chip del sujeto en el DOM.
+  // En lugar de eso, simplemente modifica los datos y luego actualiza la UI.
+  horarios.subjects[subjectIndex].deactivate();
+  updateSubjectsAndSchedules();
 
-  const selectedSubjectChip = document.querySelector(
-    `#subjectChip-${subjectIndex}`
-  );
-
-  if (selectedSubjectChip) {
-    horarios.subjects[subjectIndex].deactivate();
-
-    updateSubjectsAndSchedules();
-    // Regresa al horario que estaba siendo editado si existe
-    if (editingSubjectIndex !== null && editingScheduleIndex !== null) {
-      editingSchedule(editingSubjectIndex, editingScheduleIndex);
-    } else if(horarios.subjects[subjectIndex].isActive && horarios.subjects[subjectIndex].schedules.length > 0) { // verifica si la asignatura está activa y tiene horarios
-      editingSchedule(subjectIndex, 0); // edita el primer horario
-    }
+  // Si el sujeto actualmente está en edición, cambia el enfoque de edición al primer horario de la asignatura si está activa y tiene horarios.
+  if (editingSubjectIndex === subjectIndex && horarios.subjects[subjectIndex].isActive && horarios.subjects[subjectIndex].schedules.length > 0) {
+    editingSchedule(subjectIndex, 0);
+  }
+  // Si otro horario está en edición, mantén su enfoque.
+  else if (editingSubjectIndex !== null && editingScheduleIndex !== null) {
+    editingSchedule(editingSubjectIndex, editingScheduleIndex);
   }
 }
 
@@ -316,45 +306,8 @@ function deactivateSchedule(subjectIndex, scheduleIndex) {
 
 //parte de guardar y cargar el horario de la tabla
 
-function saveSchedule() {
-  const selectedSchedule =
-    horarios.subjects[selectedSubjectIndex].schedules[selectedScheduleIndex];
-
-  const table = document.getElementById("scheduleTable");
-
-  selectedSchedule.days = {};
-  for (let day of days) {
-    selectedSchedule.days[day] = {};
-    for (let timeSlot of timeSlots) {
-      selectedSchedule.days[day][timeSlot] = "";
-    }
-  }
-
-  for (let i = 1; i < table.rows.length; i++) {
-    const row = table.rows[i];
-    for (let j = 1; j < row.cells.length; j++) {
-      if (row.cells[j].classList.contains("selected")) {
-        selectedSchedule.days[days[j - 1]][timeSlots[i - 1]] = "x";
-      }
-    }
-  }
-
-  loadSchedule();
-
-  // Cuando todo está hecho, muestra el icono de verificación.
-  const scheduleSavedIcon = document.getElementById("scheduleSavedIcon");
-  scheduleSavedIcon.textContent = "✔";
-
-  // Eliminar el icono después de 1 segundos
-  setTimeout(function () {
-    scheduleSavedIcon.style.opacity = "0";
-  }, 500);
-
-  setTimeout(function () {
-    scheduleSavedIcon.textContent = "";
-    scheduleSavedIcon.style.opacity = "1";
-  }, 1500);
-}
+let selectedSubjectIndex = null;
+let selectedScheduleIndex = null;
 
 function loadSchedule() {
   let editingSchedule;
@@ -399,9 +352,45 @@ function loadSchedule() {
   }
 }
 
+function saveSchedule() {
+  const selectedSchedule =
+    horarios.subjects[selectedSubjectIndex].schedules[selectedScheduleIndex];
 
-let selectedSubjectIndex = null;
-let selectedScheduleIndex = null;
+  const table = document.getElementById("scheduleTable");
+
+  selectedSchedule.days = {};
+  for (let day of days) {
+    selectedSchedule.days[day] = {};
+    for (let timeSlot of timeSlots) {
+      selectedSchedule.days[day][timeSlot] = "";
+    }
+  }
+
+  for (let i = 1; i < table.rows.length; i++) {
+    const row = table.rows[i];
+    for (let j = 1; j < row.cells.length; j++) {
+      if (row.cells[j].classList.contains("selected")) {
+        selectedSchedule.days[days[j - 1]][timeSlots[i - 1]] = "x";
+      }
+    }
+  }
+
+  loadSchedule();
+
+  // Cuando todo está hecho, muestra el icono de verificación.
+  const scheduleSavedIcon = document.getElementById("scheduleSavedIcon");
+  scheduleSavedIcon.textContent = "✔";
+
+  // Eliminar el icono después de 1 segundos
+  setTimeout(function () {
+    scheduleSavedIcon.style.opacity = "0";
+  }, 500);
+
+  setTimeout(function () {
+    scheduleSavedIcon.textContent = "";
+    scheduleSavedIcon.style.opacity = "1";
+  }, 1500);
+}
 
 //parte de guardar y cargar archivos json
 
