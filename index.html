@@ -27,12 +27,15 @@
                 <label for="newSubjectName">Nombre de la Asignatura:</label>
                 <input type="text" id="newSubjectName">
                 <button type="button"  onclick="createSubject()">Crear Asignatura</button>
+                <label for="subjectCredits">Créditos de la asignatura:</label>
+                <input type="number" name="subjectCredits" id="subjectCredits">
             </div>
             <hr>
             <h3>Asignaturas y Horarios:</h3>
             <div class="createNewSubject">
                 <div id="subjectsAndSchedules"></div>
             </div>
+            <div id="showCredits"></div>
         </div>
         <div>
             <div class="createNewSubject">

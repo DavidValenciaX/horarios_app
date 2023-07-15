@@ -23,17 +23,17 @@ class Schedule {
 }
 
 class Subject {
-  constructor(name, color) {
+  constructor(name, color, credits) {
     this.name = name;
     this.color = color;
     this.schedules = [new Schedule(0)];
     this.isActive = true;
+    this.credits = credits;
   }
 
   addSchedule() {
     this.schedules.forEach((schedule) => { schedule.stopEditing(); });
     this.schedules.push(new Schedule(this.schedules.length));
-    // Aquí podrías retornar el índice del nuevo horario, por si lo necesitas.
     return this.schedules.length - 1;
   }
 
@@ -48,13 +48,13 @@ class TimeTable {
     this.subjects = [];
   }
 
-  addSubject(name, color) {
+  addSubject(name, color, credits) {
     this.subjects.forEach((subject) => {
       subject.schedules.forEach((schedule) => {
         schedule.stopEditing();
       });
     });
-    this.subjects.push(new Subject(name, color));
+    this.subjects.push(new Subject(name, color, credits));
   }
   
   deleteSubject(index) {
@@ -66,20 +66,34 @@ const horarios = new TimeTable();
 
 function createSubject() {
   const newSubjectName = document.getElementById("newSubjectName").value;
+  let subjectCredits = document.getElementById("subjectCredits").value;
 
-  if (!newSubjectName) {
-    alert("Por favor ingrese un nombre de asignatura válido");
+  if (!newSubjectName || !subjectCredits) {
+    alert("Por favor ingrese un nombre de asignatura válido y la cantidad de créditos");
     return;
   }
 
-  horarios.addSubject(newSubjectName, generatePastelColor());
+  horarios.addSubject(newSubjectName, generatePastelColor(), subjectCredits);
 
   updateSubjectsAndSchedules();
 
   // Poner el nuevo horario en estado de edición
   editingSchedule(horarios.subjects.length - 1, 0);
 
+  sumCredits();
+
   document.getElementById("newSubjectName").value = "";
+  document.getElementById("subjectCredits").value = "";
+}
+
+function sumCredits() {
+  const showCredits = document.getElementById("showCredits");
+
+  let sumCredits = 0; 
+  horarios.subjects.forEach((subject) => {
+    sumCredits += parseInt(subject.credits);
+  });
+  showCredits.innerHTML = '<h4>Suma de creditos: </h4>' + sumCredits;
 }
 
 function updateSubjectsAndSchedules() {
@@ -204,6 +218,8 @@ function deleteSubject(subjectIndex) {
   if (horarios.subjects[newSubjectIndex].schedules.length == 0) {
     return;
   }
+
+  sumCredits();
 
   editingSchedule(newSubjectIndex, 0);
 }

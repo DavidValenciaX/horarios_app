@@ -120,6 +120,7 @@ tr:nth-child(even) {
     display: flex;
     justify-content: start;
     align-items: center;
+    flex-wrap: wrap;
 }
 
 .createNewSubject > div {
