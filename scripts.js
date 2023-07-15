@@ -91,7 +91,9 @@ function sumCredits() {
 
   let sumCredits = 0; 
   horarios.subjects.forEach((subject) => {
-    sumCredits += parseInt(subject.credits);
+    if(subject.isActive){
+      sumCredits += parseInt(subject.credits);
+    }
   });
   showCredits.innerHTML = '<h4>Suma de creditos: </h4>' + sumCredits;
 }
@@ -286,6 +288,8 @@ function deactivateSubject(subjectIndex) {
   // En lugar de eso, simplemente modifica los datos y luego actualiza la UI.
   horarios.subjects[subjectIndex].deactivate();
   updateSubjectsAndSchedules();
+
+  sumCredits();
 
   // Si el sujeto actualmente está en edición, cambia el enfoque de edición al primer horario de la asignatura si está activa y tiene horarios.
   if (editingSubjectIndex === subjectIndex && horarios.subjects[subjectIndex].isActive && horarios.subjects[subjectIndex].schedules.length > 0) {
