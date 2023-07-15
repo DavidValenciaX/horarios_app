@@ -1,7 +1,8 @@
 //parte de anadir asignaturas y horarios
 
 class Schedule {
-  constructor() {
+  constructor(index) {
+    this.index = index;
     this.days = {};
     this.isActive = true;
     this.isEditing = true; 
@@ -25,13 +26,13 @@ class Subject {
   constructor(name, color) {
     this.name = name;
     this.color = color;
-    this.schedules = [new Schedule()];
+    this.schedules = [new Schedule(0)];
     this.isActive = true;
   }
 
   addSchedule() {
     this.schedules.forEach((schedule) => { schedule.stopEditing(); });
-    this.schedules.push(new Schedule());
+    this.schedules.push(new Schedule(this.schedules.length));
     // Aquí podrías retornar el índice del nuevo horario, por si lo necesitas.
     return this.schedules.length - 1;
   }
@@ -463,10 +464,10 @@ let subjectColors = {};
 
 function getActiveSubjectsAndSchedules() {
   let activeSubjects = [];
-  horarios.subjects.forEach((subject, subjectIndex) => {
+  horarios.subjects.forEach((subject) => {
     let activeSchedules = [];
     if (subject.isActive) {
-      subject.schedules.forEach((schedule, scheduleIndex) => {
+      subject.schedules.forEach((schedule) => {
         if (schedule.isActive && !isScheduleEmpty(schedule)) {
           activeSchedules.push(schedule);
         }
@@ -556,7 +557,6 @@ function getAllCombinations(
     getAllCombinations(subjects, index + 1, currentSchedule, allCombinations);
     currentSchedule.pop();
   }
-
   return allCombinations;
 }
 
@@ -587,7 +587,7 @@ function populateScheduleTable(table, schedules) {
 
       schedules.forEach((schedule) => {
         if (schedule.days[day] && schedule.days[day][timeSlot] === "x") {
-          cellContent.push(schedule.name);
+          cellContent.push(schedule.name + ' H' + (schedule.index + 1));
           subjectsInCell++;
           cellColor = schedule.color; // Usar el color de la asignatura
         }
@@ -598,7 +598,6 @@ function populateScheduleTable(table, schedules) {
         row.cells[j].style.backgroundColor = "red";
         row.cells[j].innerHTML = cellContent.join(" - "); // Unir nombres con guion
       } else if (cellContent.length > 0) {
-        let subjectName = cellContent[0];
         row.cells[j].style.backgroundColor = cellColor;
         row.cells[j].innerHTML = cellContent.join(""); // Solo un nombre, sin guion
       }
