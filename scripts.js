@@ -6,10 +6,21 @@ class Schedule {
     this.days = {};
     this.isActive = true;
     this.isEditing = true;
+    this.wasEditing = false; 
   }
 
   deactivate() {
     this.isActive = !this.isActive;
+
+    // Si el horario se está desactivando, guarda su estado de edición
+    if (!this.isActive) {
+      this.wasEditing = this.isEditing;
+      this.isEditing = false;
+    }
+    // Si el horario se está reactivando, restaura su estado de edición
+    else {
+      this.isEditing = this.wasEditing;
+    }
   }
 
   edit() {
@@ -274,25 +285,10 @@ function editingSchedule(subjectIndex, scheduleIndex) {
   loadSchedule();
 }
 
-let editingSubjectIndex = null;
-let editingScheduleIndex = null;
-
 function deactivateSubject(subjectIndex) {
   horarios.subjects[subjectIndex].deactivate();
   updateSubjectsAndSchedules();
 
-  // Si el sujeto actualmente está en edición, cambia el enfoque de edición al primer horario de la asignatura si está activa y tiene horarios.
-  if (
-    editingSubjectIndex === subjectIndex &&
-    horarios.subjects[subjectIndex].isActive &&
-    horarios.subjects[subjectIndex].schedules.length > 0
-  ) {
-    editingSchedule(subjectIndex, 0);
-  }
-  // Si otro horario está en edición, mantén su enfoque.
-  else if (editingSubjectIndex !== null && editingScheduleIndex !== null) {
-    editingSchedule(editingSubjectIndex, editingScheduleIndex);
-  }
 }
 
 function deactivateSchedule(subjectIndex, scheduleIndex) {
@@ -311,21 +307,12 @@ function deactivateSchedule(subjectIndex, scheduleIndex) {
 
   updateSubjectsAndSchedules();
 
-  // Regresa al horario que estaba siendo editado si existe y no es el que se acaba de desactivar
+  // Si el horario está activo y estaba en edición antes de ser desactivado
   if (
-    editingSubjectIndex !== null &&
-    editingScheduleIndex !== null &&
-    !(
-      editingSubjectIndex === subjectIndex &&
-      editingScheduleIndex === scheduleIndex
-    )
+    horarios.subjects[subjectIndex].schedules[scheduleIndex].isActive &&
+    horarios.subjects[subjectIndex].schedules[scheduleIndex].wasEditing
   ) {
-    editingSchedule(editingSubjectIndex, editingScheduleIndex);
-  } else if (
-    horarios.subjects[subjectIndex].schedules[scheduleIndex].isActive
-  ) {
-    // verifica si el horario está activo
-    editingSchedule(subjectIndex, scheduleIndex); // edita este horario
+    editingSchedule(subjectIndex, scheduleIndex);
   }
 }
 
