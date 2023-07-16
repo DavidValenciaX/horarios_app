@@ -5,7 +5,7 @@ class Schedule {
     this.index = index;
     this.days = {};
     this.isActive = true;
-    this.isEditing = true; 
+    this.isEditing = true;
   }
 
   deactivate() {
@@ -19,7 +19,6 @@ class Schedule {
   stopEditing() {
     this.isEditing = false;
   }
-
 }
 
 class Subject {
@@ -32,14 +31,25 @@ class Subject {
   }
 
   addSchedule() {
-    this.schedules.forEach((schedule) => { schedule.stopEditing(); });
+    this.schedules.forEach((schedule) => {
+      schedule.stopEditing();
+    });
     this.schedules.push(new Schedule(this.schedules.length));
     return this.schedules.length - 1;
   }
 
   deactivate() {
     this.isActive = !this.isActive;
-    this.schedules.forEach(schedule => schedule.isActive = this.isActive);
+    this.schedules.forEach((schedule) => (schedule.isActive = this.isActive));
+  }
+
+  deleteSchedule(scheduleIndex) {
+    this.schedules.splice(scheduleIndex, 1);
+
+    // Se retorna el nuevo horario a ser editado
+    let newScheduleIndex = scheduleIndex > 0 ? scheduleIndex - 1 : 0;
+
+    return newScheduleIndex;
   }
 }
 
@@ -56,9 +66,14 @@ class TimeTable {
     });
     this.subjects.push(new Subject(name, color, credits));
   }
-  
-  deleteSubject(index) {
-    this.subjects.splice(index, 1);
+
+  deleteSubject(subjectIndex) {
+    this.subjects.splice(subjectIndex, 1);
+
+    // Se retrna el nuevo indice a ser editado
+    let newSubjectIndex = subjectIndex > 0 ? subjectIndex - 1 : 0;
+
+    return newSubjectIndex;
   }
 }
 
@@ -69,7 +84,9 @@ function createSubject() {
   let subjectCredits = document.getElementById("subjectCredits").value;
 
   if (!newSubjectName || !subjectCredits) {
-    alert("Por favor ingrese un nombre de asignatura válido y la cantidad de créditos");
+    alert(
+      "Por favor ingrese un nombre de asignatura válido y la cantidad de créditos"
+    );
     return;
   }
 
@@ -89,13 +106,13 @@ function createSubject() {
 function sumCredits() {
   const showCredits = document.getElementById("showCredits");
 
-  let sumCredits = 0; 
+  let sumCredits = 0;
   horarios.subjects.forEach((subject) => {
-    if(subject.isActive){
+    if (subject.isActive) {
       sumCredits += parseInt(subject.credits);
     }
   });
-  showCredits.innerHTML = '<h4>Suma de creditos: </h4>' + sumCredits;
+  showCredits.innerHTML = sumCredits > 0 ? "<h4>Suma de creditos:</h4>" + sumCredits : "";
 }
 
 function updateSubjectsAndSchedules() {
@@ -122,7 +139,16 @@ function updateSubjectsAndSchedules() {
     closeIcon.textContent = "x";
     closeIcon.addEventListener("click", (e) => {
       e.stopPropagation();
-      deleteSubject(subjectIndex);
+      // Verifica si algún horario de la asignatura está en edición antes de eliminarla
+      let isAnyScheduleEditing = horarios.subjects[subjectIndex].schedules.some(schedule => schedule.isEditing);
+      const newSubjectIndex = horarios.deleteSubject(subjectIndex);
+      if (horarios.subjects.length <= 0) {
+        createInitialTable();
+      } else if (isAnyScheduleEditing) {
+        editingSchedule(newSubjectIndex, 0);
+      }
+      sumCredits();
+      updateSubjectsAndSchedules();
     });
 
     const disableIcon = document.createElement("span");
@@ -135,7 +161,7 @@ function updateSubjectsAndSchedules() {
       subjectChip.classList.remove("inactive");
       disableIcon.textContent = inactiveIcon;
     }
-    
+
     disableIcon.addEventListener("click", (e) => {
       e.stopPropagation();
       deactivateSubject(subjectIndex);
@@ -163,7 +189,22 @@ function updateSubjectsAndSchedules() {
       closeIcon.textContent = "x";
       closeIcon.addEventListener("click", (e) => {
         e.stopPropagation();
-        deleteSchedule(subjectIndex, scheduleIndex);
+        const newScheduleIndex =
+          horarios.subjects[subjectIndex].deleteSchedule(scheduleIndex);
+        if (horarios.subjects[subjectIndex].schedules.length > 0 && schedule.isEditing) {
+          // Si todavía hay horarios para esta asignatura, editamos el primero.
+          editingSchedule(subjectIndex, newScheduleIndex);
+        } else {
+          // Si no hay más horarios para esta asignatura, eliminamos la asignatura
+          const newSubjectIndex = horarios.deleteSubject(subjectIndex);
+          if (horarios.subjects.length <= 0) {
+            createInitialTable();
+          } else if(schedule.isEditing) {
+            editingSchedule(newSubjectIndex, 0);
+          }
+        }
+        sumCredits();
+        updateSubjectsAndSchedules();
       });
 
       const disableIcon = document.createElement("span");
@@ -200,53 +241,9 @@ function updateSubjectsAndSchedules() {
   });
 }
 
-function deleteSubject(subjectIndex) {
-  horarios.deleteSubject(subjectIndex);
-  updateSubjectsAndSchedules();
-
-  if (horarios.subjects.length == 0) {
-    // Si no hay más asignaturas, no hacemos nada más.
-    createInitialTable();
-    return;
-  }
-
-  // Escogemos una nueva asignatura para editar.
-  // Si la asignatura eliminada no era la primera, editamos la anterior.
-  // Si la asignatura eliminada era la primera, editamos la siguiente (ahora la primera asignatura en la lista).
-  let newSubjectIndex = subjectIndex > 0 ? subjectIndex - 1 : 0;
-
-  // Ahora que tenemos la nueva asignatura, vamos a editar su primer horario.
-  // Si no hay horarios para esta asignatura, no hacemos nada más.
-  if (horarios.subjects[newSubjectIndex].schedules.length == 0) {
-    return;
-  }
-
-  sumCredits();
-
-  editingSchedule(newSubjectIndex, 0);
-}
-
-function deleteSchedule(subjectIndex, scheduleIndex) {
-  horarios.subjects[subjectIndex].schedules.splice(scheduleIndex, 1);
-
-  updateSubjectsAndSchedules();
-
-  if (horarios.subjects[subjectIndex].schedules.length == 0) {
-    // Si no hay más horarios para esta asignatura, la eliminamos.
-    deleteSubject(subjectIndex);
-  } else {
-    // Escogemos un nuevo horario para editar.
-    // Si el horario eliminado no era el primero, editamos el horario anterior.
-    // Si el horario eliminado era el primero, editamos el siguiente (ahora el primer horario en la lista).
-    let newScheduleIndex = scheduleIndex > 0 ? scheduleIndex - 1 : 0;
-
-    editingSchedule(subjectIndex, newScheduleIndex);
-  }
-}
-
 function addSchedule(subjectIndex) {
-  horarios.subjects.forEach(subject => {
-    subject.schedules.forEach(schedule => {
+  horarios.subjects.forEach((subject) => {
+    subject.schedules.forEach((schedule) => {
       schedule.stopEditing();
     });
   });
@@ -258,8 +255,8 @@ function addSchedule(subjectIndex) {
 
 function editingSchedule(subjectIndex, scheduleIndex) {
   // Asegúrate de que todos los horarios no estén siendo editados
-  horarios.subjects.forEach(subject => {
-    subject.schedules.forEach(schedule => {
+  horarios.subjects.forEach((subject) => {
+    subject.schedules.forEach((schedule) => {
       schedule.stopEditing();
     });
   });
@@ -284,15 +281,17 @@ let editingSubjectIndex = null;
 let editingScheduleIndex = null;
 
 function deactivateSubject(subjectIndex) {
-  // No hay necesidad de buscar y manipular el chip del sujeto en el DOM.
-  // En lugar de eso, simplemente modifica los datos y luego actualiza la UI.
   horarios.subjects[subjectIndex].deactivate();
   updateSubjectsAndSchedules();
 
   sumCredits();
 
   // Si el sujeto actualmente está en edición, cambia el enfoque de edición al primer horario de la asignatura si está activa y tiene horarios.
-  if (editingSubjectIndex === subjectIndex && horarios.subjects[subjectIndex].isActive && horarios.subjects[subjectIndex].schedules.length > 0) {
+  if (
+    editingSubjectIndex === subjectIndex &&
+    horarios.subjects[subjectIndex].isActive &&
+    horarios.subjects[subjectIndex].schedules.length > 0
+  ) {
     editingSchedule(subjectIndex, 0);
   }
   // Si otro horario está en edición, mantén su enfoque.
@@ -318,9 +317,19 @@ function deactivateSchedule(subjectIndex, scheduleIndex) {
   updateSubjectsAndSchedules();
 
   // Regresa al horario que estaba siendo editado si existe y no es el que se acaba de desactivar
-  if (editingSubjectIndex !== null && editingScheduleIndex !== null && !(editingSubjectIndex === subjectIndex && editingScheduleIndex === scheduleIndex)) {
+  if (
+    editingSubjectIndex !== null &&
+    editingScheduleIndex !== null &&
+    !(
+      editingSubjectIndex === subjectIndex &&
+      editingScheduleIndex === scheduleIndex
+    )
+  ) {
     editingSchedule(editingSubjectIndex, editingScheduleIndex);
-  } else if(horarios.subjects[subjectIndex].schedules[scheduleIndex].isActive) { // verifica si el horario está activo
+  } else if (
+    horarios.subjects[subjectIndex].schedules[scheduleIndex].isActive
+  ) {
+    // verifica si el horario está activo
     editingSchedule(subjectIndex, scheduleIndex); // edita este horario
   }
 }
@@ -335,8 +344,8 @@ function loadSchedule() {
   let editingSubject;
 
   // Busca el horario que se está editando
-  horarios.subjects.forEach(subject => {
-    subject.schedules.forEach(schedule => {
+  horarios.subjects.forEach((subject) => {
+    subject.schedules.forEach((schedule) => {
       if (schedule.isEditing) {
         editingSchedule = schedule;
         editingSubject = subject;
@@ -607,7 +616,7 @@ function populateScheduleTable(table, schedules) {
 
       schedules.forEach((schedule) => {
         if (schedule.days[day] && schedule.days[day][timeSlot] === "x") {
-          cellContent.push(schedule.name + ' H' + (schedule.index + 1));
+          cellContent.push(schedule.name + " H" + (schedule.index + 1));
           subjectsInCell++;
           cellColor = schedule.color; // Usar el color de la asignatura
         }
@@ -706,9 +715,8 @@ function toggleCell(cell) {
     selectedSubjectIndex == null ||
     selectedScheduleIndex == null ||
     horarios.subjects[selectedSubjectIndex] === undefined ||
-    horarios.subjects[selectedSubjectIndex].schedules[
-      selectedScheduleIndex
-    ] === undefined
+    horarios.subjects[selectedSubjectIndex].schedules[selectedScheduleIndex] ===
+      undefined
   ) {
     alert("Selecciona primero una asignatura y un horario");
     return;
