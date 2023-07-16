@@ -238,6 +238,7 @@ tr:nth-child(even) {
   right: -1.25em;
   cursor: pointer;
   background-color: grey;
+  color: black;
   width: 1em;
   height: 1em;
   z-index: 1;
@@ -274,6 +275,16 @@ tr:nth-child(even) {
   background-color: white;
   color: gray;
   border: 2px dotted gray;
+}
+
+.chip.subject{
+    color: black;
+}
+
+.chip.subject .close-icon,
+.chip.subject .disable-icon{
+    width: 1.65em;
+    height: 1.65em;
 }
 
 .credits{
