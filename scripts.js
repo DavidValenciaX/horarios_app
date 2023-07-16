@@ -6,21 +6,10 @@ class Schedule {
     this.days = {};
     this.isActive = true;
     this.isEditing = true;
-    this.wasEditing = false;
   }
 
   deactivate() {
     this.isActive = !this.isActive;
-
-    // Si el horario se está desactivando, guarda su estado de edición
-    if (!this.isActive) {
-      this.wasEditing = this.isEditing;
-      this.isEditing = false;
-    }
-    // Si el horario se está reactivando, restaura su estado de edición
-    else {
-      this.isEditing = this.wasEditing;
-    }
   }
 
   edit() {
@@ -301,6 +290,14 @@ function editingSchedule(subjectIndex, scheduleIndex) {
 
 function deactivateSubject(subjectIndex) {
   horarios.subjects[subjectIndex].deactivate();
+
+  const combinedSchedulesContainer = document.getElementById(
+    "combinedSchedulesContainer"
+  );
+  if (combinedSchedulesContainer.innerHTML !== "") {
+    generateCombinedSchedules();
+  }
+
   updateSubjectsAndSchedules();
 }
 
@@ -320,13 +317,6 @@ function deactivateSchedule(subjectIndex, scheduleIndex) {
 
   updateSubjectsAndSchedules();
 
-  // Si el horario está activo y estaba en edición antes de ser desactivado
-  if (
-    horarios.subjects[subjectIndex].schedules[scheduleIndex].isActive &&
-    horarios.subjects[subjectIndex].schedules[scheduleIndex].wasEditing
-  ) {
-    editingSchedule(subjectIndex, scheduleIndex);
-  }
 }
 
 //parte de guardar y cargar el horario de la tabla
@@ -334,6 +324,7 @@ function deactivateSchedule(subjectIndex, scheduleIndex) {
 let selectedSubjectIndex = null;
 let selectedScheduleIndex = null;
 
+//función que carga la tabla con las horas de clase
 function loadSchedule() {
   let editingSchedule;
   let editingSubject;
@@ -377,6 +368,7 @@ function loadSchedule() {
   }
 }
 
+//funciín para guardar las horas de clase de la tabla
 function saveSchedule() {
   const selectedSchedule =
     horarios.subjects[selectedSubjectIndex].schedules[selectedScheduleIndex];
