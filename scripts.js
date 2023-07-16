@@ -94,7 +94,7 @@ function createSubject() {
 
   updateSubjectsAndSchedules();
 
-  // Poner el nuevo horario en estado de edición
+  // Poner el primer horario de la nueva asignatura en estado de edición
   editingSchedule(horarios.subjects.length - 1, 0);
 
   document.getElementById("newSubjectName").value = "";
@@ -199,7 +199,7 @@ function updateSubjectsAndSchedules() {
           horarios.subjects[subjectIndex].deleteSchedule(scheduleIndex);
         if (horarios.subjects[subjectIndex].schedules.length > 0) {
           if (schedule.isEditing) {
-            // Si todavía hay horarios para esta asignatura, editamos el primero.
+            // Si todavía hay horarios para esta asignatura, editamos el siguiente horario
             editingSchedule(subjectIndex, newScheduleIndex);
           }
         } else {
@@ -253,11 +253,6 @@ function updateSubjectsAndSchedules() {
 }
 
 function addSchedule(subjectIndex) {
-  horarios.subjects.forEach((subject) => {
-    subject.schedules.forEach((schedule) => {
-      schedule.stopEditing();
-    });
-  });
   const scheduleIndex = horarios.subjects[subjectIndex].addSchedule();
   updateSubjectsAndSchedules();
   // Poner el nuevo horario en estado de edición
