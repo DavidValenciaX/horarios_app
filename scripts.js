@@ -260,17 +260,17 @@ function addSchedule(subjectIndex) {
 }
 
 function editingSchedule(subjectIndex, scheduleIndex) {
+  // Verifica si el horario seleccionado está inactivo
+  if (!horarios.subjects[subjectIndex].schedules[scheduleIndex].isActive) {
+    return; // Si el horario está inactivo, retorna y no hagas nada más
+  }
+
   // Asegúrate de que todos los horarios no estén siendo editados
   horarios.subjects.forEach((subject) => {
     subject.schedules.forEach((schedule) => {
       schedule.stopEditing();
     });
   });
-
-  // Verifica si el horario seleccionado está inactivo
-  if (!horarios.subjects[subjectIndex].schedules[scheduleIndex].isActive) {
-    return; // Si el horario está inactivo, retorna y no hagas nada más
-  }
 
   selectedSubjectIndex = subjectIndex;
   selectedScheduleIndex = scheduleIndex;
@@ -297,8 +297,6 @@ function deactivateSubject(subjectIndex) {
 }
 
 function deactivateSchedule(subjectIndex, scheduleIndex) {
-  selectedSubjectIndex = subjectIndex;
-  selectedScheduleIndex = scheduleIndex;
 
   // Cambia el estado del horario
   horarios.subjects[subjectIndex].schedules[scheduleIndex].deactivate();
