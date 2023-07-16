@@ -6,7 +6,7 @@ class Schedule {
     this.days = {};
     this.isActive = true;
     this.isEditing = true;
-    this.wasEditing = false; 
+    this.wasEditing = false;
   }
 
   deactivate() {
@@ -121,7 +121,8 @@ function sumCredits() {
       sumCredits += parseInt(subject.credits);
     }
   });
-  showCredits.innerHTML = sumCredits > 0 ? "<h4>Suma de creditos:</h4>" + sumCredits : "";
+  showCredits.innerHTML =
+    sumCredits > 0 ? "<h4>Suma de creditos:</h4>" + sumCredits : "";
 }
 
 function updateSubjectsAndSchedules() {
@@ -140,8 +141,13 @@ function updateSubjectsAndSchedules() {
     subjectChip.classList.add("chip");
     subjectChip.style.backgroundColor = subject.color;
     subjectChip.style.color = "black";
-    subjectChip.textContent = subject.name;
-    subjectChip.id = `subjectChip-${subjectIndex}`;
+    // Creamos dos elementos diferentes para el nombre y los créditos
+    const subjectName = document.createElement("div");
+    subjectName.textContent = subject.name;
+
+    const subjectCredits = document.createElement("div");
+    subjectCredits.classList.add("credits");
+    subjectCredits.textContent = "Créditos: " + subject.credits;
 
     const closeIcon = document.createElement("span");
     closeIcon.classList.add("close-icon");
@@ -149,7 +155,9 @@ function updateSubjectsAndSchedules() {
     closeIcon.addEventListener("click", (e) => {
       e.stopPropagation();
       // Verifica si algún horario de la asignatura está en edición antes de eliminarla
-      let isAnyScheduleEditing = horarios.subjects[subjectIndex].schedules.some(schedule => schedule.isEditing);
+      let isAnyScheduleEditing = horarios.subjects[subjectIndex].schedules.some(
+        (schedule) => schedule.isEditing
+      );
       const newSubjectIndex = horarios.deleteSubject(subjectIndex);
       if (horarios.subjects.length <= 0) {
         createInitialTable();
@@ -175,6 +183,9 @@ function updateSubjectsAndSchedules() {
       deactivateSubject(subjectIndex);
     });
 
+    // Añadimos los elementos al chip de la asignatura
+    subjectChip.appendChild(subjectName);
+    subjectChip.appendChild(subjectCredits);
     subjectChip.appendChild(closeIcon);
     subjectChip.appendChild(disableIcon);
     parentDiv.appendChild(subjectChip);
@@ -183,7 +194,6 @@ function updateSubjectsAndSchedules() {
       const scheduleChip = document.createElement("div");
       scheduleChip.classList.add("chip");
       scheduleChip.textContent = `Horario ${scheduleIndex + 1}`;
-      scheduleChip.id = `scheduleChip-${subjectIndex}-${scheduleIndex}`;
       scheduleChip.addEventListener("click", () => {
         editingSchedule(subjectIndex, scheduleIndex);
       });
@@ -199,18 +209,23 @@ function updateSubjectsAndSchedules() {
         e.stopPropagation();
         const newScheduleIndex =
           horarios.subjects[subjectIndex].deleteSchedule(scheduleIndex);
-        if (horarios.subjects[subjectIndex].schedules.length > 0 && schedule.isEditing) {
-          // Si todavía hay horarios para esta asignatura, editamos el primero.
-          editingSchedule(subjectIndex, newScheduleIndex);
+        if (horarios.subjects[subjectIndex].schedules.length > 0) {
+          if (schedule.isEditing) {
+            // Si todavía hay horarios para esta asignatura, editamos el primero.
+            editingSchedule(subjectIndex, newScheduleIndex);
+          }
         } else {
           // Si no hay más horarios para esta asignatura, eliminamos la asignatura
           const newSubjectIndex = horarios.deleteSubject(subjectIndex);
-          if (horarios.subjects.length <= 0) {
+          if (horarios.subjects.length > 0) {
+            if (schedule.isEditing) {
+              editingSchedule(newSubjectIndex, 0);
+            }
+          } else {
             createInitialTable();
-          } else if(schedule.isEditing) {
-            editingSchedule(newSubjectIndex, 0);
           }
         }
+
         updateSubjectsAndSchedules();
       });
 
@@ -288,7 +303,6 @@ function editingSchedule(subjectIndex, scheduleIndex) {
 function deactivateSubject(subjectIndex) {
   horarios.subjects[subjectIndex].deactivate();
   updateSubjectsAndSchedules();
-
 }
 
 function deactivateSchedule(subjectIndex, scheduleIndex) {
