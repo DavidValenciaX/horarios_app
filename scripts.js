@@ -97,8 +97,6 @@ function createSubject() {
   // Poner el nuevo horario en estado de edición
   editingSchedule(horarios.subjects.length - 1, 0);
 
-  sumCredits();
-
   document.getElementById("newSubjectName").value = "";
   document.getElementById("subjectCredits").value = "";
 }
@@ -147,7 +145,6 @@ function updateSubjectsAndSchedules() {
       } else if (isAnyScheduleEditing) {
         editingSchedule(newSubjectIndex, 0);
       }
-      sumCredits();
       updateSubjectsAndSchedules();
     });
 
@@ -203,7 +200,6 @@ function updateSubjectsAndSchedules() {
             editingSchedule(newSubjectIndex, 0);
           }
         }
-        sumCredits();
         updateSubjectsAndSchedules();
       });
 
@@ -239,6 +235,7 @@ function updateSubjectsAndSchedules() {
     subjectsAndSchedulesDiv.appendChild(parentDiv);
     subjectsAndSchedulesDiv.appendChild(document.createElement("hr"));
   });
+  sumCredits();
 }
 
 function addSchedule(subjectIndex) {
@@ -283,8 +280,6 @@ let editingScheduleIndex = null;
 function deactivateSubject(subjectIndex) {
   horarios.subjects[subjectIndex].deactivate();
   updateSubjectsAndSchedules();
-
-  sumCredits();
 
   // Si el sujeto actualmente está en edición, cambia el enfoque de edición al primer horario de la asignatura si está activa y tiene horarios.
   if (
