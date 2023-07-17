@@ -476,8 +476,6 @@ function isScheduleEmpty(schedule) {
   return true;
 }
 
-let subjectColors = {};
-
 function getActiveSubjectsAndSchedules() {
   let activeSubjects = [];
   horarios.subjects.forEach((subject) => {
