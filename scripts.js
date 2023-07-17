@@ -272,9 +272,6 @@ function editingSchedule(subjectIndex, scheduleIndex) {
     });
   });
 
-  selectedSubjectIndex = subjectIndex;
-  selectedScheduleIndex = scheduleIndex;
-
   // Edita el horario seleccionado
   horarios.subjects[subjectIndex].schedules[scheduleIndex].edit();
 
@@ -313,9 +310,6 @@ function deactivateSchedule(subjectIndex, scheduleIndex) {
 }
 
 //parte de guardar y cargar el horario de la tabla
-
-let selectedSubjectIndex = null;
-let selectedScheduleIndex = null;
 
 //función que carga la tabla con las horas de clase
 function loadSchedule() {
@@ -363,16 +357,29 @@ function loadSchedule() {
 
 //funciín para guardar las horas de clase de la tabla
 function saveSchedule() {
-  const selectedSchedule =
-    horarios.subjects[selectedSubjectIndex].schedules[selectedScheduleIndex];
+  let editingSchedule;
+
+  // Busca el horario que se está editando
+  horarios.subjects.forEach((subject) => {
+    subject.schedules.forEach((schedule) => {
+      if (schedule.isEditing) {
+        editingSchedule = schedule;
+      }
+    });
+  });
+
+  if (!editingSchedule) {
+    alert("Selecciona primero una asignatura y un horario");
+    return;
+  }
 
   const table = document.getElementById("scheduleTable");
 
-  selectedSchedule.days = {};
+  editingSchedule.days = {};
   for (let day of days) {
-    selectedSchedule.days[day] = {};
+    editingSchedule.days[day] = {};
     for (let timeSlot of timeSlots) {
-      selectedSchedule.days[day][timeSlot] = "";
+      editingSchedule.days[day][timeSlot] = "";
     }
   }
 
@@ -380,7 +387,7 @@ function saveSchedule() {
     const row = table.rows[i];
     for (let j = 1; j < row.cells.length; j++) {
       if (row.cells[j].classList.contains("selected")) {
-        selectedSchedule.days[days[j - 1]][timeSlots[i - 1]] = "x";
+        editingSchedule.days[days[j - 1]][timeSlots[i - 1]] = "x";
       }
     }
   }
@@ -717,18 +724,25 @@ function createTable(table) {
 }
 
 function toggleCell(cell) {
-  if (
-    selectedSubjectIndex == null ||
-    selectedScheduleIndex == null ||
-    horarios.subjects[selectedSubjectIndex] === undefined ||
-    horarios.subjects[selectedSubjectIndex].schedules[selectedScheduleIndex] ===
-      undefined
-  ) {
+  let editingSchedule;
+  let editingSubject;
+
+  // Busca el horario que se está editando
+  horarios.subjects.forEach((subject) => {
+    subject.schedules.forEach((schedule) => {
+      if (schedule.isEditing) {
+        editingSchedule = schedule;
+        editingSubject = subject;
+      }
+    });
+  });
+
+  if (!editingSchedule) {
     alert("Selecciona primero una asignatura y un horario");
     return;
   }
 
-  const selectedColor = horarios.subjects[selectedSubjectIndex].color;
+  const selectedColor = editingSubject.color;
 
   cell.classList.toggle("selected");
 
@@ -744,6 +758,7 @@ function toggleCell(cell) {
     generateCombinedSchedules();
   }
 }
+
 
 let isDragging = false;
 
