@@ -1,11 +1,52 @@
 //parte de anadir asignaturas y horarios
 
 class Schedule {
+  static days = [
+    "Lunes",
+    "Martes",
+    "Miércoles",
+    "Jueves",
+    "Viernes",
+    "Sábado",
+    "Domingo",
+  ];
+  static timeSlots = [
+    "6:00AM - 6:45AM",
+    "7:00AM - 7:45AM",
+    "8:00AM - 8:45AM",
+    "9:00AM - 9:45AM",
+    "10:00AM - 10:45AM",
+    "11:00AM - 11:45AM",
+    "12:00PM - 12:45PM",
+    "1:00PM - 1:45PM",
+    "2:00PM - 2:45PM",
+    "3:00PM - 3:45PM",
+    "4:00PM - 4:45PM",
+    "5:00PM - 5:45PM",
+    "5:45PM - 6:30PM",
+    "6:30PM - 7:15PM",
+    "7:15PM - 8:00PM",
+    "8:15PM - 9:00PM",
+    "9:00PM - 9:45PM",
+    "9:45PM - 10:30PM",
+  ];
+
   constructor(index) {
     this.index = index;
-    this.days = {};
+    this.days = this.initializeDays();
     this.isActive = true;
     this.isEditing = true;
+  }
+
+  initializeDays() {
+    let days = {};
+    for (let day of Schedule.days) {
+      days[day] = {};
+      for (let timeSlot of Schedule.timeSlots) {
+        days[day][timeSlot] = "";
+      }
+    }
+    return days;
   }
 
   deactivate() {
@@ -360,8 +401,8 @@ function loadSchedule() {
   for (let i = 1; i < table.rows.length; i++) {
     const row = table.rows[i];
     for (let j = 1; j < row.cells.length; j++) {
-      const day = days[j - 1];
-      const timeSlot = timeSlots[i - 1];
+      const day = Schedule.days[j - 1];
+      const timeSlot = Schedule.timeSlots[i - 1];
       if (
         editingSchedule.days[day] &&
         editingSchedule.days[day][timeSlot] === "x"
@@ -397,9 +438,9 @@ function saveSchedule() {
   const table = document.getElementById("scheduleTable");
 
   editingSchedule.days = {};
-  for (let day of days) {
+  for (let day of Schedule.days) {
     editingSchedule.days[day] = {};
-    for (let timeSlot of timeSlots) {
+    for (let timeSlot of Schedule.timeSlots) {
       editingSchedule.days[day][timeSlot] = "";
     }
   }
@@ -408,7 +449,7 @@ function saveSchedule() {
     const row = table.rows[i];
     for (let j = 1; j < row.cells.length; j++) {
       if (row.cells[j].classList.contains("selected")) {
-        editingSchedule.days[days[j - 1]][timeSlots[i - 1]] = "x";
+        editingSchedule.days[Schedule.days[j - 1]][Schedule.timeSlots[i - 1]] = "x";
       }
     }
   }
@@ -640,8 +681,8 @@ function populateScheduleTable(table, schedules) {
   for (let i = 1; i < table.rows.length; i++) {
     const row = table.rows[i];
     for (let j = 1; j < row.cells.length; j++) {
-      const day = days[j - 1];
-      const timeSlot = timeSlots[i - 1];
+      const day = Schedule.days[j - 1];
+      const timeSlot = Schedule.timeSlots[i - 1];
 
       let cellContent = [];
       let subjectsInCell = 0;
@@ -689,41 +730,9 @@ function toggleConflictSchedules() {
   }
 }
 
-//codigo para crear las tablas
-
-const days = [
-  "Lunes",
-  "Martes",
-  "Miércoles",
-  "Jueves",
-  "Viernes",
-  "Sábado",
-  "Domingo",
-];
-const timeSlots = [
-  "6:00AM - 6:45AM",
-  "7:00AM - 7:45AM",
-  "8:00AM - 8:45AM",
-  "9:00AM - 9:45AM",
-  "10:00AM - 10:45AM",
-  "11:00AM - 11:45AM",
-  "12:00PM - 12:45PM",
-  "1:00PM - 1:45PM",
-  "2:00PM - 2:45PM",
-  "3:00PM - 3:45PM",
-  "4:00PM - 4:45PM",
-  "5:00PM - 5:45PM",
-  "5:45PM - 6:30PM",
-  "6:30PM - 7:15PM",
-  "7:15PM - 8:00PM",
-  "8:15PM - 9:00PM",
-  "9:00PM - 9:45PM",
-  "9:45PM - 10:30PM",
-];
-
 function createTable(table) {
   let header = "<thead><tr><th>Horas/días</th>";
-  for (let day of days) {
+  for (let day of Schedule.days) {
     header += `<th>${day}</th>`;
   }
   header += "</thead></tr>";
@@ -731,9 +740,9 @@ function createTable(table) {
 
   let body = "<tbody>";
   let row = "";
-  for (let time of timeSlots) {
+  for (let time of Schedule.timeSlots) {
     row += `<tr><th>${time}</th>`;
-    for (let day of days) {
+    for (let day of Schedule.days) {
       row += `<td></td>`;
     }
     row += "</tr>";
