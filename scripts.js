@@ -19,6 +19,14 @@ class Schedule {
   stopEditing() {
     this.isEditing = false;
   }
+
+  static fromJSON(data) {
+    let schedule = new Schedule(data.index);
+    schedule.days = data.days;
+    schedule.isActive = data.isActive;
+    schedule.isEditing = data.isEditing;
+    return schedule;
+  }
 }
 
 class Subject {
@@ -51,6 +59,13 @@ class Subject {
 
     return newScheduleIndex;
   }
+
+  static fromJSON(data) {
+    let subject = new Subject(data.name, data.color, data.credits);
+    subject.schedules = data.schedules.map(Schedule.fromJSON);
+    subject.isActive = data.isActive;
+    return subject;
+  }
 }
 
 class TimeTable {
@@ -75,9 +90,15 @@ class TimeTable {
 
     return newSubjectIndex;
   }
+
+  static fromJSON(data) {
+    let timeTable = new TimeTable();
+    timeTable.subjects = data.subjects.map(Subject.fromJSON);
+    return timeTable;
+  }
 }
 
-const horarios = new TimeTable();
+let horarios = new TimeTable();
 
 function createSubject() {
   const newSubjectName = document.getElementById("newSubjectName").value;
@@ -447,7 +468,7 @@ function loadFromFile() {
         }
 
         // Si la validación es exitosa, reemplazar el objeto horarios
-        horarios.subjects = data.subjects;
+        horarios = TimeTable.fromJSON(data);
 
         // Actualizar el selector de asignaturas
         updateSubjectsAndSchedules();
