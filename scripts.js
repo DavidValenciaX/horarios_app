@@ -191,6 +191,9 @@ function updateSubjectsAndSchedules() {
     const subjectChip = document.createElement("div");
     subjectChip.classList.add("chip", "subject");
     subjectChip.style.backgroundColor = subject.color;
+    subjectChip.addEventListener("click", () => {
+      editingSchedule(subjectIndex, 0);
+    });
     // Creamos dos elementos diferentes para el nombre y los créditos
     const subjectName = document.createElement("div");
     subjectName.textContent = subject.name;
