@@ -277,16 +277,17 @@ tr:nth-child(even) {
   border: 2px dotted gray;
 }
 
-.chip.subject{
-    color: black;
+.chip.subject {
+  color: black;
 }
 
 .chip.subject .close-icon,
-.chip.subject .disable-icon{
-    width: 1.65em;
-    height: 1.65em;
+.chip.subject .disable-icon {
+  right: -1.7em;
+  width: 1.65em;
+  height: 1.65em;
 }
 
-.credits{
-    font-size: 0.75em;
+.credits {
+  font-size: 0.75em;
 }
