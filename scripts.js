@@ -1,6 +1,9 @@
 //parte de anadir asignaturas y horarios
+class TimeTable {
+  constructor() {
+    this.timeTable = this.initializeTimeTable();
+  }
 
-class Schedule {
   static days = [
     "Lunes",
     "Martes",
@@ -31,22 +34,30 @@ class Schedule {
     "9:45PM - 10:30PM",
   ];
 
-  constructor(index) {
-    this.index = index;
-    this.days = this.initializeDays();
-    this.isActive = true;
-    this.isEditing = true;
-  }
-
-  initializeDays() {
-    let days = {};
-    for (let day of Schedule.days) {
-      days[day] = {};
-      for (let timeSlot of Schedule.timeSlots) {
-        days[day][timeSlot] = "";
+  initializeTimeTable() {
+    let timeTable = {};
+    for (let day of TimeTable.days) {
+      timeTable[day] = {};
+      for (let timeSlot of TimeTable.timeSlots) {
+        timeTable[day][timeSlot] = "";
       }
     }
-    return days;
+    return timeTable;
+  }
+
+  static fromJSON(data) {
+    let timeTable = new TimeTable();
+    timeTable = data;
+    return timeTable;
+  }
+}
+
+class Schedule {
+  constructor(index) {
+    this.index = index;
+    this.timeTable = new TimeTable();
+    this.isActive = true;
+    this.isEditing = true;
   }
 
   deactivate() {
@@ -63,7 +74,7 @@ class Schedule {
 
   static fromJSON(data) {
     let schedule = new Schedule(data.index);
-    schedule.days = data.days;
+    schedule.timeTable = TimeTable.fromJSON(data.timeTable);
     schedule.isActive = data.isActive;
     schedule.isEditing = data.isEditing;
     return schedule;
@@ -109,7 +120,7 @@ class Subject {
   }
 }
 
-class TimeTable {
+class SubjectManager {
   constructor() {
     this.subjects = [];
   }
@@ -133,13 +144,13 @@ class TimeTable {
   }
 
   static fromJSON(data) {
-    let timeTable = new TimeTable();
-    timeTable.subjects = data.subjects.map(Subject.fromJSON);
-    return timeTable;
+    let subjectManager = new SubjectManager();
+    subjectManager.subjects = data.subjects.map(Subject.fromJSON);
+    return subjectManager;
   }
 }
 
-let horarios = new TimeTable();
+let horarios = new SubjectManager();
 
 function createSubject() {
   const newSubjectName = document.getElementById("newSubjectName").value;
@@ -207,17 +218,7 @@ function updateSubjectsAndSchedules() {
     closeIcon.textContent = "x";
     closeIcon.addEventListener("click", (e) => {
       e.stopPropagation();
-      // Verifica si algún horario de la asignatura está en edición antes de eliminarla
-      let isAnyScheduleEditing = horarios.subjects[subjectIndex].schedules.some(
-        (schedule) => schedule.isEditing
-      );
-      const newSubjectIndex = horarios.deleteSubject(subjectIndex);
-      if (horarios.subjects.length <= 0) {
-        createInitialTable();
-      } else if (isAnyScheduleEditing) {
-        editingSchedule(newSubjectIndex, 0);
-      }
-      updateSubjectsAndSchedules();
+      deleteSubject(subjectIndex);
     });
 
     const disableIcon = document.createElement("span");
@@ -260,26 +261,7 @@ function updateSubjectsAndSchedules() {
       closeIcon.textContent = "x";
       closeIcon.addEventListener("click", (e) => {
         e.stopPropagation();
-        const newScheduleIndex =
-          horarios.subjects[subjectIndex].deleteSchedule(scheduleIndex);
-        if (horarios.subjects[subjectIndex].schedules.length > 0) {
-          if (schedule.isEditing) {
-            // Si todavía hay horarios para esta asignatura, editamos el siguiente horario
-            editingSchedule(subjectIndex, newScheduleIndex);
-          }
-        } else {
-          // Si no hay más horarios para esta asignatura, eliminamos la asignatura
-          const newSubjectIndex = horarios.deleteSubject(subjectIndex);
-          if (horarios.subjects.length > 0) {
-            if (schedule.isEditing) {
-              editingSchedule(newSubjectIndex, 0);
-            }
-          } else {
-            createInitialTable();
-          }
-        }
-
-        updateSubjectsAndSchedules();
+        deleteSchedule(subjectIndex, scheduleIndex);
       });
 
       const disableIcon = document.createElement("span");
@@ -345,15 +327,19 @@ function editingSchedule(subjectIndex, scheduleIndex) {
   loadSchedule();
 }
 
-function deactivateSubject(subjectIndex) {
-  horarios.subjects[subjectIndex].deactivate();
-
+function updateCombinedSchedules(){
   const combinedSchedulesContainer = document.getElementById(
     "combinedSchedulesContainer"
   );
   if (combinedSchedulesContainer.innerHTML !== "") {
     generateCombinedSchedules();
   }
+}
+
+function deactivateSubject(subjectIndex) {
+  horarios.subjects[subjectIndex].deactivate();
+
+  updateCombinedSchedules();
 
   updateSubjectsAndSchedules();
 }
@@ -363,17 +349,55 @@ function deactivateSchedule(subjectIndex, scheduleIndex) {
   // Cambia el estado del horario
   horarios.subjects[subjectIndex].schedules[scheduleIndex].deactivate();
 
-  const combinedSchedulesContainer = document.getElementById(
-    "combinedSchedulesContainer"
-  );
-  if (combinedSchedulesContainer.innerHTML !== "") {
-    generateCombinedSchedules();
-  }
+  updateCombinedSchedules();
 
   updateSubjectsAndSchedules();
 
 }
 
+function deleteSubject(subjectIndex){
+  // Verifica si algún horario de la asignatura está en edición antes de eliminarla
+  let isAnyScheduleEditing = horarios.subjects[subjectIndex].schedules.some(
+    (schedule) => schedule.isEditing
+  );
+  const newSubjectIndex = horarios.deleteSubject(subjectIndex);
+  if (horarios.subjects.length <= 0) {
+    createInitialTable();
+  } else if (isAnyScheduleEditing) {
+    editingSchedule(newSubjectIndex, 0);
+  }
+
+  updateCombinedSchedules();
+  
+  updateSubjectsAndSchedules();
+}
+
+function deleteSchedule(subjectIndex, scheduleIndex){
+  const schedule = horarios.subjects[subjectIndex].schedules[scheduleIndex];
+
+  const newScheduleIndex =
+          horarios.subjects[subjectIndex].deleteSchedule(scheduleIndex);
+        if (horarios.subjects[subjectIndex].schedules.length > 0) {
+          if (schedule.isEditing) {
+            // Si todavía hay horarios para esta asignatura, editamos el siguiente horario
+            editingSchedule(subjectIndex, newScheduleIndex);
+          }
+        } else {
+          // Si no hay más horarios para esta asignatura, eliminamos la asignatura
+          const newSubjectIndex = horarios.deleteSubject(subjectIndex);
+          if (horarios.subjects.length > 0) {
+            if (schedule.isEditing) {
+              editingSchedule(newSubjectIndex, 0);
+            }
+          } else {
+            createInitialTable();
+          }
+        }
+
+        updateCombinedSchedules();
+
+        updateSubjectsAndSchedules();
+}
 //parte de guardar y cargar el horario de la tabla
 
 //función que carga la tabla con las horas de clase
@@ -404,11 +428,11 @@ function loadSchedule() {
   for (let i = 1; i < table.rows.length; i++) {
     const row = table.rows[i];
     for (let j = 1; j < row.cells.length; j++) {
-      const day = Schedule.days[j - 1];
-      const timeSlot = Schedule.timeSlots[i - 1];
+      const day = TimeTable.days[j - 1];
+      const timeSlot = TimeTable.timeSlots[i - 1];
       if (
-        editingSchedule.days[day] &&
-        editingSchedule.days[day][timeSlot] === "x"
+        editingSchedule.timeTable[day] &&
+        editingSchedule.timeTable[day][timeSlot] === "x"
       ) {
         row.cells[j].classList.add("selected");
         row.cells[j].style.backgroundColor = selectedColor;
@@ -440,11 +464,11 @@ function saveSchedule() {
 
   const table = document.getElementById("scheduleTable");
 
-  editingSchedule.days = {};
-  for (let day of Schedule.days) {
-    editingSchedule.days[day] = {};
-    for (let timeSlot of Schedule.timeSlots) {
-      editingSchedule.days[day][timeSlot] = "";
+  editingSchedule.timeTable = {};
+  for (let day of TimeTable.days) {
+    editingSchedule.timeTable[day] = {};
+    for (let timeSlot of TimeTable.timeSlots) {
+      editingSchedule.timeTable[day][timeSlot] = "";
     }
   }
 
@@ -452,7 +476,7 @@ function saveSchedule() {
     const row = table.rows[i];
     for (let j = 1; j < row.cells.length; j++) {
       if (row.cells[j].classList.contains("selected")) {
-        editingSchedule.days[Schedule.days[j - 1]][Schedule.timeSlots[i - 1]] = "x";
+        editingSchedule.timeTable[TimeTable.days[j - 1]][TimeTable.timeSlots[i - 1]] = "x";
       }
     }
   }
@@ -512,10 +536,12 @@ function loadFromFile() {
         }
 
         // Si la validación es exitosa, reemplazar el objeto horarios
-        horarios = TimeTable.fromJSON(data);
+        horarios = SubjectManager.fromJSON(data);
 
         // Actualizar el selector de asignaturas
         updateSubjectsAndSchedules();
+
+        loadSchedule();
       } catch (error) {
         alert("Error al subir el archivo: " + error.message);
       }
@@ -531,9 +557,9 @@ function loadFromFile() {
 //parte de generar las combinaciones de horarios
 
 function isScheduleEmpty(schedule) {
-  for (let day in schedule.days) {
-    for (let timeSlot in schedule.days[day]) {
-      if (schedule.days[day][timeSlot] === "x") {
+  for (let day in schedule.timeTable) {
+    for (let timeSlot in schedule.timeTable[day]) {
+      if (schedule.timeTable[day][timeSlot] === "x") {
         return false;
       }
     }
@@ -684,14 +710,14 @@ function populateScheduleTable(table, schedules) {
   for (let i = 1; i < table.rows.length; i++) {
     const row = table.rows[i];
     for (let j = 1; j < row.cells.length; j++) {
-      const day = Schedule.days[j - 1];
-      const timeSlot = Schedule.timeSlots[i - 1];
+      const day = TimeTable.days[j - 1];
+      const timeSlot = TimeTable.timeSlots[i - 1];
 
       let cellContent = [];
       let subjectsInCell = 0;
 
       schedules.forEach((schedule) => {
-        if (schedule.days[day] && schedule.days[day][timeSlot] === "x") {
+        if (schedule.timeTable[day] && schedule.timeTable[day][timeSlot] === "x") {
           cellContent.push(schedule.name + " H" + (schedule.index + 1));
           subjectsInCell++;
           cellColor = schedule.color; // Usar el color de la asignatura
@@ -735,7 +761,7 @@ function toggleConflictSchedules() {
 
 function createTable(table) {
   let header = "<thead><tr><th>Horas/días</th>";
-  for (let day of Schedule.days) {
+  for (let day of TimeTable.days) {
     header += `<th>${day}</th>`;
   }
   header += "</thead></tr>";
@@ -743,9 +769,9 @@ function createTable(table) {
 
   let body = "<tbody>";
   let row = "";
-  for (let time of Schedule.timeSlots) {
+  for (let time of TimeTable.timeSlots) {
     row += `<tr><th>${time}</th>`;
-    for (let day of Schedule.days) {
+    for (let day of TimeTable.days) {
       row += `<td></td>`;
     }
     row += "</tr>";
@@ -782,12 +808,7 @@ function toggleCell(cell) {
   //guardar horario
   saveSchedule();
 
-  const combinedSchedulesContainer = document.getElementById(
-    "combinedSchedulesContainer"
-  );
-  if (combinedSchedulesContainer.innerHTML !== "") {
-    generateCombinedSchedules();
-  }
+  updateCombinedSchedules();
 }
 
 
