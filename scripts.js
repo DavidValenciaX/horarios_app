@@ -629,7 +629,7 @@ function generateCombinedSchedules() {
     }
 
     const header = document.createElement("h3");
-    header.textContent = `Horario Combinado ${index + 1}${
+    header.textContent = `Horario ${index + 1}${
       hasConflict ? " (Cruce de Horarios)" : ""
     }`;
 
@@ -673,6 +673,7 @@ function getAllCombinations(
       ...subjects[index].schedules[i],
       name: subjects[index].name,
       color: subjects[index].color,
+      totalSchedules: subjects[index].schedules.length
     };
     currentSchedule.push(scheduleWithSubjectName);
     getAllCombinations(subjects, index + 1, currentSchedule, allCombinations);
@@ -731,12 +732,14 @@ function populateScheduleTable(table, schedules) {
 
       let cellContent = [];
       let subjectsInCell = 0;
+      let cellColor;
 
       schedules.forEach((schedule) => {
         if (schedule.timeTable[day] && schedule.timeTable[day][timeSlot] === "x") {
-          cellContent.push(schedule.name + " H" + (schedule.index + 1));
+          const scheduleLabel = (schedule.totalSchedules > 1) ? schedule.name + " H" + (schedule.index + 1) : schedule.name;
+          cellContent.push(scheduleLabel);
           subjectsInCell++;
-          cellColor = schedule.color; // Usar el color de la asignatura
+          cellColor = schedule.color;
         }
       });
 
