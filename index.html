@@ -23,12 +23,18 @@
     <div id="layoutSubjectSchedule">
         <div>
             <h3>Crea las asignaturas</h3>
-            <div class="createNewSubject">
-                <label for="newSubjectName">Nombre de la Asignatura:</label>
-                <input type="text" id="newSubjectName">
-                <button type="button"  onclick="createSubject()">Crear Asignatura</button>
-                <label for="subjectCredits">Créditos de la asignatura:</label>
-                <input type="number" name="subjectCredits" id="subjectCredits">
+            <div>
+                <div class="createNewSubject">
+                    <label for="newSubjectName">Nombre de la Asignatura:</label>
+                    <input type="text" id="newSubjectName">
+                </div>
+                <div class="createNewSubject">
+                    <label for="subjectCredits">Créditos de la asignatura:</label>
+                    <input type="number" name="subjectCredits" id="subjectCredits" min="0" max="10">
+                </div>
+                <div class="createNewSubject">
+                    <button type="button" onclick="createSubject()">Crear Asignatura</button>
+                </div>
             </div>
             <hr>
             <h3>Asignaturas y Horarios:</h3>
@@ -54,9 +60,10 @@
     <div id="generateCombinedSchedules">
         <button type="button" onclick="generateCombinedSchedules()">Generar Horarios Combinados</button>
         <!-- Switch para mostrar/ocultar horarios con conflictos -->
-        <label for="toggleConflicts">Mostrar horarios con cruces:</label>
+        <label id="conflictLabel" for="toggleConflicts">Ocultar horarios con cruces:</label>
         <input type="checkbox" id="toggleConflicts" onchange="toggleConflictSchedules()">
     </div>
+    
 
     <div id="combinedSchedulesContainer"></div>
 

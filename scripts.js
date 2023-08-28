@@ -156,10 +156,22 @@ function createSubject() {
   const newSubjectName = document.getElementById("newSubjectName").value;
   let subjectCredits = document.getElementById("subjectCredits").value;
 
-  if (!newSubjectName || !subjectCredits) {
+  if (!newSubjectName) {
     alert(
-      "Por favor ingrese un nombre de asignatura válido y la cantidad de créditos"
+      "Por favor ingrese un nombre de asignatura válido"
     );
+    return;
+  }
+
+  if (!subjectCredits || isNaN(subjectCredits)) {
+    alert("Por favor ingrese la cantidad de créditos");
+    return;
+  }
+
+  // Convertir a número y validar el rango
+  subjectCredits = Number(subjectCredits);
+  if (subjectCredits < 0 || subjectCredits > 10) {
+    alert("Por favor ingrese un valor de créditos entre 0 y 10");
     return;
   }
 
@@ -183,9 +195,13 @@ function sumCredits() {
       sumCredits += parseInt(subject.credits);
     }
   });
+
+  let textColor = sumCredits > 20 ? "red" : "inherit";
+
   showCredits.innerHTML =
-    sumCredits > 0 ? "<h4>Suma de creditos:</h4>" + sumCredits : "";
+    sumCredits > 0 ? `<h4 style="color: ${textColor};">Suma de creditos: ${sumCredits}</h4>` : "";
 }
+
 
 function updateSubjectsAndSchedules() {
   const subjectsAndSchedulesDiv = document.getElementById(
@@ -741,13 +757,19 @@ function populateScheduleTable(table, schedules) {
 
 function toggleConflictSchedules() {
   const showConflicts = document.getElementById("toggleConflicts").checked;
-  const combinedSchedulesContainer = document.getElementById(
-    "combinedSchedulesContainer"
-  );
+  const combinedSchedulesContainer = document.getElementById("combinedSchedulesContainer");
   const tables = combinedSchedulesContainer.getElementsByTagName("table");
+  const conflictLabel = document.getElementById("conflictLabel");
+
+  // Cambia el texto del label según el estado del checkbox
+  if (showConflicts) {
+    conflictLabel.textContent = "Mostrar horarios con cruces:";
+  } else {
+    conflictLabel.textContent = "Ocultar horarios con cruces:";
+  }
 
   for (let table of tables) {
-    if (table.classList.contains("hasConflict") && !showConflicts) {
+    if (table.classList.contains("hasConflict") && showConflicts) {
       table.style.display = "none";
       // Ocultar el encabezado y el botón de descarga asociado
       table.previousSibling.style.display = "none";

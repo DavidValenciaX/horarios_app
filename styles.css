@@ -128,9 +128,12 @@ tr:nth-child(even) {
   flex-wrap: wrap;
 }
 
-.createNewSubject > div {
+.createNewSubject > div, 
+.createNewSubject button, 
+.createNewSubject input {
   flex: 1;
 }
+
 
 #scheduleSavedIcon {
   position: absolute;
