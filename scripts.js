@@ -157,9 +157,7 @@ function createSubject() {
   let subjectCredits = document.getElementById("subjectCredits").value;
 
   if (!newSubjectName) {
-    alert(
-      "Por favor ingrese un nombre de asignatura válido"
-    );
+    alert("Por favor ingrese un nombre de asignatura válido");
     return;
   }
 
@@ -175,7 +173,11 @@ function createSubject() {
     return;
   }
 
-  horarios.addSubject(newSubjectName, generatePastelColor(newSubjectName), subjectCredits);
+  horarios.addSubject(
+    newSubjectName,
+    generatePastelColor(newSubjectName),
+    subjectCredits
+  );
 
   updateSubjectsAndSchedules();
 
@@ -199,9 +201,10 @@ function sumCredits() {
   let textColor = sumCredits > 20 ? "red" : "inherit";
 
   showCredits.innerHTML =
-    sumCredits > 0 ? `<h4 style="color: ${textColor};">Suma de creditos: ${sumCredits}</h4>` : "";
+    sumCredits > 0
+      ? `<h4 style="color: ${textColor};">Suma de creditos: ${sumCredits}</h4>`
+      : "";
 }
-
 
 function updateSubjectsAndSchedules() {
   const subjectsAndSchedulesDiv = document.getElementById(
@@ -343,7 +346,7 @@ function editingSchedule(subjectIndex, scheduleIndex) {
   loadSchedule();
 }
 
-function updateCombinedSchedules(){
+function updateCombinedSchedules() {
   const combinedSchedulesContainer = document.getElementById(
     "combinedSchedulesContainer"
   );
@@ -361,17 +364,15 @@ function deactivateSubject(subjectIndex) {
 }
 
 function deactivateSchedule(subjectIndex, scheduleIndex) {
-
   // Cambia el estado del horario
   horarios.subjects[subjectIndex].schedules[scheduleIndex].deactivate();
 
   updateCombinedSchedules();
 
   updateSubjectsAndSchedules();
-
 }
 
-function deleteSubject(subjectIndex){
+function deleteSubject(subjectIndex) {
   // Verifica si algún horario de la asignatura está en edición antes de eliminarla
   let isAnyScheduleEditing = horarios.subjects[subjectIndex].schedules.some(
     (schedule) => schedule.isEditing
@@ -384,35 +385,35 @@ function deleteSubject(subjectIndex){
   }
 
   updateCombinedSchedules();
-  
+
   updateSubjectsAndSchedules();
 }
 
-function deleteSchedule(subjectIndex, scheduleIndex){
+function deleteSchedule(subjectIndex, scheduleIndex) {
   const schedule = horarios.subjects[subjectIndex].schedules[scheduleIndex];
 
   const newScheduleIndex =
-          horarios.subjects[subjectIndex].deleteSchedule(scheduleIndex);
-        if (horarios.subjects[subjectIndex].schedules.length > 0) {
-          if (schedule.isEditing) {
-            // Si todavía hay horarios para esta asignatura, editamos el siguiente horario
-            editingSchedule(subjectIndex, newScheduleIndex);
-          }
-        } else {
-          // Si no hay más horarios para esta asignatura, eliminamos la asignatura
-          const newSubjectIndex = horarios.deleteSubject(subjectIndex);
-          if (horarios.subjects.length > 0) {
-            if (schedule.isEditing) {
-              editingSchedule(newSubjectIndex, 0);
-            }
-          } else {
-            createInitialTable();
-          }
-        }
+    horarios.subjects[subjectIndex].deleteSchedule(scheduleIndex);
+  if (horarios.subjects[subjectIndex].schedules.length > 0) {
+    if (schedule.isEditing) {
+      // Si todavía hay horarios para esta asignatura, editamos el siguiente horario
+      editingSchedule(subjectIndex, newScheduleIndex);
+    }
+  } else {
+    // Si no hay más horarios para esta asignatura, eliminamos la asignatura
+    const newSubjectIndex = horarios.deleteSubject(subjectIndex);
+    if (horarios.subjects.length > 0) {
+      if (schedule.isEditing) {
+        editingSchedule(newSubjectIndex, 0);
+      }
+    } else {
+      createInitialTable();
+    }
+  }
 
-        updateCombinedSchedules();
+  updateCombinedSchedules();
 
-        updateSubjectsAndSchedules();
+  updateSubjectsAndSchedules();
 }
 //parte de guardar y cargar el horario de la tabla
 
@@ -492,7 +493,9 @@ function saveSchedule() {
     const row = table.rows[i];
     for (let j = 1; j < row.cells.length; j++) {
       if (row.cells[j].classList.contains("selected")) {
-        editingSchedule.timeTable[TimeTable.days[j - 1]][TimeTable.timeSlots[i - 1]] = "x";
+        editingSchedule.timeTable[TimeTable.days[j - 1]][
+          TimeTable.timeSlots[i - 1]
+        ] = "x";
       }
     }
   }
@@ -516,19 +519,47 @@ function saveSchedule() {
 
 //parte de guardar y cargar archivos json
 
-function saveToFile() {
+async function saveToFile() {
   const dataStr = JSON.stringify(horarios);
   const dataBlob = new Blob([dataStr], {
     type: "application/json;charset=utf-8",
   });
-  const dataUrl = URL.createObjectURL(dataBlob);
 
-  const downloadAnchor = document.createElement("a");
-  downloadAnchor.href = dataUrl;
-  downloadAnchor.download = "horarios.json";
-  document.body.appendChild(downloadAnchor);
-  downloadAnchor.click();
-  document.body.removeChild(downloadAnchor);
+  // Verificar si showSaveFilePicker está disponible
+  if (window.showSaveFilePicker) {
+    try {
+      // Configuración para el archivo a guardar
+      const options = {
+        types: [
+          {
+            description: "JSON Files",
+            accept: { "application/json": [".json"] },
+          },
+        ],
+        suggestedName: "horarios.json",
+      };
+
+      // Mostrar el cuadro de diálogo para guardar el archivo
+      const fileHandle = await window.showSaveFilePicker(options);
+      const writableStream = await fileHandle.createWritable();
+      await writableStream.write(dataBlob);
+      await writableStream.close();
+      alert("Archivo guardado con éxito.");
+    } catch (error) {
+      console.error(error);
+      alert("No se pudo guardar el archivo.");
+    }
+  } else {
+    // Método clásico para navegadores que no soportan showSaveFilePicker
+    const dataUrl = URL.createObjectURL(dataBlob);
+
+    const downloadAnchor = document.createElement("a");
+    downloadAnchor.href = dataUrl;
+    downloadAnchor.download = "horarios.json";
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    document.body.removeChild(downloadAnchor);
+  }
 }
 
 function loadFromFile() {
@@ -673,7 +704,7 @@ function getAllCombinations(
       ...subjects[index].schedules[i],
       name: subjects[index].name,
       color: subjects[index].color,
-      totalSchedules: subjects[index].schedules.length
+      totalSchedules: subjects[index].schedules.length,
     };
     currentSchedule.push(scheduleWithSubjectName);
     getAllCombinations(subjects, index + 1, currentSchedule, allCombinations);
@@ -688,12 +719,12 @@ function createScheduleTable() {
   return table;
 }
 
-//parte de generar colores 
+//parte de generar colores
 
 function hashCode(str) {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
-      hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
   }
   return hash;
 }
@@ -735,8 +766,14 @@ function populateScheduleTable(table, schedules) {
       let cellColor;
 
       schedules.forEach((schedule) => {
-        if (schedule.timeTable[day] && schedule.timeTable[day][timeSlot] === "x") {
-          const scheduleLabel = (schedule.totalSchedules > 1) ? schedule.name + " H" + (schedule.index + 1) : schedule.name;
+        if (
+          schedule.timeTable[day] &&
+          schedule.timeTable[day][timeSlot] === "x"
+        ) {
+          const scheduleLabel =
+            schedule.totalSchedules > 1
+              ? schedule.name + " H" + (schedule.index + 1)
+              : schedule.name;
           cellContent.push(scheduleLabel);
           subjectsInCell++;
           cellColor = schedule.color;
@@ -760,7 +797,9 @@ function populateScheduleTable(table, schedules) {
 
 function toggleConflictSchedules() {
   const showConflicts = document.getElementById("toggleConflicts").checked;
-  const combinedSchedulesContainer = document.getElementById("combinedSchedulesContainer");
+  const combinedSchedulesContainer = document.getElementById(
+    "combinedSchedulesContainer"
+  );
   const tables = combinedSchedulesContainer.getElementsByTagName("table");
   const conflictLabel = document.getElementById("conflictLabel");
 
@@ -835,7 +874,6 @@ function toggleCell(cell) {
 
   updateCombinedSchedules();
 }
-
 
 let isDragging = false;
 
