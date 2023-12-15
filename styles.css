@@ -129,8 +129,8 @@ tr:nth-child(even) {
   flex-wrap: wrap;
 }
 
-.createNewSubject > div, 
-.createNewSubject > input, 
+.createNewSubject > div,
+.createNewSubject > input,
 .createNewSubject > button {
   min-width: 300px;
   flex-grow: 1;
@@ -317,19 +317,26 @@ tr:nth-child(even) {
     margin-top: 2em; /* Agregar margen superior para evitar solapamiento con el ícono */
   }
 
- /* Estilo responsive para las tablas */
+  /* Estilo responsive para las tablas */
 
- #combinedSchedulesContainer table{
-  width: auto;
-  max-height: 90vh;
-  margin: 1em auto;
-  font-size: 0.75em;
-  overflow-y: auto;
- }
+  #combinedSchedulesContainer table {
+    width: auto;
+    max-height: 90vh;
+    margin: 1em auto;
+    font-size: 0.75em;
+    overflow-y: auto;
+  }
 
- #combinedSchedulesContainer table th {
-  -webkit-user-select: none;
-  user-select: none;
-  padding: 0.25em 0.5em; 
-}
+  #combinedSchedulesContainer table td {
+    padding: 0.25em 0.5em;
+  }
+
+  #combinedSchedulesContainer table th {
+    padding: 0.25em 0.5em;
+  }
+
+  /* Desactivar efecto hover para las celdas de la tabla en pantallas pequeñas */
+  #scheduleTable td:hover {
+    background-color: inherit;
+  }
 }
