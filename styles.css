@@ -316,4 +316,20 @@ tr:nth-child(even) {
   #scheduleTable {
     margin-top: 2em; /* Agregar margen superior para evitar solapamiento con el ícono */
   }
+
+ /* Estilo responsive para las tablas */
+
+ #combinedSchedulesContainer table{
+  width: auto;
+  max-height: 90vh;
+  margin: 1em auto;
+  font-size: 0.75em;
+  overflow-y: auto;
+ }
+
+ #combinedSchedulesContainer table th {
+  -webkit-user-select: none;
+  user-select: none;
+  padding: 0.25em 0.5em; 
+}
 }
