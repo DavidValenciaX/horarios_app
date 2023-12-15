@@ -461,7 +461,7 @@ function loadSchedule() {
   }
 }
 
-//funciín para guardar las horas de clase de la tabla
+//función para guardar las horas de clase de la tabla
 function saveSchedule() {
   let editingSchedule;
 

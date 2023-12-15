@@ -140,8 +140,8 @@ tr:nth-child(even) {
 
 #scheduleSavedIcon {
   position: absolute;
-  top: 2em;
-  left: 2em;
+  top: 1em;
+  left: 1.5em;
   font-size: 1.5em;
   color: #45a049;
   transition: opacity 1s ease-out;
@@ -302,5 +302,18 @@ tr:nth-child(even) {
 @media (max-width: 1100px) {
   #layoutSubjectSchedule {
     flex-direction: column;
+  }
+
+  #scheduleSavedIcon {
+    position: absolute; /* Posicionamiento absoluto para el ícono */
+    top: 0; /* Ubicación en la parte superior del contenedor */
+    left: 0; /* Ubicación en la parte izquierda del contenedor */
+    z-index: 10; /* Asegurar que se muestre por encima de otros elementos */
+    transition: opacity 1s ease-out; /* Transición suave para la opacidad */
+  }
+
+  /* Ajustes adicionales para la tabla en pantallas pequeñas */
+  #scheduleTable {
+    margin-top: 2em; /* Agregar margen superior para evitar solapamiento con el ícono */
   }
 }
