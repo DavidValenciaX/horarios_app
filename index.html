@@ -12,8 +12,8 @@
     <h3>Guarda o carga un archivo con tu horario</h3>
 
     <div>
-        <button type="button" onclick="saveToFile()">Guardar horario</button>
-        <input type="file" id="fileInput" onchange="loadFromFile()" accept=".json">
+        <button id="saveToFileButton" type="button">Guardar horario</button>
+        <input type="file" id="fileInput" accept=".json">
         <label for="fileInput" id="fileInputLabel">Cargar horario</label>
         <span id="fileName"></span>
     </div>
@@ -33,7 +33,7 @@
                     <input type="number" name="subjectCredits" id="subjectCredits" min="0" max="10">
                 </div>
                 <div class="createNewSubject">
-                    <button type="button" onclick="createSubject()">Crear Asignatura</button>
+                    <button id="createSubjectButton" type="button">Crear Asignatura</button>
                 </div>
             </div>
             <hr>
@@ -58,16 +58,16 @@
     <h3>Genera las combinaciones de horario posibles</h3>
 
     <div id="generateCombinedSchedules">
-        <button type="button" onclick="generateCombinedSchedules()">Generar Horarios Combinados</button>
+        <button id="generateCombinedSchedulesButton" type="button">Generar Horarios Combinados</button>
         <!-- Switch para mostrar/ocultar horarios con conflictos -->
         <label id="conflictLabel" for="toggleConflicts">Ocultar horarios con cruces:</label>
-        <input type="checkbox" id="toggleConflicts" onchange="toggleConflictSchedules()">
+        <input type="checkbox" id="toggleConflicts">
     </div>
     
 
     <div id="combinedSchedulesContainer"></div>
 
-    <script src="scripts.js"></script>
+    <script type="module" src="scripts.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
 </body>
 
