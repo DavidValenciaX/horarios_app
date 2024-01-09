@@ -1,5 +1,10 @@
 import { TimeTable, SubjectManager } from "./subjects.js";
 import generatePastelColor from "./colors.js";
+import {
+  toggleConflictSchedules,
+  generateCombinedSchedules,
+} from "./combinations.js";
+import { createInitialTable } from "./createTables.js";
 
 let horarios = new SubjectManager();
 
@@ -465,7 +470,7 @@ function isScheduleEmpty(schedule) {
   return true;
 }
 
-function getActiveSubjectsAndSchedules() {
+export function getActiveSubjectsAndSchedules() {
   let activeSubjects = [];
   horarios.subjects.forEach((subject) => {
     let activeSchedules = [];
@@ -487,182 +492,7 @@ function getActiveSubjectsAndSchedules() {
   return activeSubjects;
 }
 
-function generateCombinedSchedules() {
-  const combinedSchedulesContainer = document.getElementById(
-    "combinedSchedulesContainer"
-  );
-  combinedSchedulesContainer.innerHTML = "";
-
-  const activeSubjects = getActiveSubjectsAndSchedules();
-
-  // Si no hay asignaturas activas, detén la ejecución de la función
-  if (activeSubjects.length === 0) {
-    return;
-  }
-
-  const combinedSchedules = getAllCombinations(activeSubjects, 0);
-
-  combinedSchedules.forEach((combinedSchedule, index) => {
-    const table = createScheduleTable();
-    const hasConflict = populateScheduleTable(table, combinedSchedule);
-
-    if (hasConflict) {
-      table.classList.add("hasConflict");
-    }
-
-    const header = document.createElement("h3");
-    header.textContent = `Horario ${index + 1}${
-      hasConflict ? " (Cruce de Horarios)" : ""
-    }`;
-
-    // Crea un botón de descarga
-    const downloadButton = document.createElement("button");
-    downloadButton.textContent = "Descargar Imagen";
-    downloadButton.onclick = function () {
-      html2canvas(table).then(function (canvas) {
-        const link = document.createElement("a");
-        link.href = canvas.toDataURL();
-        link.download = `horario-combinado-${index + 1}.png`;
-        link.click();
-      });
-    };
-
-    // Crea un div para agrupar el encabezado y el botón
-    const headerDiv = document.createElement("div");
-    headerDiv.appendChild(header);
-    headerDiv.appendChild(downloadButton);
-
-    // Añade el div y la tabla al contenedor
-    combinedSchedulesContainer.appendChild(headerDiv);
-    combinedSchedulesContainer.appendChild(table);
-  });
-  toggleConflictSchedules();
-}
-
-function getAllCombinations(
-  subjects,
-  index,
-  currentSchedule = [],
-  allCombinations = []
-) {
-  if (index >= subjects.length) {
-    allCombinations.push(currentSchedule.slice());
-    return;
-  }
-
-  for (let i = 0; i < subjects[index].schedules.length; i++) {
-    let scheduleWithSubjectName = {
-      ...subjects[index].schedules[i],
-      name: subjects[index].name,
-      color: subjects[index].color,
-      totalSchedules: subjects[index].schedules.length,
-    };
-    currentSchedule.push(scheduleWithSubjectName);
-    getAllCombinations(subjects, index + 1, currentSchedule, allCombinations);
-    currentSchedule.pop();
-  }
-  return allCombinations;
-}
-
-function createScheduleTable() {
-  const table = document.createElement("table");
-  createTable(table);
-  return table;
-}
-
-function populateScheduleTable(table, schedules) {
-  let hasScheduleConflict = false;
-
-  for (let i = 1; i < table.rows.length; i++) {
-    const row = table.rows[i];
-    for (let j = 1; j < row.cells.length; j++) {
-      const day = TimeTable.days[j - 1];
-      const timeSlot = TimeTable.timeSlots[i - 1];
-
-      let cellContent = [];
-      let subjectsInCell = 0;
-      let cellColor;
-
-      schedules.forEach((schedule) => {
-        if (
-          schedule.timeTable[day] &&
-          schedule.timeTable[day][timeSlot] === "x"
-        ) {
-          const scheduleLabel =
-            schedule.totalSchedules > 1
-              ? schedule.name + " H" + (schedule.index + 1)
-              : schedule.name;
-          cellContent.push(scheduleLabel);
-          subjectsInCell++;
-          cellColor = schedule.color;
-        }
-      });
-
-      if (subjectsInCell > 1) {
-        hasScheduleConflict = true;
-        row.cells[j].style.backgroundColor = "red";
-        row.cells[j].innerHTML = cellContent.join(" - "); // Unir nombres con guion
-      } else if (cellContent.length > 0) {
-        row.cells[j].style.backgroundColor = cellColor;
-        row.cells[j].innerHTML = cellContent.join(""); // Solo un nombre, sin guion
-      }
-    }
-  }
-  return hasScheduleConflict;
-}
-
-//codigo que muestra u oculta los cruces de horarios
-
-function toggleConflictSchedules() {
-  const showConflicts = document.getElementById("toggleConflicts").checked;
-  const combinedSchedulesContainer = document.getElementById(
-    "combinedSchedulesContainer"
-  );
-  const tables = combinedSchedulesContainer.getElementsByTagName("table");
-  const conflictLabel = document.getElementById("conflictLabel");
-
-  // Cambia el texto del label según el estado del checkbox
-  if (showConflicts) {
-    conflictLabel.textContent = "Mostrar horarios con cruces:";
-  } else {
-    conflictLabel.textContent = "Ocultar horarios con cruces:";
-  }
-
-  for (let table of tables) {
-    if (table.classList.contains("hasConflict") && showConflicts) {
-      table.style.display = "none";
-      // Ocultar el encabezado y el botón de descarga asociado
-      table.previousSibling.style.display = "none";
-    } else {
-      table.style.display = "";
-      // Mostrar el encabezado y el botón de descarga asociado
-      table.previousSibling.style.display = "";
-    }
-  }
-}
-
-function createTable(table) {
-  let header = "<thead><tr><th>Horas/días</th>";
-  for (let day of TimeTable.days) {
-    header += `<th>${day}</th>`;
-  }
-  header += "</thead></tr>";
-  table.innerHTML = header;
-
-  let body = "<tbody>";
-  let row = "";
-  for (let time of TimeTable.timeSlots) {
-    row += `<tr><th>${time}</th>`;
-    for (let day of TimeTable.days) {
-      row += `<td></td>`;
-    }
-    row += "</tr>";
-  }
-  body += row + "</tbody>";
-  table.innerHTML += body;
-}
-
-function toggleCell(cell) {
+export function toggleCell(cell) {
   let editingSchedule;
   let editingSubject;
 
@@ -691,38 +521,6 @@ function toggleCell(cell) {
   saveSchedule();
 
   updateCombinedSchedules();
-}
-
-let isDragging = false;
-
-function createInitialTable() {
-  const table = document.getElementById("scheduleTable");
-
-  createTable(table);
-
-  // Agrega los listeners a las celdas
-  for (let i = 1; i < table.rows.length; i++) {
-    const row = table.rows[i];
-    for (let j = 1; j < row.cells.length; j++) {
-      const cell = row.cells[j];
-
-      cell.addEventListener("mousedown", (e) => {
-        isDragging = true;
-        toggleCell(e.target);
-      });
-
-      cell.addEventListener("mouseover", (e) => {
-        if (isDragging) {
-          toggleCell(e.target);
-        }
-      });
-    }
-  }
-
-  // Escucha el evento mouseup en el objeto window
-  window.addEventListener("mouseup", (e) => {
-    isDragging = false;
-  });
 }
 
 function initListeners() {
