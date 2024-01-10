@@ -1,14 +1,14 @@
-import { TimeTable } from "./subjects.js";
+import { TimeTable } from "./classes.js";
 import { createScheduleTable } from "./createTables.js";
 import { getActiveSubjectsAndSchedules } from "./scripts.js";
 
-export function generateCombinedSchedules() {
+export function generateCombinedSchedules(subjectManager) {
   const combinedSchedulesContainer = document.getElementById(
     "combinedSchedulesContainer"
   );
   combinedSchedulesContainer.innerHTML = "";
 
-  const activeSubjects = getActiveSubjectsAndSchedules();
+  const activeSubjects = getActiveSubjectsAndSchedules(subjectManager);
 
   // Si no hay asignaturas activas, detén la ejecución de la función
   if (activeSubjects.length === 0) {
