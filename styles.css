@@ -138,7 +138,7 @@ tr:nth-child(even) {
   flex-basis: auto;
 }
 
-#scheduleSavedIcon {
+#saveClassTimeIcon {
   position: absolute;
   top: 1em;
   left: 1.5em;
@@ -153,7 +153,7 @@ tr:nth-child(even) {
 
 /* Tabla de selección de horarios */
 
-#scheduleTable {
+#classTimeTable {
   width: auto;
   max-height: 90vh;
   margin: 1em auto;
@@ -161,23 +161,23 @@ tr:nth-child(even) {
   overflow-y: auto;
 }
 
-/* Efecto hover para las celdas de la tabla scheduleTable */
-#scheduleTable td {
+/* Efecto hover para las celdas de la tabla classTimeTable */
+#classTimeTable td {
   cursor: pointer;
   -webkit-user-select: none;
   user-select: none;
   padding: 0.25em 0.5em; /* Reduce the padding */
 }
 
-#scheduleTable td.selected {
+#classTimeTable td.selected {
   color: white;
 }
 
-#scheduleTable td:hover {
+#classTimeTable td:hover {
   background-color: rgba(85, 220, 89, 0.5);
 }
 
-#scheduleTable th {
+#classTimeTable th {
   -webkit-user-select: none;
   user-select: none;
   padding: 0.25em 0.5em; /* Reduce the padding */
@@ -277,7 +277,7 @@ tr:nth-child(even) {
   background-color: #087f23;
 }
 
-.chip.add-schedule {
+.chip.add-classTime {
   background-color: white;
   color: gray;
   border: 2px dotted gray;
@@ -304,7 +304,7 @@ tr:nth-child(even) {
     flex-direction: column;
   }
 
-  #scheduleSavedIcon {
+  #saveClassTimeIcon {
     position: absolute; /* Posicionamiento absoluto para el ícono */
     top: 0; /* Ubicación en la parte superior del contenedor */
     left: 0; /* Ubicación en la parte izquierda del contenedor */
@@ -313,7 +313,7 @@ tr:nth-child(even) {
   }
 
   /* Ajustes adicionales para la tabla en pantallas pequeñas */
-  #scheduleTable {
+  #classTimeTable {
     margin-top: 2em; /* Agregar margen superior para evitar solapamiento con el ícono */
   }
 
@@ -336,7 +336,7 @@ tr:nth-child(even) {
   }
 
   /* Desactivar efecto hover para las celdas de la tabla en pantallas pequeñas */
-  #scheduleTable td:hover {
+  #classTimeTable td:hover {
     background-color: inherit;
   }
 }

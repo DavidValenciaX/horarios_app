@@ -52,7 +52,7 @@ export class TimeTable {
   }
 }
 
-class Schedule {
+class ClassTime {
   constructor(index) {
     this.index = index;
     this.timeTable = new TimeTable();
@@ -73,11 +73,11 @@ class Schedule {
   }
 
   static fromJSON(data) {
-    let schedule = new Schedule(data.index);
-    schedule.timeTable = TimeTable.fromJSON(data.timeTable);
-    schedule.isActive = data.isActive;
-    schedule.isEditing = data.isEditing;
-    return schedule;
+    let classTime = new ClassTime(data.index);
+    classTime.timeTable = TimeTable.fromJSON(data.timeTable);
+    classTime.isActive = data.isActive;
+    classTime.isEditing = data.isEditing;
+    return classTime;
   }
 }
 
@@ -85,36 +85,38 @@ class Subject {
   constructor(name, color, credits) {
     this.name = name;
     this.color = color;
-    this.schedules = [new Schedule(0)];
+    this.classTimes = [new ClassTime(0)];
     this.isActive = true;
     this.credits = credits;
   }
 
-  addSchedule() {
-    this.schedules.forEach((schedule) => {
-      schedule.stopEditing();
+  addClassTime() {
+    this.classTimes.forEach((classTime) => {
+      classTime.stopEditing();
     });
-    this.schedules.push(new Schedule(this.schedules.length));
-    return this.schedules.length - 1;
+    this.classTimes.push(new ClassTime(this.classTimes.length));
+    return this.classTimes.length - 1;
   }
 
   deactivate() {
     this.isActive = !this.isActive;
-    this.schedules.forEach((schedule) => (schedule.isActive = this.isActive));
+    this.classTimes.forEach(
+      (classTime) => (classTime.isActive = this.isActive)
+    );
   }
 
-  deleteSchedule(scheduleIndex) {
-    this.schedules.splice(scheduleIndex, 1);
+  deleteClassTime(classTimeIndex) {
+    this.classTimes.splice(classTimeIndex, 1);
 
     // Se retorna el nuevo horario a ser editado
-    let newScheduleIndex = scheduleIndex > 0 ? scheduleIndex - 1 : 0;
+    let newClassTimeIndex = classTimeIndex > 0 ? classTimeIndex - 1 : 0;
 
-    return newScheduleIndex;
+    return newClassTimeIndex;
   }
 
   static fromJSON(data) {
     let subject = new Subject(data.name, data.color, data.credits);
-    subject.schedules = data.schedules.map(Schedule.fromJSON);
+    subject.classTimes = data.classTimes.map(ClassTime.fromJSON);
     subject.isActive = data.isActive;
     return subject;
   }
@@ -127,8 +129,8 @@ export class SubjectManager {
 
   addSubject(name, color, credits) {
     this.subjects.forEach((subject) => {
-      subject.schedules.forEach((schedule) => {
-        schedule.stopEditing();
+      subject.classTimes.forEach((classTime) => {
+        classTime.stopEditing();
       });
     });
     this.subjects.push(new Subject(name, color, credits));

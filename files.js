@@ -1,6 +1,9 @@
 //parte de guardar y cargar archivos json
 
 import { SubjectManager } from "./classes.js";
+import { updateSubjectsAndClassTimes } from "./UI.js";
+import { loadClassTime } from "./createTables.js";
+import { initListeners } from "./initScript.js";
 
 export async function saveToFile(subjectManager) {
   const dataStr = JSON.stringify(subjectManager);
@@ -69,9 +72,11 @@ export function loadFromFile(subjectManager) {
         subjectManager = SubjectManager.fromJSON(data);
 
         // Actualizar el selector de asignaturas
-        updateSubjectsAndSchedules(subjectManager);
+        updateSubjectsAndClassTimes(subjectManager);
 
-        loadSchedule(subjectManager);
+        loadClassTime(subjectManager);
+
+        initListeners(subjectManager);
       } catch (error) {
         alert("Error al subir el archivo: " + error.message);
       }

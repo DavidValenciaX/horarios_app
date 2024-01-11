@@ -1,6 +1,5 @@
 import { TimeTable } from "./classes.js";
 import { createScheduleTable } from "./createTables.js";
-import { getActiveSubjectsAndSchedules } from "./scripts.js";
 
 export function generateCombinedSchedules(subjectManager) {
   const combinedSchedulesContainer = document.getElementById(
@@ -8,7 +7,7 @@ export function generateCombinedSchedules(subjectManager) {
   );
   combinedSchedulesContainer.innerHTML = "";
 
-  const activeSubjects = getActiveSubjectsAndSchedules(subjectManager);
+  const activeSubjects = getActiveSubjectsAndClassTimes(subjectManager);
 
   // Si no hay asignaturas activas, detén la ejecución de la función
   if (activeSubjects.length === 0) {
@@ -54,27 +53,60 @@ export function generateCombinedSchedules(subjectManager) {
   toggleConflictSchedules();
 }
 
+function getActiveSubjectsAndClassTimes(subjectManager) {
+  let activeSubjects = [];
+  subjectManager.subjects.forEach((subject) => {
+    let activeClassTimes = [];
+    if (subject.isActive) {
+      subject.classTimes.forEach((classTime) => {
+        if (classTime.isActive && !isClassTimeEmpty(classTime)) {
+          activeClassTimes.push(classTime);
+        }
+      });
+      if (activeClassTimes.length > 0) {
+        activeSubjects.push({
+          name: subject.name,
+          classTimes: activeClassTimes,
+          color: subject.color,
+        });
+      }
+    }
+  });
+  return activeSubjects;
+}
+
+function isClassTimeEmpty(classTime) {
+  for (let day in classTime.timeTable) {
+    for (let timeSlot in classTime.timeTable[day]) {
+      if (classTime.timeTable[day][timeSlot] === "x") {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
 function getAllCombinations(
   subjects,
   index,
-  currentSchedule = [],
+  currentClassTime = [],
   allCombinations = []
 ) {
   if (index >= subjects.length) {
-    allCombinations.push(currentSchedule.slice());
+    allCombinations.push(currentClassTime.slice());
     return;
   }
 
-  for (let i = 0; i < subjects[index].schedules.length; i++) {
-    let scheduleWithSubjectName = {
-      ...subjects[index].schedules[i],
+  for (let i = 0; i < subjects[index].classTimes.length; i++) {
+    let classTimeWithSubjectName = {
+      ...subjects[index].classTimes[i],
       name: subjects[index].name,
       color: subjects[index].color,
-      totalSchedules: subjects[index].schedules.length,
+      totalClassTimes: subjects[index].classTimes.length,
     };
-    currentSchedule.push(scheduleWithSubjectName);
-    getAllCombinations(subjects, index + 1, currentSchedule, allCombinations);
-    currentSchedule.pop();
+    currentClassTime.push(classTimeWithSubjectName);
+    getAllCombinations(subjects, index + 1, currentClassTime, allCombinations);
+    currentClassTime.pop();
   }
   return allCombinations;
 }
@@ -147,5 +179,14 @@ export function toggleConflictSchedules() {
       // Mostrar el encabezado y el botón de descarga asociado
       table.previousSibling.style.display = "";
     }
+  }
+}
+
+export function updateCombinedSchedules(subjectManager) {
+  const combinedSchedulesContainer = document.getElementById(
+    "combinedSchedulesContainer"
+  );
+  if (combinedSchedulesContainer.innerHTML !== "") {
+    generateCombinedSchedules(subjectManager);
   }
 }

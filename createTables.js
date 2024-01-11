@@ -1,5 +1,5 @@
 import { TimeTable } from "./classes.js";
-import { updateCombinedSchedules } from "./UI.js";
+import { updateCombinedSchedules } from "./combinations.js";
 
 export function createScheduleTable() {
   const table = document.createElement("table");
@@ -31,7 +31,7 @@ function createTable(table) {
 let isDragging = false;
 
 export function createInitialTable(subjectManager) {
-  const table = document.getElementById("scheduleTable");
+  const table = document.getElementById("classTimeTable");
 
   createTable(table);
 
@@ -61,21 +61,21 @@ export function createInitialTable(subjectManager) {
 }
 
 function toggleCell(subjectManager, cell) {
-  let editingSchedule;
+  let editingClassTime;
   let editingSubject;
 
   // Busca el horario que se está editando
   subjectManager.subjects.forEach((subject) => {
-    subject.schedules.forEach((schedule) => {
-      if (schedule.isEditing) {
-        editingSchedule = schedule;
+    subject.classTimes.forEach((classTime) => {
+      if (classTime.isEditing) {
+        editingClassTime = classTime;
         editingSubject = subject;
       }
     });
   });
 
-  if (!editingSchedule) {
-    alert("Selecciona primero una asignatura y un horario");
+  if (!editingClassTime) {
+    alert("Selecciona primero una asignatura y una hora de clase");
     return;
   }
 
@@ -86,38 +86,38 @@ function toggleCell(subjectManager, cell) {
   cell.style.backgroundColor = cell.style.backgroundColor ? "" : selectedColor;
 
   //guardar horario
-  saveSchedule(subjectManager);
+  saveClassTime(subjectManager);
 
   updateCombinedSchedules(subjectManager);
 }
 
-//parte de guardar y cargar el horario de la tabla
+//parte de guardar y cargar la hora de clase de la tabla
 
 //función para guardar las horas de clase de la tabla
-function saveSchedule(subjectManager) {
-  let editingSchedule;
+function saveClassTime(subjectManager) {
+  let editingClassTime;
 
   // Busca el horario que se está editando
   subjectManager.subjects.forEach((subject) => {
-    subject.schedules.forEach((schedule) => {
-      if (schedule.isEditing) {
-        editingSchedule = schedule;
+    subject.classTimes.forEach((classTime) => {
+      if (classTime.isEditing) {
+        editingClassTime = classTime;
       }
     });
   });
 
-  if (!editingSchedule) {
-    alert("Selecciona primero una asignatura y un horario");
+  if (!editingClassTime) {
+    alert("Selecciona primero una asignatura y una hora de clase");
     return;
   }
 
-  const table = document.getElementById("scheduleTable");
+  const table = document.getElementById("classTimeTable");
 
-  editingSchedule.timeTable = {};
+  editingClassTime.timeTable = {};
   for (let day of TimeTable.days) {
-    editingSchedule.timeTable[day] = {};
+    editingClassTime.timeTable[day] = {};
     for (let timeSlot of TimeTable.timeSlots) {
-      editingSchedule.timeTable[day][timeSlot] = "";
+      editingClassTime.timeTable[day][timeSlot] = "";
     }
   }
 
@@ -125,54 +125,54 @@ function saveSchedule(subjectManager) {
     const row = table.rows[i];
     for (let j = 1; j < row.cells.length; j++) {
       if (row.cells[j].classList.contains("selected")) {
-        editingSchedule.timeTable[TimeTable.days[j - 1]][
+        editingClassTime.timeTable[TimeTable.days[j - 1]][
           TimeTable.timeSlots[i - 1]
         ] = "x";
       }
     }
   }
 
-  loadSchedule(subjectManager);
+  loadClassTime(subjectManager);
 
   // Cuando todo está hecho, muestra el icono de verificación.
-  const scheduleSavedIcon = document.getElementById("scheduleSavedIcon");
-  scheduleSavedIcon.textContent = "✔";
+  const saveClassTimeIcon = document.getElementById("saveClassTimeIcon");
+  saveClassTimeIcon.textContent = "✔";
 
   // Eliminar el icono después de 1 segundos
   setTimeout(function () {
-    scheduleSavedIcon.style.opacity = "0";
+    saveClassTimeIcon.style.opacity = "0";
   }, 500);
 
   setTimeout(function () {
-    scheduleSavedIcon.textContent = "";
-    scheduleSavedIcon.style.opacity = "1";
+    saveClassTimeIcon.textContent = "";
+    saveClassTimeIcon.style.opacity = "1";
   }, 1500);
 }
 
-//función que carga la tabla con las horas de clase
-export function loadSchedule(subjectManager) {
-  let editingSchedule;
+//función que carga la tabla con la hora de clase
+export function loadClassTime(subjectManager) {
+  let editingClassTime;
   let editingSubject;
 
   // Busca el horario que se está editando
   subjectManager.subjects.forEach((subject) => {
-    subject.schedules.forEach((schedule) => {
-      if (schedule.isEditing) {
-        editingSchedule = schedule;
+    subject.classTimes.forEach((classTime) => {
+      if (classTime.isEditing) {
+        editingClassTime = classTime;
         editingSubject = subject;
       }
     });
   });
 
   // Si no se está editando ningún horario, muestra una alerta y retorna
-  if (!editingSchedule) {
-    alert("Selecciona primero una asignatura y un horario");
+  if (!editingClassTime) {
+    alert("Selecciona primero una asignatura y una hora de clase");
     return;
   }
 
   const selectedColor = editingSubject.color;
 
-  const table = document.getElementById("scheduleTable");
+  const table = document.getElementById("classTimeTable");
 
   for (let i = 1; i < table.rows.length; i++) {
     const row = table.rows[i];
@@ -180,8 +180,8 @@ export function loadSchedule(subjectManager) {
       const day = TimeTable.days[j - 1];
       const timeSlot = TimeTable.timeSlots[i - 1];
       if (
-        editingSchedule.timeTable[day] &&
-        editingSchedule.timeTable[day][timeSlot] === "x"
+        editingClassTime.timeTable[day] &&
+        editingClassTime.timeTable[day][timeSlot] === "x"
       ) {
         row.cells[j].classList.add("selected");
         row.cells[j].style.backgroundColor = selectedColor;
