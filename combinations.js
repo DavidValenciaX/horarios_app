@@ -1,5 +1,6 @@
 import { TimeTable } from "./classes.js";
 import { createScheduleTable } from "./createTables.js";
+import { toJpeg } from "html-to-image";
 
 export function generateCombinedSchedules(subjectManager) {
   const combinedSchedulesContainer = document.getElementById(
@@ -33,10 +34,10 @@ export function generateCombinedSchedules(subjectManager) {
     const downloadButton = document.createElement("button");
     downloadButton.textContent = "Descargar Imagen";
     downloadButton.onclick = function () {
-      html2canvas(table).then(function (canvas) {
-        const link = document.createElement("a");
-        link.href = canvas.toDataURL();
+      toJpeg(table, { quality: 1 }).then(function (dataUrl) {
+        var link = document.createElement("a");
         link.download = `horario-combinado-${index + 1}.png`;
+        link.href = dataUrl;
         link.click();
       });
     };
