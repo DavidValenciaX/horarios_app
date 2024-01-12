@@ -3,7 +3,7 @@
 import { SubjectManager } from "./classes.js";
 import { updateSubjectsAndClassTimes } from "./UI.js";
 import { loadClassTime, createInitialTable } from "./createTables.js";
-import { updateEventHandlers } from "./initScript.js";
+//import { updateEventHandlers } from "./initScript.js";
 
 export async function saveToFile(subjectManager) {
   const dataStr = JSON.stringify(subjectManager);
@@ -68,20 +68,13 @@ export function loadFromFile(subjectManager) {
           throw new Error("Formato no válido");
         }
 
-        // Si la validación es exitosa, reemplazar el objeto horarios
-        //subjectManager = SubjectManager.fromJSON(data);
-        // Actualiza subjectManager con los datos cargados
+        // Si la validación es exitosa, Actualiza subjectManager con los datos cargados
         Object.assign(subjectManager, SubjectManager.fromJSON(data));
 
         // Actualizar el selector de asignaturas
         updateSubjectsAndClassTimes(subjectManager);
 
         loadClassTime(subjectManager);
-
-        createInitialTable(subjectManager);
-
-        // Actualizar manejadores de eventos
-        updateEventHandlers(subjectManager);
       } catch (error) {
         alert("Error al subir el archivo: " + error.message);
       }
