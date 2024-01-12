@@ -76,6 +76,8 @@ export function loadFromFile(subjectManager) {
 
         loadClassTime(subjectManager);
 
+        createInitialTable(subjectManager);
+
         initListeners(subjectManager);
       } catch (error) {
         alert("Error al subir el archivo: " + error.message);
