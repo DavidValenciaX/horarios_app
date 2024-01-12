@@ -7,26 +7,42 @@ import { createInitialTable } from "./createTables.js";
 import { createSubject } from "./UI.js";
 import { saveToFile, loadFromFile } from "./files.js";
 
-export function initListeners(subjectManager) {
-  document
-    .getElementById("createSubjectButton")
-    .addEventListener("click", () => createSubject(subjectManager));
-  document
-    .getElementById("saveToFileButton")
-    .addEventListener("click", () => saveToFile(subjectManager));
-  document
-    .getElementById("fileInput")
-    .addEventListener("change", () => loadFromFile(subjectManager));
-  document
-    .getElementById("generateCombinedSchedulesButton")
-    .addEventListener("click", () => generateCombinedSchedules(subjectManager));
-  document
-    .getElementById("toggleConflicts")
-    .addEventListener("change", toggleConflictSchedules);
+let createSubjectHandler;
+let saveToFileHandler;
+let loadFromFileHandler;
+let generateCombinedSchedulesHandler;
+
+export function updateEventHandlers(subjectManager) {
+  createSubjectHandler = () => createSubject(subjectManager);
+  saveToFileHandler = () => saveToFile(subjectManager);
+  loadFromFileHandler = () => loadFromFile(subjectManager);
+  generateCombinedSchedulesHandler = () =>
+    generateCombinedSchedules(subjectManager);
+}
+
+export function initListeners() {
+  const createSubjectButton = document.getElementById("createSubjectButton");
+  const saveToFileButton = document.getElementById("saveToFileButton");
+  const fileInput = document.getElementById("fileInput");
+  const generateCombinedSchedulesButton = document.getElementById(
+    "generateCombinedSchedulesButton"
+  );
+
+  createSubjectButton.addEventListener("click", createSubjectHandler);
+  saveToFileButton.addEventListener("click", saveToFileHandler);
+  fileInput.addEventListener("change", loadFromFileHandler);
+  generateCombinedSchedulesButton.addEventListener(
+    "click",
+    generateCombinedSchedulesHandler
+  );
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   let horario = new SubjectManager();
   createInitialTable(horario);
-  initListeners(horario);
+  updateEventHandlers(horario);
+  initListeners();
+  document
+    .getElementById("toggleConflicts")
+    .addEventListener("change", toggleConflictSchedules);
 });

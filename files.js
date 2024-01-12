@@ -2,8 +2,8 @@
 
 import { SubjectManager } from "./classes.js";
 import { updateSubjectsAndClassTimes } from "./UI.js";
-import { loadClassTime } from "./createTables.js";
-import { initListeners } from "./initScript.js";
+import { loadClassTime, createInitialTable } from "./createTables.js";
+import { updateEventHandlers } from "./initScript.js";
 
 export async function saveToFile(subjectManager) {
   const dataStr = JSON.stringify(subjectManager);
@@ -69,7 +69,9 @@ export function loadFromFile(subjectManager) {
         }
 
         // Si la validación es exitosa, reemplazar el objeto horarios
-        subjectManager = SubjectManager.fromJSON(data);
+        //subjectManager = SubjectManager.fromJSON(data);
+        // Actualiza subjectManager con los datos cargados
+        Object.assign(subjectManager, SubjectManager.fromJSON(data));
 
         // Actualizar el selector de asignaturas
         updateSubjectsAndClassTimes(subjectManager);
@@ -78,7 +80,8 @@ export function loadFromFile(subjectManager) {
 
         createInitialTable(subjectManager);
 
-        initListeners(subjectManager);
+        // Actualizar manejadores de eventos
+        updateEventHandlers(subjectManager);
       } catch (error) {
         alert("Error al subir el archivo: " + error.message);
       }
