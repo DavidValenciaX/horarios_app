@@ -18,24 +18,15 @@ export function initApp() {
     const generateCombinedSchedulesButton = document.getElementById(
       "generateCombinedSchedulesButton"
     );
+    const toggleConflicts = document.getElementById("toggleConflicts");
 
-    const handleCreateSubject = () => createSubject(horario);
-    const handleSaveToFile = () => saveToFile(horario);
-    const handleLoadFromFile = () => loadFromFile(horario);
-    const handleGenerateCombinedSchedules = () =>
-      generateCombinedSchedules(horario);
-
-    createSubjectButton.addEventListener("click", handleCreateSubject);
-    saveToFileButton.addEventListener("click", handleSaveToFile);
-    fileInput.addEventListener("change", handleLoadFromFile);
-    generateCombinedSchedulesButton.addEventListener(
-      "click",
-      handleGenerateCombinedSchedules
+    createSubjectButton.addEventListener("click", () => createSubject(horario));
+    saveToFileButton.addEventListener("click", () => saveToFile(horario));
+    fileInput.addEventListener("change", () => loadFromFile(horario));
+    generateCombinedSchedulesButton.addEventListener("click", () =>
+      generateCombinedSchedules(horario)
     );
-
-    document
-      .getElementById("toggleConflicts")
-      .addEventListener("change", toggleConflictSchedules);
+    toggleConflicts.addEventListener("change", toggleConflictSchedules);
   });
 }
 
