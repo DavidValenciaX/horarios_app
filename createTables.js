@@ -134,7 +134,7 @@ function saveClassTime(subjectManager) {
 
   loadClassTime(subjectManager);
 
-  // Cuando todo está hecho, muestra el icono de verificación.
+  // muestra el icono de verificación.
   const saveClassTimeIcon = document.getElementById("saveClassTimeIcon");
   saveClassTimeIcon.textContent = "✔";
 

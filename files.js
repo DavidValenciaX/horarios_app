@@ -2,8 +2,7 @@
 
 import { SubjectManager } from "./classes.js";
 import { updateSubjectsAndClassTimes } from "./UI.js";
-import { loadClassTime, createInitialTable } from "./createTables.js";
-//import { updateEventHandlers } from "./initScript.js";
+import { loadClassTime } from "./createTables.js";
 
 export async function saveToFile(subjectManager) {
   const dataStr = JSON.stringify(subjectManager);
