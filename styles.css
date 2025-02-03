@@ -49,6 +49,8 @@ button:hover {
 /* Estilo para las tablas en general */
 table {
   width: 100%;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
   border-collapse: collapse;
   background-color: white;
   margin-bottom: 2em;

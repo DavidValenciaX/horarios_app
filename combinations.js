@@ -1,6 +1,6 @@
 import { TimeTable } from "./classes.js";
 import { createScheduleTable } from "./createTables.js";
-import { toJpeg } from "html-to-image";
+import { toPng } from "html-to-image";
 
 export function generateCombinedSchedules(subjectManager) {
   const combinedSchedulesContainer = document.getElementById(
@@ -34,11 +34,21 @@ export function generateCombinedSchedules(subjectManager) {
     const downloadButton = document.createElement("button");
     downloadButton.textContent = "Descargar Imagen";
     downloadButton.onclick = function () {
-      toJpeg(table, { quality: 1 }).then(function (dataUrl) {
-        var link = document.createElement("a");
+      // Clonar la tabla para aplicar estilos temporales
+      const clone = table.cloneNode(true);
+      clone.style.background = "white";
+      clone.style.width = table.offsetWidth + "px";
+      document.body.appendChild(clone);
+    
+      toPng(clone, {
+        pixelRatio: 3, // Aumentar resolución (3x)
+        backgroundColor: "white"
+      }).then(function (dataUrl) {
+        let link = document.createElement("a");
         link.download = `horario-combinado-${index + 1}.png`;
         link.href = dataUrl;
         link.click();
+        document.body.removeChild(clone); // Eliminar el clon
       });
     };
 
