@@ -46,9 +46,9 @@ export class TimeTable {
   }
 
   static fromJSON(data) {
-    let timeTable = new TimeTable();
-    timeTable = data;
-    return timeTable;
+    const timeTableInstance = new TimeTable();
+    timeTableInstance.timeTable = data;
+    return timeTableInstance;
   }
 }
 
