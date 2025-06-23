@@ -82,12 +82,11 @@ class ClassTime {
 }
 
 class Subject {
-  constructor(name, color, credits) {
+  constructor(name, color) {
     this.name = name;
     this.color = color;
     this.classTimes = [new ClassTime(0)];
     this.isActive = true;
-    this.credits = credits;
   }
 
   addClassTime() {
@@ -115,7 +114,7 @@ class Subject {
   }
 
   static fromJSON(data) {
-    let subject = new Subject(data.name, data.color, data.credits);
+    let subject = new Subject(data.name, data.color);
     subject.classTimes = data.classTimes.map(ClassTime.fromJSON);
     subject.isActive = data.isActive;
     return subject;
@@ -127,13 +126,13 @@ export class SubjectManager {
     this.subjects = [];
   }
 
-  addSubject(name, color, credits) {
+  addSubject(name, color) {
     this.subjects.forEach((subject) => {
       subject.classTimes.forEach((classTime) => {
         classTime.stopEditing();
       });
     });
-    this.subjects.push(new Subject(name, color, credits));
+    this.subjects.push(new Subject(name, color));
   }
 
   deleteSubject(subjectIndex) {

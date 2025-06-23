@@ -287,17 +287,6 @@ tr:nth-child(even) {
   color: black;
 }
 
-.chip.subject .close-icon,
-.chip.subject .disable-icon {
-  right: -1.7em;
-  width: 1.65em;
-  height: 1.65em;
-}
-
-.credits {
-  font-size: 0.75em;
-}
-
 /* Media query para pantallas de tamaño celular */
 @media (max-width: 1100px) {
   #layoutSubjectSchedule {

@@ -24,10 +24,6 @@ export function updateSubjectsAndClassTimes(subjectManager) {
     const subjectName = document.createElement("div");
     subjectName.textContent = subject.name;
 
-    const subjectCredits = document.createElement("div");
-    subjectCredits.classList.add("credits");
-    subjectCredits.textContent = "Créditos: " + subject.credits;
-
     const closeIcon = document.createElement("span");
     closeIcon.classList.add("close-icon");
     closeIcon.textContent = "x";
@@ -54,7 +50,6 @@ export function updateSubjectsAndClassTimes(subjectManager) {
 
     // Añadimos los elementos al chip de la asignatura
     subjectChip.appendChild(subjectName);
-    subjectChip.appendChild(subjectCredits);
     subjectChip.appendChild(closeIcon);
     subjectChip.appendChild(disableIcon);
     parentDiv.appendChild(subjectChip);
@@ -111,34 +106,19 @@ export function updateSubjectsAndClassTimes(subjectManager) {
     subjectsAndClassTimesDiv.appendChild(parentDiv);
     subjectsAndClassTimesDiv.appendChild(document.createElement("hr"));
   });
-  sumCredits(subjectManager);
 }
 
 export function createSubject(subjectManager) {
   const newSubjectName = document.getElementById("newSubjectName").value;
-  let subjectCredits = document.getElementById("subjectCredits").value;
 
   if (!newSubjectName) {
     alert("Por favor ingrese un nombre de asignatura válido");
     return;
   }
 
-  if (!subjectCredits || isNaN(subjectCredits)) {
-    alert("Por favor ingrese la cantidad de créditos");
-    return;
-  }
-
-  // Convertir a número y validar el rango
-  subjectCredits = Number(subjectCredits);
-  if (subjectCredits < 0 || subjectCredits > 10) {
-    alert("Por favor ingrese un valor de créditos entre 0 y 10");
-    return;
-  }
-
   subjectManager.addSubject(
     newSubjectName,
-    generatePastelColor(newSubjectName),
-    subjectCredits
+    generatePastelColor(newSubjectName)
   );
 
   updateSubjectsAndClassTimes(subjectManager);
@@ -147,7 +127,6 @@ export function createSubject(subjectManager) {
   editingClassTime(subjectManager, subjectManager.subjects.length - 1, 0);
 
   document.getElementById("newSubjectName").value = "";
-  document.getElementById("subjectCredits").value = "";
 }
 
 function deactivateSubject(subjectManager, subjectIndex) {
@@ -240,22 +219,4 @@ export function editingClassTime(subjectManager, subjectIndex, classTimeIndex) {
   updateSubjectsAndClassTimes(subjectManager);
 
   loadClassTime(subjectManager);
-}
-
-function sumCredits(subjectManager) {
-  const showCredits = document.getElementById("showCredits");
-
-  let sumCredits = 0;
-  subjectManager.subjects.forEach((subject) => {
-    if (subject.isActive) {
-      sumCredits += parseInt(subject.credits);
-    }
-  });
-
-  let textColor = sumCredits > 20 ? "red" : "inherit";
-
-  showCredits.innerHTML =
-    sumCredits > 0
-      ? `<h4 style="color: ${textColor};">Suma de creditos: ${sumCredits}</h4>`
-      : "";
 }
