@@ -108,9 +108,9 @@ function getAllCombinations(
     return;
   }
 
-  for (let i = 0; i < subjects[index].classTimes.length; i++) {
+  for (const classTime of subjects[index].classTimes) {
     let classTimeWithSubjectName = {
-      ...subjects[index].classTimes[i],
+      ...classTime,
       name: subjects[index].name,
       color: subjects[index].color,
       totalClassTimes: subjects[index].classTimes.length,
