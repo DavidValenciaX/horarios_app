@@ -49,7 +49,6 @@ button:hover {
 table {
   width: 100%;
   image-rendering: -webkit-optimize-contrast;
-  image-rendering: crisp-edges;
   border-collapse: collapse;
   background-color: white;
   margin-bottom: 2em;
