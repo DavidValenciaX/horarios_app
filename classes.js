@@ -13,26 +13,20 @@ export class TimeTable {
     "Sábado",
     "Domingo",
   ];
-  static timeSlots = [
-    "6:00AM - 6:45AM",
-    "7:00AM - 7:45AM",
-    "8:00AM - 8:45AM",
-    "9:00AM - 9:45AM",
-    "10:00AM - 10:45AM",
-    "11:00AM - 11:45AM",
-    "12:00PM - 12:45PM",
-    "1:00PM - 1:45PM",
-    "2:00PM - 2:45PM",
-    "3:00PM - 3:45PM",
-    "4:00PM - 4:45PM",
-    "5:00PM - 5:45PM",
-    "5:45PM - 6:30PM",
-    "6:30PM - 7:15PM",
-    "7:15PM - 8:00PM",
-    "8:15PM - 9:00PM",
-    "9:00PM - 9:45PM",
-    "9:45PM - 10:30PM",
-  ];
+  static timeSlots = (() => {
+    const slots = [];
+    for (let i = 0; i < 24; i++) {
+      const startHour = i.toString().padStart(2, "0");
+      let endHour = i + 1;
+      if (endHour === 24) {
+        endHour = "00";
+      } else {
+        endHour = endHour.toString().padStart(2, "0");
+      }
+      slots.push(`${startHour}:00 - ${endHour}:00`);
+    }
+    return slots;
+  })();
 
   initializeTimeTable() {
     let timeTable = {};
