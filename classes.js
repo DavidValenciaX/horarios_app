@@ -15,15 +15,20 @@ export class TimeTable {
   ];
   static timeSlots = (() => {
     const slots = [];
-    for (let i = 0; i < 24; i++) {
-      const startHour = i.toString().padStart(2, "0");
-      let endHour = i + 1;
-      if (endHour === 24) {
-        endHour = "00";
-      } else {
-        endHour = endHour.toString().padStart(2, "0");
+    const formatHour = (hour) => {
+      const h = hour % 24;
+      const ampm = h >= 12 ? "PM" : "AM";
+      let formattedHour = h % 12;
+      if (formattedHour === 0) {
+        formattedHour = 12;
       }
-      slots.push(`${startHour}:00 - ${endHour}:00`);
+      return `${formattedHour}:00 ${ampm}`;
+    };
+
+    for (let i = 0; i < 24; i++) {
+      const startHour = i;
+      const endHour = i + 1;
+      slots.push(`${formatHour(startHour)} - ${formatHour(endHour)}`);
     }
     return slots;
   })();
