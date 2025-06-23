@@ -12,7 +12,7 @@ function createTable(table) {
   for (let day of TimeTable.days) {
     header += `<th>${day}</th>`;
   }
-  header += "</thead></tr>";
+  header += "</tr></thead>";
   table.innerHTML = header;
 
   let body = "<tbody>";
