@@ -1,14 +1,14 @@
-import { SubjectManager } from "./classes.js";
+import { ActivityManager } from "./classes.js";
 import {
   toggleConflictSchedules,
   generateCombinedSchedules,
 } from "./combinations.js";
 import { createInitialTable } from "./createTables.js";
-import { createSubject } from "./UI.js";
+import { createActivity } from "./UI.js";
 import { saveToFile, loadFromFile } from "./files.js";
 
-function initListeners(subjectManager) {
-  const createSubjectButton = document.getElementById("createSubjectButton");
+function initListeners(activityManager) {
+  const createActivityButton = document.getElementById("createActivityButton");
   const saveToFileButton = document.getElementById("saveToFileButton");
   const fileInput = document.getElementById("fileInput");
   const generateCombinedSchedulesButton = document.getElementById(
@@ -16,19 +16,19 @@ function initListeners(subjectManager) {
   );
   const toggleConflicts = document.getElementById("toggleConflicts");
 
-  createSubjectButton.addEventListener("click", () =>
-    createSubject(subjectManager)
+  createActivityButton.addEventListener("click", () =>
+    createActivity(activityManager)
   );
-  saveToFileButton.addEventListener("click", () => saveToFile(subjectManager));
-  fileInput.addEventListener("change", () => loadFromFile(subjectManager));
+  saveToFileButton.addEventListener("click", () => saveToFile(activityManager));
+  fileInput.addEventListener("change", () => loadFromFile(activityManager));
   generateCombinedSchedulesButton.addEventListener("click", () =>
-    generateCombinedSchedules(subjectManager)
+    generateCombinedSchedules(activityManager)
   );
   toggleConflicts.addEventListener("change", toggleConflictSchedules);
 }
 
 function initApp() {
-  const horario = new SubjectManager();
+  const horario = new ActivityManager();
   createInitialTable(horario);
 
   document.addEventListener("DOMContentLoaded", () => {

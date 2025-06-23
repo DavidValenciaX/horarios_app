@@ -112,16 +112,16 @@ tr:nth-child(even) {
   margin-bottom: 1em;
 }
 
-#layoutSubjectSchedule {
+#layoutActivitySchedule {
   display: flex;
   flex-direction: row;
 }
 
-#layoutSubjectSchedule > div {
+#layoutActivitySchedule > div {
   flex: 1;
 }
 
-.createNewSubject {
+.createNewActivity {
   position: relative;
   display: flex;
   justify-content: start;
@@ -129,16 +129,16 @@ tr:nth-child(even) {
   flex-wrap: wrap;
 }
 
-.createNewSubject > div,
-.createNewSubject > input,
-.createNewSubject > button {
+.createNewActivity > div,
+.createNewActivity > input,
+.createNewActivity > button {
   min-width: 300px;
   flex-grow: 1;
   flex-shrink: 1;
   flex-basis: auto;
 }
 
-#saveClassTimeIcon {
+#saveScheduleOptionIcon {
   position: absolute;
   top: 1em;
   left: 1.5em;
@@ -153,7 +153,7 @@ tr:nth-child(even) {
 
 /* Tabla de selección de horarios */
 
-#classTimeTable {
+#scheduleOptionTable {
   width: auto;
   max-height: 90vh;
   margin: 1em auto;
@@ -161,23 +161,23 @@ tr:nth-child(even) {
   overflow-y: auto;
 }
 
-/* Efecto hover para las celdas de la tabla classTimeTable */
-#classTimeTable td {
+/* Efecto hover para las celdas de la tabla scheduleOptionTable */
+#scheduleOptionTable td {
   cursor: pointer;
   -webkit-user-select: none;
   user-select: none;
   padding: 0.25em 0.5em; /* Reduce the padding */
 }
 
-#classTimeTable td.selected {
+#scheduleOptionTable td.selected {
   color: white;
 }
 
-#classTimeTable td:hover {
+#scheduleOptionTable td:hover {
   background-color: rgba(85, 220, 89, 0.5);
 }
 
-#classTimeTable th {
+#scheduleOptionTable th {
   -webkit-user-select: none;
   user-select: none;
   padding: 0.25em 0.5em; /* Reduce the padding */
@@ -270,62 +270,60 @@ tr:nth-child(even) {
 }
 
 .chip.inactive {
-  background-color: grey !important;
+  background-color: #6c757d;
 }
 
 .chip.editing {
   background-color: #087f23;
 }
 
-.chip.add-classTime {
+.chip.add-scheduleOption {
   background-color: white;
   color: gray;
   border: 2px dotted gray;
 }
 
-.chip.subject {
+.chip.activity {
   color: black;
+  cursor: default;
 }
 
 /* Media query para pantallas de tamaño celular */
 @media (max-width: 1100px) {
-  #layoutSubjectSchedule {
+  #layoutActivitySchedule {
     flex-direction: column;
   }
 
-  #saveClassTimeIcon {
-    position: absolute; /* Posicionamiento absoluto para el ícono */
-    top: 0; /* Ubicación en la parte superior del contenedor */
-    left: 0; /* Ubicación en la parte izquierda del contenedor */
-    z-index: 10; /* Asegurar que se muestre por encima de otros elementos */
-    transition: opacity 1s ease-out; /* Transición suave para la opacidad */
+  #saveScheduleOptionIcon {
+    position: static;
+    font-size: 1.5em;
+    padding: 0;
+    margin-right: 1em;
+    background-color: transparent;
+    transition: none;
   }
 
-  /* Ajustes adicionales para la tabla en pantallas pequeñas */
-  #classTimeTable {
-    margin-top: 2em; /* Agregar margen superior para evitar solapamiento con el ícono */
+  #scheduleOptionTable {
+    max-height: none;
+    font-size: 0.7em;
   }
-
-  /* Estilo responsive para las tablas */
 
   #combinedSchedulesContainer table {
-    width: auto;
-    max-height: 90vh;
-    margin: 1em auto;
-    font-size: 0.75em;
-    overflow-y: auto;
+    font-size: 0.6em;
   }
 
+  #combinedSchedulesContainer h2 {
+    font-size: 1.2em;
+  }
   #combinedSchedulesContainer table td {
-    padding: 0.25em 0.5em;
+    padding: 0.2em;
   }
 
   #combinedSchedulesContainer table th {
-    padding: 0.25em 0.5em;
+    padding: 0.2em;
   }
 
-  /* Desactivar efecto hover para las celdas de la tabla en pantallas pequeñas */
-  #classTimeTable td:hover {
-    background-color: inherit;
+  #scheduleOptionTable td:hover {
+    background-color: transparent;
   }
 }

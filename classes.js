@@ -51,7 +51,7 @@ export class TimeTable {
   }
 }
 
-class ClassTime {
+class ScheduleOption {
   constructor(index) {
     this.index = index;
     this.timeTable = new TimeTable();
@@ -72,80 +72,83 @@ class ClassTime {
   }
 
   static fromJSON(data) {
-    let classTime = new ClassTime(data.index);
-    classTime.timeTable = TimeTable.fromJSON(data.timeTable);
-    classTime.isActive = data.isActive;
-    classTime.isEditing = data.isEditing;
-    return classTime;
+    let scheduleOption = new ScheduleOption(data.index);
+    scheduleOption.timeTable = TimeTable.fromJSON(data.timeTable);
+    scheduleOption.isActive = data.isActive;
+    scheduleOption.isEditing = data.isEditing;
+    return scheduleOption;
   }
 }
 
-class Subject {
+class Activity {
   constructor(name, color) {
     this.name = name;
     this.color = color;
-    this.classTimes = [new ClassTime(0)];
+    this.scheduleOptions = [new ScheduleOption(0)];
     this.isActive = true;
   }
 
-  addClassTime() {
-    this.classTimes.forEach((classTime) => {
-      classTime.stopEditing();
+  addScheduleOption() {
+    this.scheduleOptions.forEach((scheduleOption) => {
+      scheduleOption.stopEditing();
     });
-    this.classTimes.push(new ClassTime(this.classTimes.length));
-    return this.classTimes.length - 1;
+    this.scheduleOptions.push(new ScheduleOption(this.scheduleOptions.length));
+    return this.scheduleOptions.length - 1;
   }
 
   deactivate() {
     this.isActive = !this.isActive;
-    this.classTimes.forEach(
-      (classTime) => (classTime.isActive = this.isActive)
+    this.scheduleOptions.forEach(
+      (scheduleOption) => (scheduleOption.isActive = this.isActive)
     );
   }
 
-  deleteClassTime(classTimeIndex) {
-    this.classTimes.splice(classTimeIndex, 1);
+  deleteScheduleOption(scheduleOptionIndex) {
+    this.scheduleOptions.splice(scheduleOptionIndex, 1);
 
     // Se retorna el nuevo horario a ser editado
-    let newClassTimeIndex = classTimeIndex > 0 ? classTimeIndex - 1 : 0;
+    let newScheduleOptionIndex =
+      scheduleOptionIndex > 0 ? scheduleOptionIndex - 1 : 0;
 
-    return newClassTimeIndex;
+    return newScheduleOptionIndex;
   }
 
   static fromJSON(data) {
-    let subject = new Subject(data.name, data.color);
-    subject.classTimes = data.classTimes.map(ClassTime.fromJSON);
-    subject.isActive = data.isActive;
-    return subject;
+    let activity = new Activity(data.name, data.color);
+    activity.scheduleOptions = data.scheduleOptions.map(
+      ScheduleOption.fromJSON
+    );
+    activity.isActive = data.isActive;
+    return activity;
   }
 }
 
-export class SubjectManager {
+export class ActivityManager {
   constructor() {
-    this.subjects = [];
+    this.activities = [];
   }
 
-  addSubject(name, color) {
-    this.subjects.forEach((subject) => {
-      subject.classTimes.forEach((classTime) => {
-        classTime.stopEditing();
+  addActivity(name, color) {
+    this.activities.forEach((activity) => {
+      activity.scheduleOptions.forEach((scheduleOption) => {
+        scheduleOption.stopEditing();
       });
     });
-    this.subjects.push(new Subject(name, color));
+    this.activities.push(new Activity(name, color));
   }
 
-  deleteSubject(subjectIndex) {
-    this.subjects.splice(subjectIndex, 1);
+  deleteActivity(activityIndex) {
+    this.activities.splice(activityIndex, 1);
 
     // Se retrna el nuevo indice a ser editado
-    let newSubjectIndex = subjectIndex > 0 ? subjectIndex - 1 : 0;
+    let newActivityIndex = activityIndex > 0 ? activityIndex - 1 : 0;
 
-    return newSubjectIndex;
+    return newActivityIndex;
   }
 
   static fromJSON(data) {
-    let subjectManager = new SubjectManager();
-    subjectManager.subjects = data.subjects.map(Subject.fromJSON);
-    return subjectManager;
+    let activityManager = new ActivityManager();
+    activityManager.activities = data.activities.map(Activity.fromJSON);
+    return activityManager;
   }
 }

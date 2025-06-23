@@ -1,11 +1,11 @@
 //parte de guardar y cargar archivos json
 
-import { SubjectManager } from "./classes.js";
-import { updateSubjectsAndClassTimes } from "./UI.js";
-import { loadClassTime } from "./createTables.js";
+import { ActivityManager } from "./classes.js";
+import { updateActivitiesAndScheduleOptions } from "./UI.js";
+import { loadScheduleOption } from "./createTables.js";
 
-export async function saveToFile(subjectManager) {
-  const dataStr = JSON.stringify(subjectManager);
+export async function saveToFile(activityManager) {
+  const dataStr = JSON.stringify(activityManager);
   const dataBlob = new Blob([dataStr], {
     type: "application/json;charset=utf-8",
   });
@@ -47,7 +47,7 @@ export async function saveToFile(subjectManager) {
   }
 }
 
-export function loadFromFile(subjectManager) {
+export function loadFromFile(activityManager) {
   const fileInput = document.getElementById("fileInput");
   const fileNameElement = document.getElementById("fileName");
   const file = fileInput.files[0];
@@ -63,17 +63,17 @@ export function loadFromFile(subjectManager) {
         const data = JSON.parse(event.target.result);
 
         // Validación del formato
-        if (!Array.isArray(data.subjects)) {
+        if (!Array.isArray(data.activities)) {
           throw new Error("Formato no válido");
         }
 
-        // Si la validación es exitosa, Actualiza subjectManager con los datos cargados
-        Object.assign(subjectManager, SubjectManager.fromJSON(data));
+        // Si la validación es exitosa, Actualiza activityManager con los datos cargados
+        Object.assign(activityManager, ActivityManager.fromJSON(data));
 
         // Actualizar el selector de asignaturas
-        updateSubjectsAndClassTimes(subjectManager);
+        updateActivitiesAndScheduleOptions(activityManager);
 
-        loadClassTime(subjectManager);
+        loadScheduleOption(activityManager);
       } catch (error) {
         alert("Error al subir el archivo: " + error.message);
       }

@@ -28,171 +28,128 @@ function createTable(table) {
 
 let isDragging = false;
 
-export function createInitialTable(subjectManager) {
-  const tableContainer = document.getElementById("classTimeTableContainer");
+export function createInitialTable(activityManager) {
+  const tableContainer = document.getElementById("scheduleOptionTableContainer");
   if (!tableContainer) return;
 
   const table = document.createElement("table");
-  table.id = "classTimeTable";
+  table.id = "scheduleOptionTable";
 
+  tableContainer.innerHTML = ""; // Limpiar el contenedor antes de agregar la nueva tabla
   tableContainer.appendChild(table);
 
   createTable(table);
 
-  // Agrega los listeners a las celdas
   for (let i = 1; i < table.rows.length; i++) {
     const row = table.rows[i];
     for (let j = 1; j < row.cells.length; j++) {
       const cell = row.cells[j];
-
       cell.addEventListener("mousedown", (e) => {
         isDragging = true;
-        toggleCell(subjectManager, e.target);
+        toggleCell(activityManager, e.target);
       });
-
       cell.addEventListener("mouseover", (e) => {
         if (isDragging) {
-          toggleCell(subjectManager, e.target);
+          toggleCell(activityManager, e.target);
         }
       });
     }
   }
 
-  // Escucha el evento mouseup en el objeto window
-  window.addEventListener("mouseup", (e) => {
+  window.addEventListener("mouseup", () => {
     isDragging = false;
   });
 }
 
-function toggleCell(subjectManager, cell) {
-  let editingClassTime;
-  let editingSubject;
+function toggleCell(activityManager, cell) {
+  let editingScheduleOption;
+  let editingActivity;
 
-  // Busca el horario que se está editando
-  subjectManager.subjects.forEach((subject) => {
-    subject.classTimes.forEach((classTime) => {
-      if (classTime.isEditing) {
-        editingClassTime = classTime;
-        editingSubject = subject;
+  activityManager.activities.forEach((activity) => {
+    activity.scheduleOptions.forEach((scheduleOption) => {
+      if (scheduleOption.isEditing) {
+        editingScheduleOption = scheduleOption;
+        editingActivity = activity;
       }
     });
   });
 
-  if (!editingClassTime) {
-    alert("Selecciona primero una asignatura y una hora de clase");
+  if (!editingScheduleOption) {
+    alert("Selecciona primero una actividad y una opción de horario");
     return;
   }
 
-  const selectedColor = editingSubject.color;
-
+  const selectedColor = editingActivity.color;
   cell.classList.toggle("selected");
+  cell.style.backgroundColor = cell.classList.contains("selected")
+    ? selectedColor
+    : "";
 
-  cell.style.backgroundColor = cell.style.backgroundColor ? "" : selectedColor;
-
-  //guardar horario
-  saveClassTime(subjectManager);
-
-  updateCombinedSchedules(subjectManager);
+  saveScheduleOption(activityManager);
+  updateCombinedSchedules(activityManager);
 }
 
-//parte de guardar y cargar la hora de clase de la tabla
-
-//función para guardar las horas de clase de la tabla
-function saveClassTime(subjectManager) {
-  let editingClassTime;
-
-  // Busca el horario que se está editando
-  subjectManager.subjects.forEach((subject) => {
-    subject.classTimes.forEach((classTime) => {
-      if (classTime.isEditing) {
-        editingClassTime = classTime;
+function saveScheduleOption(activityManager) {
+  let editingScheduleOption;
+  activityManager.activities.forEach((activity) => {
+    activity.scheduleOptions.forEach((scheduleOption) => {
+      if (scheduleOption.isEditing) {
+        editingScheduleOption = scheduleOption;
       }
     });
   });
 
-  if (!editingClassTime) {
-    alert("Selecciona primero una asignatura y una hora de clase");
-    return;
-  }
+  if (!editingScheduleOption) return;
 
-  const table = document.getElementById("classTimeTable");
-
-  editingClassTime.timeTable = {};
-  for (let day of TimeTable.days) {
-    editingClassTime.timeTable[day] = {};
-    for (let timeSlot of TimeTable.timeSlots) {
-      editingClassTime.timeTable[day][timeSlot] = "";
-    }
-  }
+  const table = document.getElementById("scheduleOptionTable");
+  editingScheduleOption.timeTable = new TimeTable().initializeTimeTable(); // Reiniciar
 
   for (let i = 1; i < table.rows.length; i++) {
-    const row = table.rows[i];
-    for (let j = 1; j < row.cells.length; j++) {
-      if (row.cells[j].classList.contains("selected")) {
-        editingClassTime.timeTable[TimeTable.days[j - 1]][
-          TimeTable.timeSlots[i - 1]
-        ] = "x";
+    for (let j = 1; j < table.rows[i].cells.length; j++) {
+      if (table.rows[i].cells[j].classList.contains("selected")) {
+        const day = TimeTable.days[j - 1];
+        const timeSlot = TimeTable.timeSlots[i - 1];
+        editingScheduleOption.timeTable[day][timeSlot] = "x";
       }
     }
   }
 
-  loadClassTime(subjectManager);
-
-  // muestra el icono de verificación.
-  const saveClassTimeIcon = document.getElementById("saveClassTimeIcon");
-  saveClassTimeIcon.textContent = "✔";
-
-  // Eliminar el icono después de 1 segundos
-  setTimeout(function () {
-    saveClassTimeIcon.style.opacity = "0";
-  }, 500);
-
-  setTimeout(function () {
-    saveClassTimeIcon.textContent = "";
-    saveClassTimeIcon.style.opacity = "1";
+  const saveIcon = document.getElementById("saveScheduleOptionIcon");
+  saveIcon.textContent = "✔";
+  setTimeout(() => (saveIcon.style.opacity = "0"), 500);
+  setTimeout(() => {
+    saveIcon.textContent = "";
+    saveIcon.style.opacity = "1";
   }, 1500);
 }
 
-//función que carga la tabla con la hora de clase
-export function loadClassTime(subjectManager) {
-  let editingClassTime;
-  let editingSubject;
+export function loadScheduleOption(activityManager) {
+  let editingScheduleOption;
+  let editingActivity;
 
-  // Busca el horario que se está editando
-  subjectManager.subjects.forEach((subject) => {
-    subject.classTimes.forEach((classTime) => {
-      if (classTime.isEditing) {
-        editingClassTime = classTime;
-        editingSubject = subject;
+  activityManager.activities.forEach((activity) => {
+    activity.scheduleOptions.forEach((scheduleOption) => {
+      if (scheduleOption.isEditing) {
+        editingScheduleOption = scheduleOption;
+        editingActivity = activity;
       }
     });
   });
 
-  // Si no se está editando ningún horario, muestra una alerta y retorna
-  if (!editingClassTime) {
-    alert("Selecciona primero una asignatura y una hora de clase");
-    return;
-  }
-
-  const selectedColor = editingSubject.color;
-
-  const table = document.getElementById("classTimeTable");
+  const table = document.getElementById("scheduleOptionTable");
+  if (!table) return;
 
   for (let i = 1; i < table.rows.length; i++) {
-    const row = table.rows[i];
-    for (let j = 1; j < row.cells.length; j++) {
+    for (let j = 1; j < table.rows[i].cells.length; j++) {
+      const cell = table.rows[i].cells[j];
       const day = TimeTable.days[j - 1];
       const timeSlot = TimeTable.timeSlots[i - 1];
-      if (
-        editingClassTime.timeTable[day] &&
-        editingClassTime.timeTable[day][timeSlot] === "x"
-      ) {
-        row.cells[j].classList.add("selected");
-        row.cells[j].style.backgroundColor = selectedColor;
-      } else {
-        row.cells[j].classList.remove("selected");
-        row.cells[j].style.backgroundColor = "";
-      }
+      
+      const isSelected =
+        editingScheduleOption?.timeTable[day]?.[timeSlot] === "x";
+      
+      cell.classList.toggle("selected", isSelected);
+      cell.style.backgroundColor = isSelected ? editingActivity.color : "";
     }
   }
 }
