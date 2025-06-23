@@ -19,9 +19,7 @@ function createTable(table) {
   let row = "";
   for (let time of TimeTable.timeSlots) {
     row += `<tr><th>${time}</th>`;
-    for (let day of TimeTable.days) {
-      row += `<td></td>`;
-    }
+    row += `<td></td>`.repeat(TimeTable.days.length);
     row += "</tr>";
   }
   body += row + "</tbody>";
