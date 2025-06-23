@@ -29,7 +29,13 @@ function createTable(table) {
 let isDragging = false;
 
 export function createInitialTable(subjectManager) {
-  const table = document.getElementById("classTimeTable");
+  const tableContainer = document.getElementById("classTimeTableContainer");
+  if (!tableContainer) return;
+
+  const table = document.createElement("table");
+  table.id = "classTimeTable";
+
+  tableContainer.appendChild(table);
 
   createTable(table);
 
