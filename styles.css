@@ -376,10 +376,28 @@ tr:nth-child(even) {
 
 #main-content-header button {
   background-color: #6c757d;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
 }
 
 #main-content-header button:hover {
   background-color: #5a6268;
+}
+
+.icon-arrow-left {
+  display: inline-block;
+  width: 1.2em;
+  height: 1.2em;
+  background-color: currentColor;
+  -webkit-mask-image: url("assets/arrow-left.svg");
+  mask-image: url("assets/arrow-left.svg");
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
 }
 
 /* Media query para pantallas de tamaño celular */
