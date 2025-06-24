@@ -39,10 +39,17 @@ button {
   border-radius: 0.3em;
   font-size: 1em;
   cursor: pointer;
+  min-height: 44px; /* Touch-friendly minimum size */
+  min-width: 44px;
 }
 
 button:hover {
   background-color: #45a049;
+}
+
+button:active {
+  background-color: #3d8b40;
+  transform: scale(0.98);
 }
 
 /* Estilo para las tablas en general */
@@ -78,10 +85,16 @@ tr:nth-child(even) {
   font-size: 1em;
   outline: none;
   text-align: center;
+  min-height: 44px;
+  min-width: 44px;
 }
 
 #file-input-label:hover {
   background-color: #45a049;
+}
+
+#file-input-label:active {
+  background-color: #3d8b40;
 }
 
 #file-name {
@@ -97,6 +110,8 @@ tr:nth-child(even) {
   display: flex;
   justify-content: start;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 1em;
 }
 
 /* Estilo para el contenedor de horarios combinados */
@@ -110,11 +125,14 @@ tr:nth-child(even) {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 1em;
+  flex-wrap: wrap;
+  gap: 0.5em;
 }
 
 #layoutActivitySchedule {
   display: flex;
   flex-direction: row;
+  gap: 1em;
 }
 
 #layoutActivitySchedule > div {
@@ -127,6 +145,7 @@ tr:nth-child(even) {
   justify-content: start;
   align-items: center;
   flex-wrap: wrap;
+  gap: 0.5em;
 }
 
 .createNewActivity > div,
@@ -152,7 +171,6 @@ tr:nth-child(even) {
 }
 
 /* Tabla de selección de horarios */
-
 #scheduleOptionTable {
   width: auto;
   max-height: 90vh;
@@ -161,42 +179,52 @@ tr:nth-child(even) {
   overflow-y: auto;
 }
 
-/* Efecto hover para las celdas de la tabla scheduleOptionTable */
+/* Efecto para las celdas de la tabla scheduleOptionTable */
 #scheduleOptionTable td {
   cursor: pointer;
   -webkit-user-select: none;
   user-select: none;
-  padding: 0.25em 0.5em; /* Reduce the padding */
+  padding: 0.5em;
+  min-height: 44px; /* Touch-friendly size */
+  transition: background-color 0.2s ease;
+  position: relative;
 }
 
 #scheduleOptionTable td.selected {
   color: white;
+  border: 2px solid #333;
 }
 
-#scheduleOptionTable td:hover {
-  background-color: rgba(85, 220, 89, 0.5);
+/* Active touch feedback */
+#scheduleOptionTable td:active {
+  transform: scale(0.95);
+  transition: transform 0.1s ease;
+}
+
+/* Visual feedback for currently editing */
+#scheduleOptionTable td.editing-highlight {
+  box-shadow: 0 0 0 2px #087f23;
 }
 
 #scheduleOptionTable th {
   -webkit-user-select: none;
   user-select: none;
-  padding: 0.25em 0.5em; /* Reduce the padding */
+  padding: 0.5em;
 }
-
-/* Estilos con conflictos */
 
 /* Estilos para el switch para ver los horarios con cruces */
 #toggleConflicts {
   position: relative;
-  width: 2.5em;
-  height: 1.25em;
+  width: 3em;
+  height: 1.5em;
   margin: 0.5em;
   appearance: none;
   background-color: #ccc;
   outline: none;
   cursor: pointer;
-  border-radius: 1.25em;
+  border-radius: 1.5em;
   transition: background-color 0.3s;
+  min-height: 44px; /* Touch-friendly */
 }
 
 #toggleConflicts:before {
@@ -204,8 +232,8 @@ tr:nth-child(even) {
   position: absolute;
   top: 0.125em;
   left: 0.125em;
-  width: 1em;
-  height: 1em;
+  width: 1.25em;
+  height: 1.25em;
   background-color: white;
   border-radius: 50%;
   transition: left 0.3s;
@@ -216,76 +244,129 @@ tr:nth-child(even) {
 }
 
 #toggleConflicts:checked:before {
-  left: 1.375em;
+  left: 1.625em;
 }
 
-/* chips */
+/* Chips - Refactored for mobile */
 .chip {
   position: relative;
-  display: inline-block;
-  margin: 0.5em;
-  padding: 0.5em;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  margin: 0.25em;
+  padding: 0.75em 1em;
   background-color: #4caf50;
   color: white;
   border: none;
-  border-radius: 0.3em;
+  border-radius: 0.5em;
   font-size: 1em;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, transform 0.1s;
+  min-height: 44px; /* Touch-friendly */
+  flex-wrap: wrap;
 }
 
-.chip:hover {
-  background-color: #45a049;
+.chip:active {
+  transform: scale(0.98);
 }
 
-.chip .close-icon,
-.chip .disable-icon {
-  position: absolute;
-  right: -1.25em;
-  cursor: pointer;
-  background-color: grey;
-  color: black;
-  width: 1em;
-  height: 1em;
-  z-index: 1;
-  display: none;
-  font-size: 0.7em;
-  padding: 0.15em;
-  border: 1px solid #444;
+.chip-content {
+  flex-grow: 1;
+  text-align: left;
 }
 
-.chip .close-icon {
-  top: 0;
-}
-
-.chip .disable-icon {
-  top: 50%;
-}
-
-.chip:hover .close-icon,
-.chip:hover .disable-icon {
+.chip-actions {
   display: flex;
-  justify-content: center;
+  gap: 0.25em;
   align-items: center;
+}
+
+.chip-action-btn {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 0.8em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+  margin: 0;
+  padding: 0;
+}
+
+.chip-action-btn:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.chip-action-btn:active {
+  background-color: rgba(255, 255, 255, 0.4);
+  transform: scale(0.9);
+}
+
+.chip-action-btn.delete-btn {
+  background-color: rgba(220, 53, 69, 0.8);
+}
+
+.chip-action-btn.delete-btn:hover {
+  background-color: rgba(220, 53, 69, 0.9);
+}
+
+.chip-action-btn.toggle-btn.inactive {
+  background-color: rgba(108, 117, 125, 0.8);
 }
 
 .chip.inactive {
   background-color: #6c757d;
+  opacity: 0.7;
 }
 
 .chip.editing {
   background-color: #087f23;
+  box-shadow: 0 0 0 2px #20c997;
 }
 
 .chip.add-scheduleOption {
   background-color: white;
-  color: gray;
-  border: 2px dotted gray;
+  color: #6c757d;
+  border: 2px dashed #6c757d;
+  justify-content: center;
+}
+
+.chip.add-scheduleOption:hover {
+  background-color: #f8f9fa;
+  border-color: #495057;
+  color: #495057;
 }
 
 .chip.activity {
   color: black;
   cursor: default;
+  background-color: #e9ecef;
+  border: 1px solid #dee2e6;
+}
+
+/* Activity container */
+.activity-container {
+  margin-bottom: 1em;
+  padding: 1em;
+  border: 1px solid #dee2e6;
+  border-radius: 0.5em;
+  background-color: #f8f9fa;
+}
+
+.activity-header {
+  margin-bottom: 0.5em;
+}
+
+.schedule-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
+  margin-top: 0.5em;
 }
 
 /* Dashboard Styles */
@@ -301,7 +382,7 @@ tr:nth-child(even) {
 
 #scenario-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 1em;
   margin-bottom: 1em;
 }
@@ -313,11 +394,12 @@ tr:nth-child(even) {
   border: 1px solid #dee2e6;
   border-radius: 0.5em;
   cursor: pointer;
-  transition: background-color 0.2s, box-shadow 0.2s;
+  transition: background-color 0.2s, box-shadow 0.2s, transform 0.1s;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   font-weight: bold;
+  min-height: 60px; /* Touch-friendly */
 }
 
 .scenario-card:hover {
@@ -325,37 +407,50 @@ tr:nth-child(even) {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.scenario-card:active {
+  transform: scale(0.98);
+}
+
+.scenario-card-content {
+  flex-grow: 1;
+  text-align: left;
+}
+
 .scenario-card .delete-button {
-  position: absolute;
-  top: 5px;
-  right: 5px;
   background-color: #dc3545;
   color: white;
   border: none;
   border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  font-size: 12px;
-  line-height: 24px;
-  text-align: center;
-  padding: 0;
+  width: 32px;
+  height: 32px;
+  font-size: 14px;
   cursor: pointer;
-  opacity: 0;
-  transition: opacity 0.2s;
+  transition: background-color 0.2s, transform 0.1s;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.scenario-card:hover .delete-button {
-  opacity: 1;
+.scenario-card .delete-button:hover {
+  background-color: #c82333;
+}
+
+.scenario-card .delete-button:active {
+  transform: scale(0.9);
 }
 
 .scenario-actions {
   display: flex;
   gap: 0.5em;
   margin-top: 1em;
+  flex-wrap: wrap;
 }
 
 .scenario-actions input {
   flex-grow: 1;
+  min-width: 200px;
 }
 
 #main-content {
@@ -368,6 +463,8 @@ tr:nth-child(even) {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 1em;
+  flex-wrap: wrap;
+  gap: 1em;
 }
 
 #main-content-header h2 {
@@ -417,25 +514,94 @@ tr:nth-child(even) {
 
   #scheduleOptionTable {
     max-height: none;
-    font-size: 0.7em;
+    font-size: 0.8em;
+  }
+
+  #scheduleOptionTable td {
+    padding: 0.75em 0.5em;
+    min-height: 48px;
   }
 
   #combinedSchedulesContainer table {
-    font-size: 0.6em;
+    font-size: 0.7em;
   }
 
   #combinedSchedulesContainer h2 {
     font-size: 1.2em;
   }
+  
   #combinedSchedulesContainer table td {
-    padding: 0.2em;
+    padding: 0.5em 0.25em;
   }
 
   #combinedSchedulesContainer table th {
-    padding: 0.2em;
+    padding: 0.5em 0.25em;
   }
 
-  #scheduleOptionTable td:hover {
-    background-color: transparent;
+  .chip {
+    margin: 0.5em 0.25em;
+    padding: 1em;
+    font-size: 0.9em;
+  }
+
+  .chip-actions {
+    gap: 0.5em;
+  }
+
+  .chip-action-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 0.9em;
+  }
+
+  .scenario-card {
+    min-height: 70px;
+    padding: 1.25em;
+  }
+
+  .scenario-card .delete-button {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+
+  #main-content-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #main-content-header button {
+    align-self: flex-start;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 600px) {
+  .createNewActivity > div,
+  .createNewActivity > input,
+  .createNewActivity > button {
+    min-width: 100%;
+  }
+
+  #scenario-list {
+    grid-template-columns: 1fr;
+  }
+
+  .scenario-actions {
+    flex-direction: column;
+  }
+
+  .scenario-actions input {
+    min-width: 100%;
+  }
+
+  #generateCombinedSchedules {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #combinedSchedulesContainer div {
+    flex-direction: column;
+    gap: 1em;
   }
 }

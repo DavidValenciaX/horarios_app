@@ -45,15 +45,15 @@ function renderDashboard(scenarioManager) {
   scenarioManager.scenarios.forEach((scenario, index) => {
     const scenarioCard = document.createElement("div");
     scenarioCard.className = "scenario-card";
-    scenarioCard.textContent = scenario.name;
-    scenarioCard.addEventListener("click", () => {
-      scenarioManager.setActiveScenario(index);
-      showPlanningView(scenarioManager);
-    });
-
+    
+    const cardContent = document.createElement("div");
+    cardContent.className = "scenario-card-content";
+    cardContent.textContent = scenario.name;
+    
     const deleteButton = document.createElement("button");
-    deleteButton.textContent = "X";
+    deleteButton.textContent = "×";
     deleteButton.className = "delete-button";
+    deleteButton.setAttribute("aria-label", `Eliminar escenario ${scenario.name}`);
     deleteButton.onclick = (e) => {
       e.stopPropagation();
       if (confirm(`¿Estás seguro de que quieres eliminar "${scenario.name}"?`)) {
@@ -61,7 +61,16 @@ function renderDashboard(scenarioManager) {
         renderDashboard(scenarioManager);
       }
     };
+
+    scenarioCard.appendChild(cardContent);
     scenarioCard.appendChild(deleteButton);
+    
+    // Add click handler to the card content only
+    cardContent.addEventListener("click", () => {
+      scenarioManager.setActiveScenario(index);
+      showPlanningView(scenarioManager);
+    });
+
     DOM.scenarioList.appendChild(scenarioCard);
   });
 }
@@ -73,117 +82,131 @@ export function updateActivitiesAndScheduleOptions(scenarioManager) {
 
   DOM.activitiesAndScheduleOptionsDiv.innerHTML = "";
 
-  const inactiveIcon = "🛇";
-  const activeIcon = "✓";
-
   activityManager.activities.forEach((activity, activityIndex) => {
-    const parentDiv = document.createElement("div");
+    const activityContainer = document.createElement("div");
+    activityContainer.className = "activity-container";
+
+    // Activity header chip
+    const activityHeader = document.createElement("div");
+    activityHeader.className = "activity-header";
 
     const activityChip = document.createElement("div");
     activityChip.classList.add("chip", "activity");
     activityChip.style.backgroundColor = activity.color;
-    activityChip.addEventListener("click", () => {
-      editingScheduleOption(scenarioManager, activityIndex, 0);
-    });
-    // Creamos dos elementos diferentes para el nombre y los créditos
-    const activityName = document.createElement("div");
-    activityName.textContent = activity.name;
 
-    const closeIcon = document.createElement("span");
-    closeIcon.classList.add("close-icon");
-    closeIcon.textContent = "x";
-    closeIcon.addEventListener("click", (e) => {
-      e.stopPropagation();
-      deleteActivity(scenarioManager, activityIndex);
-    });
+    const activityContent = document.createElement("div");
+    activityContent.className = "chip-content";
+    activityContent.textContent = activity.name;
 
-    const disableIcon = document.createElement("span");
-    disableIcon.classList.add("disable-icon");
+    const activityActions = document.createElement("div");
+    activityActions.className = "chip-actions";
 
+    // Toggle button
+    const toggleBtn = document.createElement("button");
+    toggleBtn.className = "chip-action-btn toggle-btn";
+    toggleBtn.setAttribute("aria-label", activity.isActive ? "Desactivar actividad" : "Activar actividad");
+    toggleBtn.textContent = activity.isActive ? "👁" : "🛇";
     if (!activity.isActive) {
+      toggleBtn.classList.add("inactive");
       activityChip.classList.add("inactive");
-      disableIcon.textContent = activeIcon;
-    } else {
-      activityChip.classList.remove("inactive");
-      disableIcon.textContent = inactiveIcon;
     }
-
-    disableIcon.addEventListener("click", (e) => {
+    toggleBtn.addEventListener("click", (e) => {
       e.stopPropagation();
       deactivateActivity(scenarioManager, activityIndex);
     });
 
-    // Añadimos los elementos al chip de la asignatura
-    activityChip.appendChild(activityName);
-    activityChip.appendChild(closeIcon);
-    activityChip.appendChild(disableIcon);
-    parentDiv.appendChild(activityChip);
+    // Delete button
+    const deleteBtn = document.createElement("button");
+    deleteBtn.className = "chip-action-btn delete-btn";
+    deleteBtn.setAttribute("aria-label", "Eliminar actividad");
+    deleteBtn.textContent = "×";
+    deleteBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (confirm(`¿Estás seguro de que quieres eliminar "${activity.name}"?`)) {
+        deleteActivity(scenarioManager, activityIndex);
+      }
+    });
+
+    activityActions.appendChild(toggleBtn);
+    activityActions.appendChild(deleteBtn);
+    activityChip.appendChild(activityContent);
+    activityChip.appendChild(activityActions);
+    activityHeader.appendChild(activityChip);
+
+    // Schedule options container
+    const scheduleOptionsContainer = document.createElement("div");
+    scheduleOptionsContainer.className = "schedule-options";
 
     activity.scheduleOptions.forEach((scheduleOption, scheduleOptionIndex) => {
       const scheduleOptionChip = document.createElement("div");
       scheduleOptionChip.classList.add("chip");
-      scheduleOptionChip.textContent = `Opción ${scheduleOptionIndex + 1}`;
-      scheduleOptionChip.addEventListener("click", () => {
-        editingScheduleOption(
-          scenarioManager,
-          activityIndex,
-          scheduleOptionIndex
-        );
-      });
+      
+      const optionContent = document.createElement("div");
+      optionContent.className = "chip-content";
+      optionContent.textContent = `Opción ${scheduleOptionIndex + 1}`;
+
+      const optionActions = document.createElement("div");
+      optionActions.className = "chip-actions";
 
       if (scheduleOption.isEditing) {
         scheduleOptionChip.classList.add("editing");
       }
 
-      const closeIcon = document.createElement("span");
-      closeIcon.classList.add("close-icon");
-      closeIcon.textContent = "x";
-      closeIcon.addEventListener("click", (e) => {
-        e.stopPropagation();
-        deleteScheduleOption(
-          scenarioManager,
-          activityIndex,
-          scheduleOptionIndex
-        );
-      });
-
-      const disableIcon = document.createElement("span");
-      disableIcon.classList.add("disable-icon");
-
       if (!scheduleOption.isActive) {
         scheduleOptionChip.classList.add("inactive");
-        disableIcon.textContent = activeIcon;
-      } else {
-        disableIcon.textContent = inactiveIcon;
       }
 
-      disableIcon.addEventListener("click", (e) => {
+      // Toggle button for schedule option
+      const toggleOptionBtn = document.createElement("button");
+      toggleOptionBtn.className = "chip-action-btn toggle-btn";
+      toggleOptionBtn.setAttribute("aria-label", scheduleOption.isActive ? "Desactivar opción" : "Activar opción");
+      toggleOptionBtn.textContent = scheduleOption.isActive ? "👁" : "🛇";
+      if (!scheduleOption.isActive) {
+        toggleOptionBtn.classList.add("inactive");
+      }
+      toggleOptionBtn.addEventListener("click", (e) => {
         e.stopPropagation();
-        deactivateScheduleOption(
-          scenarioManager,
-          activityIndex,
-          scheduleOptionIndex
-        );
+        deactivateScheduleOption(scenarioManager, activityIndex, scheduleOptionIndex);
       });
 
-      scheduleOptionChip.appendChild(closeIcon);
-      scheduleOptionChip.appendChild(disableIcon);
-      parentDiv.appendChild(scheduleOptionChip);
+      // Delete button for schedule option
+      const deleteOptionBtn = document.createElement("button");
+      deleteOptionBtn.className = "chip-action-btn delete-btn";
+      deleteOptionBtn.setAttribute("aria-label", "Eliminar opción de horario");
+      deleteOptionBtn.textContent = "×";
+      deleteOptionBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (confirm(`¿Estás seguro de que quieres eliminar la Opción ${scheduleOptionIndex + 1}?`)) {
+          deleteScheduleOption(scenarioManager, activityIndex, scheduleOptionIndex);
+        }
+      });
+
+      optionActions.appendChild(toggleOptionBtn);
+      optionActions.appendChild(deleteOptionBtn);
+      scheduleOptionChip.appendChild(optionContent);
+      scheduleOptionChip.appendChild(optionActions);
+
+      // Click handler for editing
+      scheduleOptionChip.addEventListener("click", () => {
+        editingScheduleOption(scenarioManager, activityIndex, scheduleOptionIndex);
+      });
+
+      scheduleOptionsContainer.appendChild(scheduleOptionChip);
     });
 
+    // Add schedule option button
     const addScheduleOptionChip = document.createElement("div");
-    addScheduleOptionChip.classList.add("chip");
-    addScheduleOptionChip.classList.add("add-scheduleOption");
+    addScheduleOptionChip.classList.add("chip", "add-scheduleOption");
     addScheduleOptionChip.textContent = "+ Agregar Opción de Horario";
     addScheduleOptionChip.addEventListener("click", () => {
       addScheduleOption(scenarioManager, activityIndex);
     });
 
-    parentDiv.appendChild(addScheduleOptionChip);
-    DOM.activitiesAndScheduleOptionsDiv.appendChild(parentDiv);
-    DOM.activitiesAndScheduleOptionsDiv.appendChild(
-      document.createElement("hr")
-    );
+    scheduleOptionsContainer.appendChild(addScheduleOptionChip);
+
+    activityContainer.appendChild(activityHeader);
+    activityContainer.appendChild(scheduleOptionsContainer);
+    DOM.activitiesAndScheduleOptionsDiv.appendChild(activityContainer);
   });
 }
 
@@ -192,7 +215,7 @@ export function createActivity(scenarioManager) {
   if (!activeScenario) return;
   const activityManager = activeScenario.activityManager;
 
-  const newActivityName = DOM.newActivityName.value;
+  const newActivityName = DOM.newActivityName.value.trim();
 
   if (!newActivityName) {
     alert("Por favor ingrese un nombre de actividad válido");
