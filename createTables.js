@@ -38,7 +38,12 @@ export function createInitialTable(scenarioManager) {
   const table = document.createElement("table");
   table.id = "scheduleOptionTable";
 
-  tableContainer.innerHTML = ""; // Limpiar el contenedor antes de agregar la nueva tabla
+  // Limpiar el contenedor antes de agregar la nueva tabla, preservando otros elementos
+  const oldTable = tableContainer.querySelector("#scheduleOptionTable");
+  if (oldTable) {
+    oldTable.remove();
+  }
+
   tableContainer.appendChild(table);
 
   createTable(table);
