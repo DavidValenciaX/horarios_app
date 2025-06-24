@@ -41,6 +41,11 @@ button {
   cursor: pointer;
   min-height: 44px; /* Touch-friendly minimum size */
   min-width: 44px;
+  box-sizing: border-box;
+  display: inline-block;
+  text-align: center;
+  text-decoration: none;
+  vertical-align: middle;
 }
 
 button:hover {
@@ -81,12 +86,16 @@ tr:nth-child(even) {
   border: none;
   border-radius: 0.3em;
   cursor: pointer;
-  display: inline-block;
+  display: inline-flex;
   font-size: 1em;
   outline: none;
-  text-align: center;
+  align-items: center;
+  justify-content: center;
   min-height: 44px;
   min-width: 44px;
+  box-sizing: border-box;
+  text-decoration: none;
+  vertical-align: middle;
 }
 
 #file-input-label:hover {
