@@ -28,8 +28,10 @@ function createTable(table) {
 
 let isDragging = false;
 
-export function createInitialTable(activityManager) {
-  const tableContainer = document.getElementById("scheduleOptionTableContainer");
+export function createInitialTable(scenarioManager) {
+  const tableContainer = document.getElementById(
+    "scheduleOptionTableContainer"
+  );
   if (!tableContainer) return;
 
   const table = document.createElement("table");
@@ -46,11 +48,11 @@ export function createInitialTable(activityManager) {
       const cell = row.cells[j];
       cell.addEventListener("mousedown", (e) => {
         isDragging = true;
-        toggleCell(activityManager, e.target);
+        toggleCell(scenarioManager, e.target);
       });
       cell.addEventListener("mouseover", (e) => {
         if (isDragging) {
-          toggleCell(activityManager, e.target);
+          toggleCell(scenarioManager, e.target);
         }
       });
     }
@@ -61,7 +63,11 @@ export function createInitialTable(activityManager) {
   });
 }
 
-function toggleCell(activityManager, cell) {
+function toggleCell(scenarioManager, cell) {
+  const activeScenario = scenarioManager.getActiveScenario();
+  if (!activeScenario) return;
+  const activityManager = activeScenario.activityManager;
+
   let editingScheduleOption;
   let editingActivity;
 
@@ -85,11 +91,15 @@ function toggleCell(activityManager, cell) {
     ? selectedColor
     : "";
 
-  saveScheduleOption(activityManager);
-  updateCombinedSchedules(activityManager);
+  saveScheduleOption(scenarioManager);
+  updateCombinedSchedules(scenarioManager);
 }
 
-function saveScheduleOption(activityManager) {
+function saveScheduleOption(scenarioManager) {
+  const activeScenario = scenarioManager.getActiveScenario();
+  if (!activeScenario) return;
+  const activityManager = activeScenario.activityManager;
+
   let editingScheduleOption;
   activityManager.activities.forEach((activity) => {
     activity.scheduleOptions.forEach((scheduleOption) => {
@@ -123,7 +133,11 @@ function saveScheduleOption(activityManager) {
   }, 1500);
 }
 
-export function loadScheduleOption(activityManager) {
+export function loadScheduleOption(scenarioManager) {
+  const activeScenario = scenarioManager.getActiveScenario();
+  if (!activeScenario) return;
+  const activityManager = activeScenario.activityManager;
+
   let editingScheduleOption;
   let editingActivity;
 
@@ -144,12 +158,12 @@ export function loadScheduleOption(activityManager) {
       const cell = table.rows[i].cells[j];
       const day = TimeTable.days[j - 1];
       const timeSlot = TimeTable.timeSlots[i - 1];
-      
+
       const isSelected =
         editingScheduleOption?.timeTable[day]?.[timeSlot] === "x";
-      
+
       cell.classList.toggle("selected", isSelected);
-      cell.style.backgroundColor = isSelected ? editingActivity.color : "";
+      cell.style.backgroundColor = isSelected ? editingActivity?.color : "";
     }
   }
 }

@@ -9,55 +9,71 @@
 </head>
 
 <body>
-    <h3>Guarda o carga un archivo con tu horario</h3>
-
-    <div>
-        <button id="saveToFileButton" type="button">Guardar horario</button>
-        <input type="file" id="fileInput" accept=".json">
-        <label for="fileInput" id="fileInputLabel">Cargar horario</label>
-        <span id="fileName"></span>
-    </div>
-
-    <hr>
-
-    <div id="layoutActivitySchedule">
+    <div id="dashboard">
+        <h2>Mis Escenarios</h2>
+        <div id="scenario-list-container">
+            <div id="scenario-list"></div>
+            <div class="scenario-actions">
+                <input type="text" id="new-scenario-name" placeholder="Nombre del Escenario">
+                <button id="create-scenario-button">Crear Escenario</button>
+            </div>
+        </div>
+        <hr>
+        <h3>Gestionar Datos</h3>
         <div>
-            <h3>Crea las actividades</h3>
+            <button id="save-all-button" type="button">Guardar todo</button>
+            <input type="file" id="file-input" accept=".json">
+            <label for="file-input" id="file-input-label">Cargar todo</label>
+            <span id="file-name"></span>
+        </div>
+    </div>
+
+    <div id="main-content">
+        <div id="main-content-header">
+            <button type="button" id="back-to-dashboard-button">← Dashboard</button>
+            <h2 id="scenario-title">Selecciona un escenario</h2>
+        </div>
+        <hr>
+
+        <div id="layoutActivitySchedule">
             <div>
-                <div class="createNewActivity">
-                    <label for="newActivityName">Nombre de la Actividad:</label>
-                    <input type="text" id="newActivityName">
+                <h3>Crea las actividades</h3>
+                <div>
+                    <div class="createNewActivity">
+                        <label for="newActivityName">Nombre de la Actividad:</label>
+                        <input type="text" id="newActivityName">
+                    </div>
+                    <div class="createNewActivity">
+                        <button id="createActivityButton" type="button">Crear Actividad</button>
+                    </div>
                 </div>
+                <hr>
+                <h3>Actividades y Opciones de Horario:</h3>
                 <div class="createNewActivity">
-                    <button id="createActivityButton" type="button">Crear Actividad</button>
+                    <div id="activitiesAndScheduleOptions"></div>
                 </div>
             </div>
-            <hr>
-            <h3>Actividades y Opciones de Horario:</h3>
-            <div class="createNewActivity">
-                <div id="activitiesAndScheduleOptions"></div>
+            <div id="scheduleOptionTableContainer">
+                <div class="createNewActivity">
+                    <span id="saveScheduleOptionIcon"></span>
+                </div>
             </div>
         </div>
-        <div id="scheduleOptionTableContainer">
-            <div class="createNewActivity">
-                <span id="saveScheduleOptionIcon"></span>
-            </div>
+
+        <hr>
+
+        <h3>Genera las combinaciones de horario posibles</h3>
+
+        <div id="generateCombinedSchedules">
+            <button id="generateCombinedSchedulesButton" type="button">Generar Horarios Combinados</button>
+            <!-- Switch para mostrar/ocultar horarios con conflictos -->
+            <label id="conflictLabel" for="toggleConflicts">Ocultar horarios con cruces:</label>
+            <input type="checkbox" id="toggleConflicts">
         </div>
+
+
+        <div id="combinedSchedulesContainer"></div>
     </div>
-
-    <hr>
-
-    <h3>Genera las combinaciones de horario posibles</h3>
-
-    <div id="generateCombinedSchedules">
-        <button id="generateCombinedSchedulesButton" type="button">Generar Horarios Combinados</button>
-        <!-- Switch para mostrar/ocultar horarios con conflictos -->
-        <label id="conflictLabel" for="toggleConflicts">Ocultar horarios con cruces:</label>
-        <input type="checkbox" id="toggleConflicts">
-    </div>
-    
-
-    <div id="combinedSchedulesContainer"></div>
 
     <script type="module" src="initScript.js"></script>
 </body>

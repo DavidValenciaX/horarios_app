@@ -1,19 +1,16 @@
 //parte de guardar y cargar archivos json
 
-import { ActivityManager } from "./classes.js";
-import { updateActivitiesAndScheduleOptions } from "./UI.js";
-import { loadScheduleOption } from "./createTables.js";
+import { ScenarioManager } from "./classes.js";
+import { showDashboard } from "./UI.js";
 
-export async function saveToFile(activityManager) {
-  const dataStr = JSON.stringify(activityManager);
+export async function saveToFile(scenarioManager) {
+  const dataStr = JSON.stringify(scenarioManager, null, 2); // Prettify JSON
   const dataBlob = new Blob([dataStr], {
     type: "application/json;charset=utf-8",
   });
 
-  // Verificar si showSaveFilePicker está disponible
   if (window.showSaveFilePicker) {
     try {
-      // Configuración para el archivo a guardar
       const options = {
         types: [
           {
@@ -21,39 +18,35 @@ export async function saveToFile(activityManager) {
             accept: { "application/json": [".json"] },
           },
         ],
-        suggestedName: "horarios.json",
+        suggestedName: "scenarios.json",
       };
 
-      // Mostrar el cuadro de diálogo para guardar el archivo
       const fileHandle = await window.showSaveFilePicker(options);
       const writableStream = await fileHandle.createWritable();
       await writableStream.write(dataBlob);
       await writableStream.close();
-      alert("Archivo guardado con éxito.");
+      alert("Escenarios guardados con éxito.");
     } catch (error) {
       console.error(error);
       alert("No se pudo guardar el archivo.");
     }
   } else {
-    // Método clásico para navegadores que no soportan showSaveFilePicker
     const dataUrl = URL.createObjectURL(dataBlob);
-
     const downloadAnchor = document.createElement("a");
     downloadAnchor.href = dataUrl;
-    downloadAnchor.download = "horarios.json";
+    downloadAnchor.download = "scenarios.json";
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     document.body.removeChild(downloadAnchor);
   }
 }
 
-export function loadFromFile(activityManager) {
-  const fileInput = document.getElementById("fileInput");
-  const fileNameElement = document.getElementById("fileName");
+export function loadFromFile(scenarioManager) {
+  const fileInput = document.getElementById("file-input");
+  const fileNameElement = document.getElementById("file-name");
   const file = fileInput.files[0];
 
   if (file) {
-    // Actualizar el nombre del archivo seleccionado
     fileNameElement.textContent = " " + file.name;
 
     const reader = new FileReader();
@@ -62,18 +55,15 @@ export function loadFromFile(activityManager) {
       try {
         const data = JSON.parse(event.target.result);
 
-        // Validación del formato
-        if (!Array.isArray(data.activities)) {
-          throw new Error("Formato no válido");
+        // Basic validation
+        if (!data || !Array.isArray(data.scenarios)) {
+          throw new Error("Formato no válido. Se esperaba un objeto con una propiedad 'scenarios' que es un array.");
         }
 
-        // Si la validación es exitosa, Actualiza activityManager con los datos cargados
-        Object.assign(activityManager, ActivityManager.fromJSON(data));
+        Object.assign(scenarioManager, ScenarioManager.fromJSON(data));
 
-        // Actualizar el selector de asignaturas
-        updateActivitiesAndScheduleOptions(activityManager);
-
-        loadScheduleOption(activityManager);
+        showDashboard(scenarioManager);
+        alert("Escenarios cargados correctamente.");
       } catch (error) {
         alert("Error al subir el archivo: " + error.message);
       }
@@ -81,7 +71,6 @@ export function loadFromFile(activityManager) {
 
     reader.readAsText(file);
   } else {
-    // Limpiar el nombre del archivo en caso de que no haya archivo seleccionado
     fileNameElement.textContent = "";
   }
 }

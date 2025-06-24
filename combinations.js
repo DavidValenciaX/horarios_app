@@ -2,7 +2,11 @@ import { TimeTable } from "./classes.js";
 import { createScheduleTable } from "./createTables.js";
 import { toPng } from "html-to-image";
 
-export function generateCombinedSchedules(activityManager) {
+export function generateCombinedSchedules(scenarioManager) {
+  const activeScenario = scenarioManager.getActiveScenario();
+  if (!activeScenario) return;
+  const activityManager = activeScenario.activityManager;
+
   const combinedSchedulesContainer = document.getElementById(
     "combinedSchedulesContainer"
   );
@@ -161,11 +165,14 @@ export function toggleConflictSchedules() {
   }
 }
 
-export function updateCombinedSchedules(activityManager) {
+export function updateCombinedSchedules(scenarioManager) {
+  const activeScenario = scenarioManager.getActiveScenario();
+  if (!activeScenario) return;
+
   const combinedSchedulesContainer = document.getElementById(
     "combinedSchedulesContainer"
   );
   if (combinedSchedulesContainer.innerHTML !== "") {
-    generateCombinedSchedules(activityManager);
+    generateCombinedSchedules(scenarioManager);
   }
 }

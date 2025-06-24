@@ -152,3 +152,62 @@ export class ActivityManager {
     return activityManager;
   }
 }
+
+export class Scenario {
+  constructor(name) {
+    this.name = name;
+    this.activityManager = new ActivityManager();
+  }
+
+  static fromJSON(data) {
+    const scenario = new Scenario(data.name);
+    scenario.activityManager = ActivityManager.fromJSON(data.activityManager);
+    return scenario;
+  }
+}
+
+export class ScenarioManager {
+  constructor() {
+    this.scenarios = [];
+    this.activeScenarioIndex = -1;
+  }
+
+  addScenario(name) {
+    const newScenario = new Scenario(name);
+    this.scenarios.push(newScenario);
+    this.activeScenarioIndex = this.scenarios.length - 1;
+    return this.activeScenarioIndex;
+  }
+
+  deleteScenario(index) {
+    this.scenarios.splice(index, 1);
+    if (this.activeScenarioIndex === index) {
+      this.activeScenarioIndex = -1;
+    } else if (this.activeScenarioIndex > index) {
+      this.activeScenarioIndex--;
+    }
+  }
+
+  setActiveScenario(index) {
+    this.activeScenarioIndex = index;
+  }
+
+  getActiveScenario() {
+    if (
+      this.activeScenarioIndex < 0 ||
+      this.activeScenarioIndex >= this.scenarios.length
+    ) {
+      return null;
+    }
+    return this.scenarios[this.activeScenarioIndex];
+  }
+
+  static fromJSON(data) {
+    const scenarioManager = new ScenarioManager();
+    if (data && Array.isArray(data.scenarios)) {
+      scenarioManager.scenarios = data.scenarios.map(Scenario.fromJSON);
+    }
+    scenarioManager.activeScenarioIndex = -1;
+    return scenarioManager;
+  }
+}
