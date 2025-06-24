@@ -119,7 +119,7 @@ function saveScheduleOption(scenarioManager) {
       if (table.rows[i].cells[j].classList.contains("selected")) {
         const day = TimeTable.days[j - 1];
         const timeSlot = TimeTable.timeSlots[i - 1];
-        editingScheduleOption.timeTable[day][timeSlot] = "x";
+        editingScheduleOption.timeTable[day][timeSlot] = true;
       }
     }
   }
@@ -160,7 +160,7 @@ export function loadScheduleOption(scenarioManager) {
       const timeSlot = TimeTable.timeSlots[i - 1];
 
       const isSelected =
-        editingScheduleOption?.timeTable[day]?.[timeSlot] === "x";
+        editingScheduleOption?.timeTable[day]?.[timeSlot] === true;
 
       cell.classList.toggle("selected", isSelected);
       cell.style.backgroundColor = isSelected ? editingActivity?.color : "";

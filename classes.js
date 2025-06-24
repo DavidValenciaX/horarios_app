@@ -34,7 +34,7 @@ export class TimeTable {
     for (let day of TimeTable.days) {
       timeTable[day] = {};
       for (let timeSlot of TimeTable.timeSlots) {
-        timeTable[day][timeSlot] = "";
+        timeTable[day][timeSlot] = false;
       }
     }
     return timeTable;

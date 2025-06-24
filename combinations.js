@@ -84,7 +84,7 @@ function getActiveActivitiesAndScheduleOptions(activityManager) {
 
 function isScheduleOptionEmpty(scheduleOption) {
   return !Object.values(scheduleOption.timeTable).some((day) =>
-    Object.values(day).some((slot) => slot === "x")
+    Object.values(day).some((slot) => slot)
   );
 }
 
@@ -123,7 +123,7 @@ function populateScheduleTable(table, schedules) {
       const cell = table.rows[i].cells[j];
       
       const schedulesInCell = schedules.filter(
-        (schedule) => schedule.timeTable[day]?.[timeSlot] === "x"
+        (schedule) => schedule.timeTable[day]?.[timeSlot]
       );
 
       if (schedulesInCell.length > 0) {
