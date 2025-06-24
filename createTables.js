@@ -112,7 +112,7 @@ function saveScheduleOption(scenarioManager) {
   if (!editingScheduleOption) return;
 
   const table = document.getElementById("scheduleOptionTable");
-  editingScheduleOption.timeTable = new TimeTable().initializeTimeTable(); // Reiniciar
+  editingScheduleOption.timeTable = TimeTable.initializeTimeTable(); // Reiniciar
 
   for (let i = 1; i < table.rows.length; i++) {
     for (let j = 1; j < table.rows[i].cells.length; j++) {

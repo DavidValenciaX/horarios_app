@@ -1,9 +1,5 @@
 //parte de anadir asignaturas y horarios
 export class TimeTable {
-  constructor() {
-    this.timeTable = this.initializeTimeTable();
-  }
-
   static days = [
     "Lunes",
     "Martes",
@@ -33,7 +29,7 @@ export class TimeTable {
     return slots;
   })();
 
-  initializeTimeTable() {
+  static initializeTimeTable() {
     let timeTable = {};
     for (let day of TimeTable.days) {
       timeTable[day] = {};
@@ -43,18 +39,12 @@ export class TimeTable {
     }
     return timeTable;
   }
-
-  static fromJSON(data) {
-    const timeTableInstance = new TimeTable();
-    timeTableInstance.timeTable = data;
-    return timeTableInstance;
-  }
 }
 
 class ScheduleOption {
   constructor(index) {
     this.index = index;
-    this.timeTable = new TimeTable();
+    this.timeTable = TimeTable.initializeTimeTable();
     this.isActive = true;
     this.isEditing = true;
   }
@@ -73,7 +63,7 @@ class ScheduleOption {
 
   static fromJSON(data) {
     let scheduleOption = new ScheduleOption(data.index);
-    scheduleOption.timeTable = TimeTable.fromJSON(data.timeTable);
+    scheduleOption.timeTable = data.timeTable;
     scheduleOption.isActive = data.isActive;
     scheduleOption.isEditing = data.isEditing;
     return scheduleOption;
