@@ -15,16 +15,16 @@
             <div id="scenario-list"></div>
             <div class="scenario-actions">
                 <input type="text" id="new-scenario-name" placeholder="Nombre del Escenario">
-                <button id="create-scenario-button">Crear Escenario</button>
+                <button type="button" id="create-scenario-button">Crear Escenario</button>
             </div>
         </div>
         <hr>
         <h3>Gestionar Datos</h3>
         <div>
-            <button id="save-all-button" type="button">Guardar todo</button>
-            <input type="file" id="file-input" accept=".json">
-            <label for="file-input" id="file-input-label">Cargar todo</label>
-            <span id="file-name"></span>
+            <button type="button" id="save-all-button">Guardar todo</button>
+            <input type="file" id="file-input" accept=".json" aria-label="Cargar archivo JSON">
+            <label for="file-input" id="file-input-label" aria-label="Cargar todo">Cargar todo</label>
+            <span id="file-name" aria-label="Nombre del archivo cargado"></span>
         </div>
     </div>
 
