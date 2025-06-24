@@ -52,7 +52,7 @@ function renderDashboard(scenarioManager) {
     });
 
     const deleteButton = document.createElement("button");
-    deleteButton.textContent = "Eliminar";
+    deleteButton.textContent = "X";
     deleteButton.className = "delete-button";
     deleteButton.onclick = (e) => {
       e.stopPropagation();
