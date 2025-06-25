@@ -85,13 +85,6 @@ export function createInitialTable(scenarioManager) {
           }
         }
       });
-
-      // Single tap for mobile
-      cell.addEventListener("click", (e) => {
-        if (!isDragging) {
-          toggleCell(scenarioManager, e.target);
-        }
-      });
     }
   }
 
