@@ -225,25 +225,24 @@ tr:nth-child(even) {
 /* Estilos para el switch para ver los horarios con cruces */
 #toggleConflicts {
   position: relative;
-  width: 3em;
-  height: 1.5em;
+  width: 80px;
+  height: 44px;
   margin: 0.5em;
   appearance: none;
   background-color: #ccc;
   outline: none;
   cursor: pointer;
-  border-radius: 1.5em;
+  border-radius: 22px;
   transition: background-color 0.3s;
-  min-height: 44px; /* Touch-friendly */
 }
 
 #toggleConflicts:before {
   content: "";
   position: absolute;
-  top: 0.125em;
-  left: 0.125em;
-  width: 1.25em;
-  height: 1.25em;
+  top: 2px;
+  left: 2px;
+  width: 40px;
+  height: 40px;
   background-color: white;
   border-radius: 50%;
   transition: left 0.3s;
@@ -254,7 +253,7 @@ tr:nth-child(even) {
 }
 
 #toggleConflicts:checked:before {
-  left: 1.625em;
+  left: 38px;
 }
 
 /* Chips - Refactored for mobile */
