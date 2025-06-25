@@ -1,7 +1,8 @@
 import { createInitialTable, loadScheduleOption } from "./createTables.js";
 import { updateCombinedSchedules } from "./combinations.js";
 import generatePastelColor from "./colors.js";
-import { createIcon } from "./Icon.js";
+import "./components/eye-open-icon.js";
+import "./components/eye-off-icon.js";
 
 const DOM = {
   dashboard: document.getElementById("dashboard"),
@@ -106,7 +107,11 @@ export function updateActivitiesAndScheduleOptions(scenarioManager) {
     const toggleBtn = document.createElement("button");
     toggleBtn.className = "chip-action-btn toggle-btn";
     toggleBtn.setAttribute("aria-label", activity.isActive ? "Desactivar actividad" : "Activar actividad");
-    toggleBtn.appendChild(createIcon(activity.isActive ? "eye-open" : "eye-off"));
+    
+    const toggleIcon = document.createElement(activity.isActive ? "eye-open-icon" : "eye-off-icon");
+    toggleIcon.classList.add("icon");
+    toggleBtn.appendChild(toggleIcon);
+
     if (!activity.isActive) {
       toggleBtn.classList.add("inactive");
       activityChip.classList.add("inactive");
@@ -161,7 +166,11 @@ export function updateActivitiesAndScheduleOptions(scenarioManager) {
       const toggleOptionBtn = document.createElement("button");
       toggleOptionBtn.className = "chip-action-btn toggle-btn";
       toggleOptionBtn.setAttribute("aria-label", scheduleOption.isActive ? "Desactivar opción" : "Activar opción");
-      toggleOptionBtn.appendChild(createIcon(scheduleOption.isActive ? "eye-open" : "eye-off"));
+      
+      const toggleOptionIcon = document.createElement(scheduleOption.isActive ? "eye-open-icon" : "eye-off-icon");
+      toggleOptionIcon.classList.add("icon");
+      toggleOptionBtn.appendChild(toggleOptionIcon);
+
       if (!scheduleOption.isActive) {
         toggleOptionBtn.classList.add("inactive");
       }
