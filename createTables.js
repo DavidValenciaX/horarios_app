@@ -178,15 +178,6 @@ function saveScheduleOption(scenarioManager) {
       }
     }
   }
-
-  const saveIcon = document.getElementById("saveScheduleOptionIcon");
-  saveIcon.textContent = "✔";
-  saveIcon.style.opacity = "1";
-  setTimeout(() => (saveIcon.style.opacity = "0"), 500);
-  setTimeout(() => {
-    saveIcon.textContent = "";
-    saveIcon.style.opacity = "1";
-  }, 1500);
 }
 
 export function loadScheduleOption(scenarioManager) {
