@@ -1,17 +1,18 @@
 # Horarios App
 
-Esta es una aplicación web interactiva diseñada para ayudar a los usuarios a organizar sus horarios. Permite crear múltiples actividades, cada una con diferentes opciones de horario, y luego calcula y muestra todas las combinaciones de horarios posibles que no tienen conflictos entre sí.
+Esta es una aplicación web interactiva diseñada para ayudar a los usuarios a organizar sus horarios. Permite crear **escenarios** (por ejemplo, "Semestre 1", "Horario Ideal"), y dentro de cada uno, múltiples actividades con diferentes opciones de horario. La aplicación calcula y muestra todas las combinaciones de horarios posibles que no tienen conflictos entre sí.
 
 **Puedes probar la aplicación aquí: [https://horarios-application.netlify.app/](https://horarios-application.netlify.app/)**
 
 ## ✨ Características Principales
 
-- **Creación de Actividades Dinámicas**: Añade o elimina actividades fácilmente (por ejemplo, "Cálculo I", "Laboratorio de Física", "Entrenamiento de Fútbol").
+- **Gestión de Escenarios**: Crea diferentes escenarios para organizar conjuntos de horarios de forma independiente (ej. "Semestre 1", "Semestre 2").
+- **Creación de Actividades Dinámicas**: Dentro de cada escenario, añade o elimina actividades fácilmente (por ejemplo, "Cálculo I", "Laboratorio de Física", "Entrenamiento de Fútbol").
 - **Múltiples Opciones de Horario**: Para cada actividad, puedes definir uno o más horarios alternativos. Esto es ideal para asignaturas con diferentes grupos o secciones.
 - **Interfaz Visual e Interactiva**: Un tablero de horarios semanal te permite hacer clic para agregar o quitar horas a cada opción de horario.
 - **Generador de Combinaciones**: El núcleo de la aplicación. Calcula todas las posibles combinaciones de horarios válidas sin solapamientos entre las actividades seleccionadas.
-- **Activación/Desactivación Selectiva**: Puedes excluir temporalmente actividades u opciones de horario específicas del proceso de combinación.
-- **Guardar y Cargar Progreso**: Guarda tu configuración de actividades en un archivo JSON para cargarla más tarde y continuar donde la dejaste.
+- **Activación/Desactivación Selectiva**: Puedes excluir temporalmente actividades u opciones de horario específicas del proceso de combinación dentro de un escenario.
+- **Guardar y Cargar Progreso**: Guarda todos tus escenarios y actividades en un archivo JSON para cargarla más tarde y continuar donde la dejaste.
 - **Exportar Horarios**: Exporta las combinaciones de horarios generadas como imágenes PNG.
 
 ## 🚀 Cómo Empezar
@@ -59,16 +60,17 @@ Sigue estos pasos para ejecutar el proyecto en tu máquina local.
 frontend/
 ├── dist/               # Archivos de producción (generados por `npm run build`)
 ├── node_modules/       # Dependencias del proyecto
-├── classes.js          # Clases principales (ActivityManager, Activity, TimeTable)
+├── components/         # Componentes reutilizables (íconos, etc.)
+├── classes.js          # Clases principales (ScenarioManager, Scenario, ActivityManager, Activity, TimeTable)
 ├── colors.js           # Utilidades para la gestión de colores
 ├── combinations.js     # Lógica para calcular las combinaciones de horarios
 ├── createTables.js     # Funciones para renderizar las tablas de horarios en el DOM
-├── files.js            # Lógica para guardar y cargar archivos JSON
+├── files.js            # Lógica para guardar y cargar archivos JSON con escenarios
 ├── index.html          # Punto de entrada de la aplicación
-├── initScript.js       # Script de inicialización y orquestación principal
+├── initScript.js       # Script de inicialización y orquestación de vistas y eventos
 ├── package.json        # Dependencias y scripts del proyecto
 ├── styles.css          # Estilos CSS
-└── UI.js               # Lógica de la interfaz de usuario (event listeners, manipulación del DOM)
+└── UI.js               # Lógica de la interfaz de usuario (dashboard, vista de planificación, manipulación del DOM)
 ```
 
 ## 💻 Tecnologías Utilizadas
