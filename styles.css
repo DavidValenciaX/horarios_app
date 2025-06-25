@@ -287,34 +287,42 @@ tr:nth-child(even) {
 
 .chip-actions {
   display: flex;
-  gap: 0.25em;
   align-items: center;
+  gap: 4px;
 }
 
 .chip-action-btn {
-  background-color: rgba(255, 255, 255, 0.2);
-  color: white;
+  background: rgba(0, 0, 0, 0.3);
   border: none;
+  color: white;
   border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  font-size: 0.8em;
-  cursor: pointer;
+  width: 24px;
+  height: 24px;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
   transition: background-color 0.2s;
-  margin: 0;
-  padding: 0;
 }
 
 .chip-action-btn:hover {
-  background-color: rgba(255, 255, 255, 0.3);
+  background: rgba(0, 0, 0, 0.5);
 }
 
-.chip-action-btn:active {
-  background-color: rgba(255, 255, 255, 0.4);
-  transform: scale(0.9);
+.chip-action-btn.inactive {
+  opacity: 0.7;
+}
+
+.icon {
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+}
+
+.chip-action-btn .icon {
+  filter: invert(1);
 }
 
 .chip-action-btn.delete-btn {

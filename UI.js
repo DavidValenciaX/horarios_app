@@ -1,6 +1,7 @@
 import { createInitialTable, loadScheduleOption } from "./createTables.js";
 import { updateCombinedSchedules } from "./combinations.js";
 import generatePastelColor from "./colors.js";
+import { createIcon } from "./Icon.js";
 
 const DOM = {
   dashboard: document.getElementById("dashboard"),
@@ -105,7 +106,7 @@ export function updateActivitiesAndScheduleOptions(scenarioManager) {
     const toggleBtn = document.createElement("button");
     toggleBtn.className = "chip-action-btn toggle-btn";
     toggleBtn.setAttribute("aria-label", activity.isActive ? "Desactivar actividad" : "Activar actividad");
-    toggleBtn.textContent = activity.isActive ? "👁" : "🛇";
+    toggleBtn.appendChild(createIcon(activity.isActive ? "eye-open" : "eye-off"));
     if (!activity.isActive) {
       toggleBtn.classList.add("inactive");
       activityChip.classList.add("inactive");
@@ -160,7 +161,7 @@ export function updateActivitiesAndScheduleOptions(scenarioManager) {
       const toggleOptionBtn = document.createElement("button");
       toggleOptionBtn.className = "chip-action-btn toggle-btn";
       toggleOptionBtn.setAttribute("aria-label", scheduleOption.isActive ? "Desactivar opción" : "Activar opción");
-      toggleOptionBtn.textContent = scheduleOption.isActive ? "👁" : "🛇";
+      toggleOptionBtn.appendChild(createIcon(scheduleOption.isActive ? "eye-open" : "eye-off"));
       if (!scheduleOption.isActive) {
         toggleOptionBtn.classList.add("inactive");
       }
