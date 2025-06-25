@@ -3,6 +3,7 @@ import { updateCombinedSchedules } from "./combinations.js";
 import generatePastelColor from "./colors.js";
 import "./components/eye-open-icon.js";
 import "./components/eye-off-icon.js";
+import "./components/arrow-left-icon.js";
 
 const DOM = {
   dashboard: document.getElementById("dashboard"),
