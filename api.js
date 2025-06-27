@@ -1,6 +1,6 @@
 // API service layer for backend communication
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 // Constants for configuration
 const CONFIG = {
@@ -53,12 +53,23 @@ class ApiService {
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.errors?.[0]?.msg || 'Error en el login');
+      const responseText = await response.text();
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (e) {
+        data = null;
+        console.error('Error al parsear la respuesta del servidor:', e);
       }
 
+      if (!response.ok) {
+        throw new Error(data?.errors?.[0]?.msg || 'Error en el login');
+      }
+
+      if (!data?.token) {
+        throw new Error('Respuesta de login inválida del servidor.');
+      }
+      
       this.setAuthData(data.token);
       await this.getCurrentUser();
       return { success: true, token: data.token };
