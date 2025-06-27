@@ -2,6 +2,8 @@
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+console.log(API_BASE_URL);
+
 // Constants for configuration
 const CONFIG = {
   TOKEN_KEY: 'horarios_app_token',
