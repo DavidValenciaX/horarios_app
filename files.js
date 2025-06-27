@@ -2,6 +2,7 @@
 
 import { ScenarioManager } from "./classes.js";
 import { showDashboard } from "./UI.js";
+import { apiService } from "./api.js";
 
 export async function saveToFile(scenarioManager) {
   const dataStr = JSON.stringify(scenarioManager, null, 2); // Prettify JSON
@@ -64,6 +65,9 @@ export function loadFromFile(scenarioManager) {
 
         showDashboard(scenarioManager);
         alert("Escenarios cargados correctamente.");
+        
+        // Auto-save loaded data if user is authenticated
+        apiService.scheduleAutoSave(scenarioManager);
       } catch (error) {
         alert("Error al subir el archivo: " + error.message);
       }

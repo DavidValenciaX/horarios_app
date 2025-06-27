@@ -1,5 +1,6 @@
 import { TimeTable } from "./classes.js";
 import { updateCombinedSchedules } from "./combinations.js";
+import { apiService } from "./api.js";
 
 export function createScheduleTable() {
   const table = document.createElement("table");
@@ -54,34 +55,34 @@ export function createInitialTable(scenarioManager) {
       const cell = row.cells[j];
       
       // Touch and mouse events
-      cell.addEventListener("mousedown", (e) => {
+      cell.addEventListener("mousedown", async (e) => {
         e.preventDefault();
         isDragging = true;
         dragValue = !cell.classList.contains("selected");
-        toggleCell(scenarioManager, e.target, dragValue);
+        await toggleCell(scenarioManager, e.target, dragValue);
       });
       
-      cell.addEventListener("mouseover", (e) => {
+      cell.addEventListener("mouseover", async (e) => {
         if (isDragging && dragValue !== null) {
-          toggleCell(scenarioManager, e.target, dragValue);
+          await toggleCell(scenarioManager, e.target, dragValue);
         }
       });
 
       // Touch events for mobile
-      cell.addEventListener("touchstart", (e) => {
+      cell.addEventListener("touchstart", async (e) => {
         e.preventDefault();
         isDragging = true;
         dragValue = !cell.classList.contains("selected");
-        toggleCell(scenarioManager, e.target, dragValue);
+        await toggleCell(scenarioManager, e.target, dragValue);
       });
 
-      cell.addEventListener("touchmove", (e) => {
+      cell.addEventListener("touchmove", async (e) => {
         e.preventDefault();
         if (isDragging && dragValue !== null) {
           const touch = e.touches[0];
           const element = document.elementFromPoint(touch.clientX, touch.clientY);
           if (element && element.tagName === 'TD' && element !== e.target) {
-            toggleCell(scenarioManager, element, dragValue);
+            await toggleCell(scenarioManager, element, dragValue);
           }
         }
       });
@@ -99,7 +100,7 @@ export function createInitialTable(scenarioManager) {
   window.addEventListener("touchcancel", stopDragging);
 }
 
-function toggleCell(scenarioManager, cell, forceValue = null) {
+async function toggleCell(scenarioManager, cell, forceValue = null) {
   const activeScenario = scenarioManager.getActiveScenario();
   if (!activeScenario) return;
   const activityManager = activeScenario.activityManager;
@@ -140,7 +141,7 @@ function toggleCell(scenarioManager, cell, forceValue = null) {
   }
 
   saveScheduleOption(scenarioManager);
-  updateCombinedSchedules(scenarioManager);
+  await updateCombinedSchedules(scenarioManager);
 }
 
 function saveScheduleOption(scenarioManager) {
@@ -171,6 +172,9 @@ function saveScheduleOption(scenarioManager) {
       }
     }
   }
+  
+  // Auto-save when schedule option is modified
+  apiService.scheduleAutoSave(scenarioManager);
 }
 
 export function loadScheduleOption(scenarioManager) {

@@ -4,6 +4,7 @@ import generatePastelColor from "./colors.js";
 import "./components/eye-open-icon.js";
 import "./components/eye-off-icon.js";
 import "./components/arrow-left-icon.js";
+import { apiService } from "./api.js";
 
 const DOM = {
   dashboard: document.getElementById("dashboard"),
@@ -23,7 +24,7 @@ export function showDashboard(scenarioManager) {
   renderDashboard(scenarioManager);
 }
 
-export function showPlanningView(scenarioManager) {
+export async function showPlanningView(scenarioManager) {
   const activeScenario = scenarioManager.getActiveScenario();
   if (!activeScenario) {
     showDashboard(scenarioManager);
@@ -36,7 +37,7 @@ export function showPlanningView(scenarioManager) {
   createInitialTable(scenarioManager);
   updateActivitiesAndScheduleOptions(scenarioManager);
   loadScheduleOption(scenarioManager);
-  updateCombinedSchedules(scenarioManager);
+  await updateCombinedSchedules(scenarioManager);
 }
 
 function renderDashboard(scenarioManager) {
@@ -69,9 +70,9 @@ function renderDashboard(scenarioManager) {
     scenarioCard.appendChild(deleteButton);
     
     // Add click handler to the card content only
-    cardContent.addEventListener("click", () => {
+    cardContent.addEventListener("click", async () => {
       scenarioManager.setActiveScenario(index);
-      showPlanningView(scenarioManager);
+      await showPlanningView(scenarioManager);
     });
 
     DOM.scenarioList.appendChild(scenarioCard);
@@ -117,22 +118,22 @@ export function updateActivitiesAndScheduleOptions(scenarioManager) {
       toggleBtn.classList.add("inactive");
       activityChip.classList.add("inactive");
     }
-    toggleBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      deactivateActivity(scenarioManager, activityIndex);
-    });
+          toggleBtn.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        await deactivateActivity(scenarioManager, activityIndex);
+      });
 
     // Delete button
     const deleteBtn = document.createElement("button");
     deleteBtn.className = "chip-action-btn delete-btn";
     deleteBtn.setAttribute("aria-label", "Eliminar actividad");
     deleteBtn.textContent = "×";
-    deleteBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      if (confirm(`¿Estás seguro de que quieres eliminar "${activity.name}"?`)) {
-        deleteActivity(scenarioManager, activityIndex);
-      }
-    });
+          deleteBtn.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        if (confirm(`¿Estás seguro de que quieres eliminar "${activity.name}"?`)) {
+          await deleteActivity(scenarioManager, activityIndex);
+        }
+      });
 
     activityActions.appendChild(toggleBtn);
     activityActions.appendChild(deleteBtn);
@@ -175,9 +176,9 @@ export function updateActivitiesAndScheduleOptions(scenarioManager) {
       if (!scheduleOption.isActive) {
         toggleOptionBtn.classList.add("inactive");
       }
-      toggleOptionBtn.addEventListener("click", (e) => {
+      toggleOptionBtn.addEventListener("click", async (e) => {
         e.stopPropagation();
-        deactivateScheduleOption(scenarioManager, activityIndex, scheduleOptionIndex);
+        await deactivateScheduleOption(scenarioManager, activityIndex, scheduleOptionIndex);
       });
 
       // Delete button for schedule option
@@ -185,10 +186,10 @@ export function updateActivitiesAndScheduleOptions(scenarioManager) {
       deleteOptionBtn.className = "chip-action-btn delete-btn";
       deleteOptionBtn.setAttribute("aria-label", "Eliminar opción de horario");
       deleteOptionBtn.textContent = "×";
-      deleteOptionBtn.addEventListener("click", (e) => {
+      deleteOptionBtn.addEventListener("click", async (e) => {
         e.stopPropagation();
         if (confirm(`¿Estás seguro de que quieres eliminar la Opción ${scheduleOptionIndex + 1}?`)) {
-          deleteScheduleOption(scenarioManager, activityIndex, scheduleOptionIndex);
+          await deleteScheduleOption(scenarioManager, activityIndex, scheduleOptionIndex);
         }
       });
 
@@ -248,16 +249,21 @@ export function createActivity(scenarioManager) {
   );
 
   DOM.newActivityName.value = "";
+  
+  // Auto-save when creating activity
+  apiService.scheduleAutoSave(scenarioManager);
 }
 
-function deactivateActivity(scenarioManager, activityIndex) {
+async function deactivateActivity(scenarioManager, activityIndex) {
   const activityManager = scenarioManager.getActiveScenario().activityManager;
   activityManager.activities[activityIndex].deactivate();
-  updateCombinedSchedules(scenarioManager);
+  await updateCombinedSchedules(scenarioManager);
   updateActivitiesAndScheduleOptions(scenarioManager);
+  // Auto-save when deactivating activity
+  apiService.scheduleAutoSave(scenarioManager);
 }
 
-function deleteActivity(scenarioManager, activityIndex) {
+async function deleteActivity(scenarioManager, activityIndex) {
   const activityManager = scenarioManager.getActiveScenario().activityManager;
   let isAnyScheduleOptionEditing = activityManager.activities[
     activityIndex
@@ -269,8 +275,10 @@ function deleteActivity(scenarioManager, activityIndex) {
     editingScheduleOption(scenarioManager, newActivityIndex, 0);
   }
 
-  updateCombinedSchedules(scenarioManager);
+  await updateCombinedSchedules(scenarioManager);
   updateActivitiesAndScheduleOptions(scenarioManager);
+  // Auto-save when deleting activity
+  apiService.scheduleAutoSave(scenarioManager);
 }
 
 function addScheduleOption(scenarioManager, activityIndex) {
@@ -279,9 +287,11 @@ function addScheduleOption(scenarioManager, activityIndex) {
     activityManager.activities[activityIndex].addScheduleOption();
   updateActivitiesAndScheduleOptions(scenarioManager);
   editingScheduleOption(scenarioManager, activityIndex, scheduleOptionIndex);
+  // Auto-save when adding schedule option
+  apiService.scheduleAutoSave(scenarioManager);
 }
 
-function deactivateScheduleOption(
+async function deactivateScheduleOption(
   scenarioManager,
   activityIndex,
   scheduleOptionIndex
@@ -290,11 +300,13 @@ function deactivateScheduleOption(
   activityManager.activities[activityIndex].scheduleOptions[
     scheduleOptionIndex
   ].deactivate();
-  updateCombinedSchedules(scenarioManager);
+  await updateCombinedSchedules(scenarioManager);
   updateActivitiesAndScheduleOptions(scenarioManager);
+  // Auto-save when deactivating schedule option
+  apiService.scheduleAutoSave(scenarioManager);
 }
 
-function deleteScheduleOption(
+async function deleteScheduleOption(
   scenarioManager,
   activityIndex,
   scheduleOptionIndex
@@ -327,8 +339,10 @@ function deleteScheduleOption(
     }
   }
 
-  updateCombinedSchedules(scenarioManager);
+  await updateCombinedSchedules(scenarioManager);
   updateActivitiesAndScheduleOptions(scenarioManager);
+  // Auto-save when deleting schedule option
+  apiService.scheduleAutoSave(scenarioManager);
 }
 
 export function editingScheduleOption(

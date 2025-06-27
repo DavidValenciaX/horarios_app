@@ -1,8 +1,9 @@
 import { TimeTable } from "./classes.js";
 import { createScheduleTable } from "./createTables.js";
 import { toPng } from "html-to-image";
+import { apiService } from "./api.js";
 
-export function generateCombinedSchedules(scenarioManager) {
+export async function generateCombinedSchedules(scenarioManager) {
   const activeScenario = scenarioManager.getActiveScenario();
   if (!activeScenario) return;
   const activityManager = activeScenario.activityManager;
@@ -18,7 +19,25 @@ export function generateCombinedSchedules(scenarioManager) {
     return;
   }
 
-  const combinedSchedules = getAllCombinations(activeActivities, 0);
+  // Try server-side generation first, fallback to client-side
+  let combinedSchedules;
+  try {
+    const serverCombinations = await apiService.generateCombinations(
+      activeActivities, 
+      TimeTable.days, 
+      TimeTable.timeSlots
+    );
+    
+    if (serverCombinations) {
+      combinedSchedules = serverCombinations;
+    } else {
+      // Fallback to client-side generation
+      combinedSchedules = getAllCombinations(activeActivities, 0);
+    }
+  } catch (error) {
+    console.warn('Server-side combination generation failed, using client-side:', error);
+    combinedSchedules = getAllCombinations(activeActivities, 0);
+  }
 
   combinedSchedules.forEach((combinedSchedule, index) => {
     const table = createScheduleTable();
@@ -165,7 +184,7 @@ export function toggleConflictSchedules() {
   }
 }
 
-export function updateCombinedSchedules(scenarioManager) {
+export async function updateCombinedSchedules(scenarioManager) {
   const activeScenario = scenarioManager.getActiveScenario();
   if (!activeScenario) return;
 
@@ -173,6 +192,6 @@ export function updateCombinedSchedules(scenarioManager) {
     "combinedSchedulesContainer"
   );
   if (combinedSchedulesContainer.innerHTML !== "") {
-    generateCombinedSchedules(scenarioManager);
+    await generateCombinedSchedules(scenarioManager);
   }
 }
