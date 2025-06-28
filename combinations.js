@@ -3,17 +3,17 @@ import { createScheduleTable } from "./createTables.js";
 import { toPng } from "html-to-image";
 import { apiService } from "./api.js";
 
-export async function generateCombinedSchedules(scenarioManager) {
-  const activeScenario = scenarioManager.getActiveScenario();
-  if (!activeScenario) return;
-  const activityManager = activeScenario.activityManager;
+export async function generateCombinedSchedules(scheduleManager) {
+  const activeSchedule = scheduleManager.getActiveSchedule();
+  if (!activeSchedule) return;
+  const activityManager = activeSchedule.activityManager;
 
   const combinedSchedulesContainer = document.getElementById(
     "combinedSchedulesContainer"
   );
   combinedSchedulesContainer.innerHTML = "";
 
-  const activeActivities = getActiveActivitiesAndScheduleOptions(activityManager);
+  const activeActivities = getActiveActivitiesAndActivityScheduleOptions(activityManager);
 
   if (activeActivities.length === 0) {
     return;
@@ -82,17 +82,17 @@ export async function generateCombinedSchedules(scenarioManager) {
   toggleConflictSchedules();
 }
 
-function getActiveActivitiesAndScheduleOptions(activityManager) {
+function getActiveActivitiesAndActivityScheduleOptions(activityManager) {
   let activeActivities = [];
   activityManager.activities.forEach((activity) => {
     if (activity.isActive) {
-      const activeScheduleOptions = activity.scheduleOptions.filter(
-        (option) => option.isActive && !isScheduleOptionEmpty(option)
+      const activeActivityScheduleOptions = activity.activityScheduleOptions.filter(
+        (option) => option.isActive && !isActivityScheduleOptionEmpty(option)
       );
-      if (activeScheduleOptions.length > 0) {
+      if (activeActivityScheduleOptions.length > 0) {
         activeActivities.push({
           name: activity.name,
-          scheduleOptions: activeScheduleOptions,
+          activityScheduleOptions: activeActivityScheduleOptions,
           color: activity.color,
         });
       }
@@ -101,8 +101,8 @@ function getActiveActivitiesAndScheduleOptions(activityManager) {
   return activeActivities;
 }
 
-function isScheduleOptionEmpty(scheduleOption) {
-  return !Object.values(scheduleOption.timeTable).some((day) =>
+function isActivityScheduleOptionEmpty(activityScheduleOption) {
+  return !Object.values(activityScheduleOption.timeTable).some((day) =>
     Object.values(day).some((slot) => slot)
   );
 }
@@ -119,12 +119,12 @@ function getAllCombinations(
   }
 
   const activity = activities[index];
-  for (const scheduleOption of activity.scheduleOptions) {
+  for (const activityScheduleOption of activity.activityScheduleOptions) {
     currentCombination.push({
-      ...scheduleOption,
+      ...activityScheduleOption,
       name: activity.name,
       color: activity.color,
-      totalScheduleOptions: activity.scheduleOptions.length,
+      totalActivityScheduleOptions: activity.activityScheduleOptions.length,
     });
     getAllCombinations(activities, index + 1, currentCombination, allCombinations);
     currentCombination.pop();
@@ -154,7 +154,7 @@ function populateScheduleTable(table, schedules) {
         }
         cell.innerHTML = schedulesInCell
           .map((schedule) =>
-            schedule.totalScheduleOptions > 1
+            schedule.totalActivityScheduleOptions > 1
               ? `${schedule.name} H${schedule.index + 1}`
               : schedule.name
           )
@@ -184,14 +184,14 @@ export function toggleConflictSchedules() {
   }
 }
 
-export async function updateCombinedSchedules(scenarioManager) {
-  const activeScenario = scenarioManager.getActiveScenario();
-  if (!activeScenario) return;
+export async function updateCombinedSchedules(scheduleManager) {
+  const activeSchedule = scheduleManager.getActiveSchedule();
+  if (!activeSchedule) return;
 
   const combinedSchedulesContainer = document.getElementById(
     "combinedSchedulesContainer"
   );
   if (combinedSchedulesContainer.innerHTML !== "") {
-    await generateCombinedSchedules(scenarioManager);
+    await generateCombinedSchedules(scheduleManager);
   }
 }

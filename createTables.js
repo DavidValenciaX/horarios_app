@@ -30,7 +30,7 @@ function createTable(table) {
 let isDragging = false;
 let dragValue = null; // Track whether we're adding or removing cells
 
-export function createInitialTable(scenarioManager) {
+export function createInitialTable(scheduleManager) {
   const tableContainer = document.getElementById(
     "scheduleOptionTableContainer"
   );
@@ -59,12 +59,12 @@ export function createInitialTable(scenarioManager) {
         e.preventDefault();
         isDragging = true;
         dragValue = !cell.classList.contains("selected");
-        await toggleCell(scenarioManager, e.target, dragValue);
+        await toggleCell(scheduleManager, e.target, dragValue);
       });
       
       cell.addEventListener("mouseover", async (e) => {
         if (isDragging && dragValue !== null) {
-          await toggleCell(scenarioManager, e.target, dragValue);
+          await toggleCell(scheduleManager, e.target, dragValue);
         }
       });
 
@@ -73,7 +73,7 @@ export function createInitialTable(scenarioManager) {
         e.preventDefault();
         isDragging = true;
         dragValue = !cell.classList.contains("selected");
-        await toggleCell(scenarioManager, e.target, dragValue);
+        await toggleCell(scheduleManager, e.target, dragValue);
       });
 
       cell.addEventListener("touchmove", async (e) => {
@@ -82,7 +82,7 @@ export function createInitialTable(scenarioManager) {
           const touch = e.touches[0];
           const element = document.elementFromPoint(touch.clientX, touch.clientY);
           if (element && element.tagName === 'TD' && element !== e.target) {
-            await toggleCell(scenarioManager, element, dragValue);
+            await toggleCell(scheduleManager, element, dragValue);
           }
         }
       });
@@ -100,24 +100,24 @@ export function createInitialTable(scenarioManager) {
   window.addEventListener("touchcancel", stopDragging);
 }
 
-async function toggleCell(scenarioManager, cell, forceValue = null) {
-  const activeScenario = scenarioManager.getActiveScenario();
-  if (!activeScenario) return;
-  const activityManager = activeScenario.activityManager;
+async function toggleCell(scheduleManager, cell, forceValue = null) {
+  const activeSchedule = scheduleManager.getActiveSchedule();
+  if (!activeSchedule) return;
+  const activityManager = activeSchedule.activityManager;
 
-  let editingScheduleOption;
+  let editingActivityScheduleOption;
   let editingActivity;
 
   activityManager.activities.forEach((activity) => {
-    activity.scheduleOptions.forEach((scheduleOption) => {
-      if (scheduleOption.isEditing) {
-        editingScheduleOption = scheduleOption;
+    activity.activityScheduleOptions.forEach((activityScheduleOption) => {
+      if (activityScheduleOption.isEditing) {
+        editingActivityScheduleOption = activityScheduleOption;
         editingActivity = activity;
       }
     });
   });
 
-  if (!editingScheduleOption) {
+  if (!editingActivityScheduleOption) {
     alert("Selecciona primero una actividad y una opción de horario");
     return;
   }
@@ -140,55 +140,55 @@ async function toggleCell(scenarioManager, cell, forceValue = null) {
     cell.style.backgroundColor = "";
   }
 
-  saveScheduleOption(scenarioManager);
-  await updateCombinedSchedules(scenarioManager);
+  saveActivityScheduleOption(scheduleManager);
+  await updateCombinedSchedules(scheduleManager);
 }
 
-function saveScheduleOption(scenarioManager) {
-  const activeScenario = scenarioManager.getActiveScenario();
-  if (!activeScenario) return;
-  const activityManager = activeScenario.activityManager;
+function saveActivityScheduleOption(scheduleManager) {
+  const activeSchedule = scheduleManager.getActiveSchedule();
+  if (!activeSchedule) return;
+  const activityManager = activeSchedule.activityManager;
 
-  let editingScheduleOption;
+  let editingActivityScheduleOption;
   activityManager.activities.forEach((activity) => {
-    activity.scheduleOptions.forEach((scheduleOption) => {
-      if (scheduleOption.isEditing) {
-        editingScheduleOption = scheduleOption;
+    activity.activityScheduleOptions.forEach((activityScheduleOption) => {
+      if (activityScheduleOption.isEditing) {
+        editingActivityScheduleOption = activityScheduleOption;
       }
     });
   });
 
-  if (!editingScheduleOption) return;
+  if (!editingActivityScheduleOption) return;
 
   const table = document.getElementById("scheduleOptionTable");
-  editingScheduleOption.timeTable = TimeTable.initializeTimeTable(); // Reiniciar
+  editingActivityScheduleOption.timeTable = TimeTable.initializeTimeTable(); // Reiniciar
 
   for (let i = 1; i < table.rows.length; i++) {
     for (let j = 1; j < table.rows[i].cells.length; j++) {
       if (table.rows[i].cells[j].classList.contains("selected")) {
         const day = TimeTable.days[j - 1];
         const timeSlot = TimeTable.timeSlots[i - 1];
-        editingScheduleOption.timeTable[day][timeSlot] = true;
+        editingActivityScheduleOption.timeTable[day][timeSlot] = true;
       }
     }
   }
   
-  // Auto-save when schedule option is modified
-  apiService.scheduleAutoSave(scenarioManager);
+  // Auto-save when activity schedule option is modified
+  apiService.scheduleAutoSave(scheduleManager);
 }
 
-export function loadScheduleOption(scenarioManager) {
-  const activeScenario = scenarioManager.getActiveScenario();
-  if (!activeScenario) return;
-  const activityManager = activeScenario.activityManager;
+export function loadActivityScheduleOption(scheduleManager) {
+  const activeSchedule = scheduleManager.getActiveSchedule();
+  if (!activeSchedule) return;
+  const activityManager = activeSchedule.activityManager;
 
-  let editingScheduleOption;
+  let editingActivityScheduleOption;
   let editingActivity;
 
   activityManager.activities.forEach((activity) => {
-    activity.scheduleOptions.forEach((scheduleOption) => {
-      if (scheduleOption.isEditing) {
-        editingScheduleOption = scheduleOption;
+    activity.activityScheduleOptions.forEach((activityScheduleOption) => {
+      if (activityScheduleOption.isEditing) {
+        editingActivityScheduleOption = activityScheduleOption;
         editingActivity = activity;
       }
     });
@@ -212,13 +212,13 @@ export function loadScheduleOption(scenarioManager) {
       const timeSlot = TimeTable.timeSlots[i - 1];
 
       const isSelected =
-        editingScheduleOption?.timeTable[day]?.[timeSlot] === true;
+        editingActivityScheduleOption?.timeTable[day]?.[timeSlot] === true;
 
       cell.classList.toggle("selected", isSelected);
       cell.style.backgroundColor = isSelected ? editingActivity?.color : "";
       
       // Add editing highlight to show which activity is being edited
-      if (editingScheduleOption) {
+      if (editingActivityScheduleOption) {
         cell.classList.add("editing-highlight");
       }
     }

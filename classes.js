@@ -41,7 +41,7 @@ export class TimeTable {
   }
 }
 
-class ScheduleOption {
+class ActivityScheduleOption {
   constructor(index) {
     this.index = index;
     this.timeTable = TimeTable.initializeTimeTable();
@@ -62,11 +62,11 @@ class ScheduleOption {
   }
 
   static fromJSON(data) {
-    let scheduleOption = new ScheduleOption(data.index);
-    scheduleOption.timeTable = data.timeTable;
-    scheduleOption.isActive = data.isActive;
-    scheduleOption.isEditing = data.isEditing;
-    return scheduleOption;
+    let activityScheduleOption = new ActivityScheduleOption(data.index);
+    activityScheduleOption.timeTable = data.timeTable;
+    activityScheduleOption.isActive = data.isActive;
+    activityScheduleOption.isEditing = data.isEditing;
+    return activityScheduleOption;
   }
 }
 
@@ -74,39 +74,39 @@ class Activity {
   constructor(name, color) {
     this.name = name;
     this.color = color;
-    this.scheduleOptions = [new ScheduleOption(0)];
+    this.activityScheduleOptions = [new ActivityScheduleOption(0)];
     this.isActive = true;
   }
 
-  addScheduleOption() {
-    this.scheduleOptions.forEach((scheduleOption) => {
-      scheduleOption.stopEditing();
+  addActivityScheduleOption() {
+    this.activityScheduleOptions.forEach((activityScheduleOption) => {
+      activityScheduleOption.stopEditing();
     });
-    this.scheduleOptions.push(new ScheduleOption(this.scheduleOptions.length));
-    return this.scheduleOptions.length - 1;
+    this.activityScheduleOptions.push(new ActivityScheduleOption(this.activityScheduleOptions.length));
+    return this.activityScheduleOptions.length - 1;
   }
 
   deactivate() {
     this.isActive = !this.isActive;
-    this.scheduleOptions.forEach(
-      (scheduleOption) => (scheduleOption.isActive = this.isActive)
+    this.activityScheduleOptions.forEach(
+      (activityScheduleOption) => (activityScheduleOption.isActive = this.isActive)
     );
   }
 
-  deleteScheduleOption(scheduleOptionIndex) {
-    this.scheduleOptions.splice(scheduleOptionIndex, 1);
+  deleteActivityScheduleOption(activityScheduleOptionIndex) {
+    this.activityScheduleOptions.splice(activityScheduleOptionIndex, 1);
 
     // Se retorna el nuevo horario a ser editado
-    let newScheduleOptionIndex =
-      scheduleOptionIndex > 0 ? scheduleOptionIndex - 1 : 0;
+    let newActivityScheduleOptionIndex =
+      activityScheduleOptionIndex > 0 ? activityScheduleOptionIndex - 1 : 0;
 
-    return newScheduleOptionIndex;
+    return newActivityScheduleOptionIndex;
   }
 
   static fromJSON(data) {
     let activity = new Activity(data.name, data.color);
-    activity.scheduleOptions = data.scheduleOptions.map(
-      ScheduleOption.fromJSON
+    activity.activityScheduleOptions = data.activityScheduleOptions.map(
+      ActivityScheduleOption.fromJSON
     );
     activity.isActive = data.isActive;
     return activity;
@@ -120,8 +120,8 @@ export class ActivityManager {
 
   addActivity(name, color) {
     this.activities.forEach((activity) => {
-      activity.scheduleOptions.forEach((scheduleOption) => {
-        scheduleOption.stopEditing();
+      activity.activityScheduleOptions.forEach((activityScheduleOption) => {
+        activityScheduleOption.stopEditing();
       });
     });
     this.activities.push(new Activity(name, color));
@@ -143,61 +143,61 @@ export class ActivityManager {
   }
 }
 
-export class Scenario {
+export class Schedule {
   constructor(name) {
     this.name = name;
     this.activityManager = new ActivityManager();
   }
 
   static fromJSON(data) {
-    const scenario = new Scenario(data.name);
-    scenario.activityManager = ActivityManager.fromJSON(data.activityManager);
-    return scenario;
+    const schedule = new Schedule(data.name);
+    schedule.activityManager = ActivityManager.fromJSON(data.activityManager);
+    return schedule;
   }
 }
 
-export class ScenarioManager {
+export class ScheduleManager {
   constructor() {
-    this.scenarios = [];
-    this.activeScenarioIndex = -1;
+    this.schedules = [];
+    this.activeScheduleIndex = -1;
   }
 
-  addScenario(name) {
-    const newScenario = new Scenario(name);
-    this.scenarios.push(newScenario);
-    this.activeScenarioIndex = this.scenarios.length - 1;
-    return this.activeScenarioIndex;
+  addSchedule(name) {
+    const newSchedule = new Schedule(name);
+    this.schedules.push(newSchedule);
+    this.activeScheduleIndex = this.schedules.length - 1;
+    return this.activeScheduleIndex;
   }
 
-  deleteScenario(index) {
-    this.scenarios.splice(index, 1);
-    if (this.activeScenarioIndex === index) {
-      this.activeScenarioIndex = -1;
-    } else if (this.activeScenarioIndex > index) {
-      this.activeScenarioIndex--;
+  deleteSchedule(index) {
+    this.schedules.splice(index, 1);
+    if (this.activeScheduleIndex === index) {
+      this.activeScheduleIndex = -1;
+    } else if (this.activeScheduleIndex > index) {
+      this.activeScheduleIndex--;
     }
   }
 
-  setActiveScenario(index) {
-    this.activeScenarioIndex = index;
+  setActiveSchedule(index) {
+    this.activeScheduleIndex = index;
   }
 
-  getActiveScenario() {
+  getActiveSchedule() {
     if (
-      this.activeScenarioIndex < 0 ||
-      this.activeScenarioIndex >= this.scenarios.length
+      this.activeScheduleIndex < 0 ||
+      this.activeScheduleIndex >= this.schedules.length
     ) {
       return null;
     }
-    return this.scenarios[this.activeScenarioIndex];
+    return this.schedules[this.activeScheduleIndex];
   }
 
   static fromJSON(data) {
-    const scenarioManager = new ScenarioManager();
-    if (data && Array.isArray(data.scenarios)) {
-      scenarioManager.scenarios = data.scenarios.map(Scenario.fromJSON);
+    const scheduleManager = new ScheduleManager();
+    if (data && Array.isArray(data.schedules)) {
+      scheduleManager.schedules = data.schedules.map(Schedule.fromJSON);
     }
-    scenarioManager.activeScenarioIndex = -1;
-    return scenarioManager;
+    scheduleManager.activeScheduleIndex = -1;
+    return scheduleManager;
   }
 }

@@ -1,4 +1,4 @@
-import { ScenarioManager } from "./classes.js";
+import { ScheduleManager } from "./classes.js";
 import {
   toggleConflictSchedules,
   generateCombinedSchedules,
@@ -12,7 +12,7 @@ import { saveToFile, loadFromFile } from "./files.js";
 import { apiService } from "./api.js";
 import { authComponent } from "./auth.js";
 
-function initDashboardListeners(scenarioManager) {
+function initDashboardListeners(scheduleManager) {
   const createButton = document.getElementById("create-scenario-button");
   const nameInput = document.getElementById("new-scenario-name");
   const saveButton = document.getElementById("save-all-button");
@@ -21,60 +21,60 @@ function initDashboardListeners(scenarioManager) {
   createButton.addEventListener("click", async () => {
     const name = nameInput.value.trim();
     if (name) {
-      scenarioManager.addScenario(name);
+      scheduleManager.addSchedule(name);
       nameInput.value = "";
-      // Auto-save when creating new scenario
-      apiService.scheduleAutoSave(scenarioManager);
-      await showPlanningView(scenarioManager);
+      // Auto-save when creating new schedule
+      apiService.scheduleAutoSave(scheduleManager);
+      await showPlanningView(scheduleManager);
     } else {
-      alert("Por favor, introduce un nombre para el escenario.");
+      alert("Por favor, introduce un nombre para el horario.");
     }
   });
 
-  saveButton.addEventListener("click", () => saveToFile(scenarioManager));
-  fileInput.addEventListener("change", () => loadFromFile(scenarioManager));
+  saveButton.addEventListener("click", () => saveToFile(scheduleManager));
+  fileInput.addEventListener("change", () => loadFromFile(scheduleManager));
 }
 
-function initPlanningViewListeners(scenarioManager) {
+function initPlanningViewListeners(scheduleManager) {
   document
     .getElementById("createActivityButton")
-    .addEventListener("click", () => createActivity(scenarioManager));
+    .addEventListener("click", () => createActivity(scheduleManager));
   document
     .getElementById("generateCombinedSchedulesButton")
-    .addEventListener("click", async () => await generateCombinedSchedules(scenarioManager));
+    .addEventListener("click", async () => await generateCombinedSchedules(scheduleManager));
   document
     .getElementById("toggleConflicts")
     .addEventListener("change", toggleConflictSchedules);
   document
     .getElementById("back-to-dashboard-button")
-    .addEventListener("click", async () => showDashboard(scenarioManager));
+    .addEventListener("click", async () => showDashboard(scheduleManager));
 }
 
 async function initApp() {
-  const scenarioManager = new ScenarioManager();
+  const scheduleManager = new ScheduleManager();
   
   // Initialize authentication UI
   authComponent.initAuthUI();
   
   // Try to load user's data from server if authenticated
-  await loadUserDataIfAuthenticated(scenarioManager);
+  await loadUserDataIfAuthenticated(scheduleManager);
   
-  initDashboardListeners(scenarioManager);
-  initPlanningViewListeners(scenarioManager);
+  initDashboardListeners(scheduleManager);
+  initPlanningViewListeners(scheduleManager);
   
   // Set up auto-save triggers
-  setupAutoSaveTriggers(scenarioManager);
+  setupAutoSaveTriggers(scheduleManager);
   
   // Set up auth change listener
   authComponent.onAuthChange(async () => {
-    await loadUserDataIfAuthenticated(scenarioManager);
-    showDashboard(scenarioManager);
+    await loadUserDataIfAuthenticated(scheduleManager);
+    showDashboard(scheduleManager);
   });
   
-  showDashboard(scenarioManager);
+  showDashboard(scheduleManager);
 }
 
-async function loadUserDataIfAuthenticated(scenarioManager) {
+async function loadUserDataIfAuthenticated(scheduleManager) {
   if (apiService.isAuthenticated()) {
     try {
       // Try to get current user info
@@ -82,41 +82,41 @@ async function loadUserDataIfAuthenticated(scenarioManager) {
       if (user) {
         // Load schedule data from server
         const scheduleData = await apiService.loadScheduleData();
-        if (scheduleData?.scenarios) {
-          // Merge server data with scenario manager
-          Object.assign(scenarioManager, ScenarioManager.fromJSON(scheduleData));
+        if (scheduleData?.schedules) {
+          // Merge server data with schedule manager
+          Object.assign(scheduleManager, ScheduleManager.fromJSON(scheduleData));
         }
       }
     } catch (error) {
       console.error('Error loading user data:', error);
     }
   } else {
-    // User is not authenticated, clear all scenario data
-    scenarioManager.scenarios = [];
-    scenarioManager.activeScenarioIndex = -1;
+    // User is not authenticated, clear all schedule data
+    scheduleManager.schedules = [];
+    scheduleManager.activeScheduleIndex = -1;
   }
 }
 
-function setupAutoSaveTriggers(scenarioManager) {
-  // Override ScenarioManager methods to trigger auto-save
-  const originalAddScenario = scenarioManager.addScenario.bind(scenarioManager);
-  const originalDeleteScenario = scenarioManager.deleteScenario.bind(scenarioManager);
-  const originalSetActiveScenario = scenarioManager.setActiveScenario.bind(scenarioManager);
+function setupAutoSaveTriggers(scheduleManager) {
+  // Override ScheduleManager methods to trigger auto-save
+  const originalAddSchedule = scheduleManager.addSchedule.bind(scheduleManager);
+  const originalDeleteSchedule = scheduleManager.deleteSchedule.bind(scheduleManager);
+  const originalSetActiveSchedule = scheduleManager.setActiveSchedule.bind(scheduleManager);
 
-  scenarioManager.addScenario = function(name) {
-    const result = originalAddScenario(name);
+  scheduleManager.addSchedule = function(name) {
+    const result = originalAddSchedule(name);
     apiService.scheduleAutoSave(this);
     return result;
   };
 
-  scenarioManager.deleteScenario = function(index) {
-    const result = originalDeleteScenario(index);
+  scheduleManager.deleteSchedule = function(index) {
+    const result = originalDeleteSchedule(index);
     apiService.scheduleAutoSave(this);
     return result;
   };
 
-  scenarioManager.setActiveScenario = function(index) {
-    const result = originalSetActiveScenario(index);
+  scheduleManager.setActiveSchedule = function(index) {
+    const result = originalSetActiveSchedule(index);
     apiService.scheduleAutoSave(this);
     return result;
   };

@@ -1,4 +1,4 @@
-import { createInitialTable, loadScheduleOption } from "./createTables.js";
+import { createInitialTable, loadActivityScheduleOption } from "./createTables.js";
 import { updateCombinedSchedules } from "./combinations.js";
 import generatePastelColor from "./colors.js";
 import "./components/eye-open-icon.js";
@@ -9,82 +9,82 @@ import { apiService } from "./api.js";
 const DOM = {
   dashboard: document.getElementById("dashboard"),
   mainContent: document.getElementById("main-content"),
-  scenarioList: document.getElementById("scenario-list"),
-  scenarioTitle: document.getElementById("scenario-title"),
-  activitiesAndScheduleOptionsDiv: document.getElementById(
+  scheduleList: document.getElementById("scenario-list"),
+  scheduleTitle: document.getElementById("scenario-title"),
+  activitiesAndActivityScheduleOptionsDiv: document.getElementById(
     "activitiesAndScheduleOptions"
   ),
   newActivityName: document.getElementById("newActivityName"),
   combinedSchedulesContainer: document.getElementById("combinedSchedulesContainer"),
 };
 
-export function showDashboard(scenarioManager) {
+export function showDashboard(scheduleManager) {
   DOM.dashboard.style.display = "block";
   DOM.mainContent.style.display = "none";
-  renderDashboard(scenarioManager);
+  renderDashboard(scheduleManager);
 }
 
-export async function showPlanningView(scenarioManager) {
-  const activeScenario = scenarioManager.getActiveScenario();
-  if (!activeScenario) {
-    showDashboard(scenarioManager);
+export async function showPlanningView(scheduleManager) {
+  const activeSchedule = scheduleManager.getActiveSchedule();
+  if (!activeSchedule) {
+    showDashboard(scheduleManager);
     return;
   }
   DOM.dashboard.style.display = "none";
   DOM.mainContent.style.display = "block";
-  DOM.scenarioTitle.textContent = activeScenario.name;
+  DOM.scheduleTitle.textContent = activeSchedule.name;
 
-  createInitialTable(scenarioManager);
-  updateActivitiesAndScheduleOptions(scenarioManager);
-  loadScheduleOption(scenarioManager);
-  await updateCombinedSchedules(scenarioManager);
+  createInitialTable(scheduleManager);
+  updateActivitiesAndActivityScheduleOptions(scheduleManager);
+  loadActivityScheduleOption(scheduleManager);
+  await updateCombinedSchedules(scheduleManager);
 }
 
-function renderDashboard(scenarioManager) {
-  DOM.scenarioList.innerHTML = "";
-  if (scenarioManager.scenarios.length === 0) {
-    DOM.scenarioList.innerHTML = "<p>No hay escenarios. ¡Crea uno nuevo!</p>";
+function renderDashboard(scheduleManager) {
+  DOM.scheduleList.innerHTML = "";
+  if (scheduleManager.schedules.length === 0) {
+    DOM.scheduleList.innerHTML = "<p>No hay horarios. ¡Crea uno nuevo!</p>";
   }
 
-  scenarioManager.scenarios.forEach((scenario, index) => {
-    const scenarioCard = document.createElement("div");
-    scenarioCard.className = "scenario-card";
+  scheduleManager.schedules.forEach((schedule, index) => {
+    const scheduleCard = document.createElement("div");
+    scheduleCard.className = "scenario-card";
     
     const cardContent = document.createElement("div");
     cardContent.className = "scenario-card-content";
-    cardContent.textContent = scenario.name;
+    cardContent.textContent = schedule.name;
     
     const deleteButton = document.createElement("button");
     deleteButton.textContent = "×";
     deleteButton.className = "delete-button";
-    deleteButton.setAttribute("aria-label", `Eliminar escenario ${scenario.name}`);
+    deleteButton.setAttribute("aria-label", `Eliminar horario ${schedule.name}`);
     deleteButton.onclick = (e) => {
       e.stopPropagation();
-      if (confirm(`¿Estás seguro de que quieres eliminar "${scenario.name}"?`)) {
-        scenarioManager.deleteScenario(index);
-        renderDashboard(scenarioManager);
+      if (confirm(`¿Estás seguro de que quieres eliminar "${schedule.name}"?`)) {
+        scheduleManager.deleteSchedule(index);
+        renderDashboard(scheduleManager);
       }
     };
 
-    scenarioCard.appendChild(cardContent);
-    scenarioCard.appendChild(deleteButton);
+    scheduleCard.appendChild(cardContent);
+    scheduleCard.appendChild(deleteButton);
     
     // Add click handler to the card content only
     cardContent.addEventListener("click", async () => {
-      scenarioManager.setActiveScenario(index);
-      await showPlanningView(scenarioManager);
+      scheduleManager.setActiveSchedule(index);
+      await showPlanningView(scheduleManager);
     });
 
-    DOM.scenarioList.appendChild(scenarioCard);
+    DOM.scheduleList.appendChild(scheduleCard);
   });
 }
 
-export function updateActivitiesAndScheduleOptions(scenarioManager) {
-  const activeScenario = scenarioManager.getActiveScenario();
-  if (!activeScenario) return;
-  const activityManager = activeScenario.activityManager;
+export function updateActivitiesAndActivityScheduleOptions(scheduleManager) {
+  const activeSchedule = scheduleManager.getActiveSchedule();
+  if (!activeSchedule) return;
+  const activityManager = activeSchedule.activityManager;
 
-  DOM.activitiesAndScheduleOptionsDiv.innerHTML = "";
+  DOM.activitiesAndActivityScheduleOptionsDiv.innerHTML = "";
 
   activityManager.activities.forEach((activity, activityIndex) => {
     const activityContainer = document.createElement("div");
@@ -120,7 +120,7 @@ export function updateActivitiesAndScheduleOptions(scenarioManager) {
     }
           toggleBtn.addEventListener("click", async (e) => {
         e.stopPropagation();
-        await deactivateActivity(scenarioManager, activityIndex);
+        await deactivateActivity(scheduleManager, activityIndex);
       });
 
     // Delete button
@@ -131,7 +131,7 @@ export function updateActivitiesAndScheduleOptions(scenarioManager) {
           deleteBtn.addEventListener("click", async (e) => {
         e.stopPropagation();
         if (confirm(`¿Estás seguro de que quieres eliminar "${activity.name}"?`)) {
-          await deleteActivity(scenarioManager, activityIndex);
+          await deleteActivity(scheduleManager, activityIndex);
         }
       });
 
@@ -141,91 +141,91 @@ export function updateActivitiesAndScheduleOptions(scenarioManager) {
     activityChip.appendChild(activityActions);
     activityHeader.appendChild(activityChip);
 
-    // Schedule options container
-    const scheduleOptionsContainer = document.createElement("div");
-    scheduleOptionsContainer.className = "schedule-options";
+    // Activity schedule options container
+    const activityScheduleOptionsContainer = document.createElement("div");
+    activityScheduleOptionsContainer.className = "schedule-options";
 
-    activity.scheduleOptions.forEach((scheduleOption, scheduleOptionIndex) => {
-      const scheduleOptionChip = document.createElement("div");
-      scheduleOptionChip.classList.add("chip");
+    activity.activityScheduleOptions.forEach((activityScheduleOption, activityScheduleOptionIndex) => {
+      const activityScheduleOptionChip = document.createElement("div");
+      activityScheduleOptionChip.classList.add("chip");
       
       const optionContent = document.createElement("div");
       optionContent.className = "chip-content";
-      optionContent.textContent = `Opción ${scheduleOptionIndex + 1}`;
+      optionContent.textContent = `Opción ${activityScheduleOptionIndex + 1}`;
 
       const optionActions = document.createElement("div");
       optionActions.className = "chip-actions";
 
-      if (scheduleOption.isEditing) {
-        scheduleOptionChip.classList.add("editing");
+      if (activityScheduleOption.isEditing) {
+        activityScheduleOptionChip.classList.add("editing");
       }
 
-      if (!scheduleOption.isActive) {
-        scheduleOptionChip.classList.add("inactive");
+      if (!activityScheduleOption.isActive) {
+        activityScheduleOptionChip.classList.add("inactive");
       }
 
-      // Toggle button for schedule option
+      // Toggle button for activity schedule option
       const toggleOptionBtn = document.createElement("button");
       toggleOptionBtn.className = "chip-action-btn toggle-btn";
-      toggleOptionBtn.setAttribute("aria-label", scheduleOption.isActive ? "Desactivar opción" : "Activar opción");
+      toggleOptionBtn.setAttribute("aria-label", activityScheduleOption.isActive ? "Desactivar opción" : "Activar opción");
       
-      const toggleOptionIcon = document.createElement(scheduleOption.isActive ? "eye-open-icon" : "eye-off-icon");
+      const toggleOptionIcon = document.createElement(activityScheduleOption.isActive ? "eye-open-icon" : "eye-off-icon");
       toggleOptionIcon.classList.add("icon");
       toggleOptionBtn.appendChild(toggleOptionIcon);
 
-      if (!scheduleOption.isActive) {
+      if (!activityScheduleOption.isActive) {
         toggleOptionBtn.classList.add("inactive");
       }
       toggleOptionBtn.addEventListener("click", async (e) => {
         e.stopPropagation();
-        await deactivateScheduleOption(scenarioManager, activityIndex, scheduleOptionIndex);
+        await deactivateActivityScheduleOption(scheduleManager, activityIndex, activityScheduleOptionIndex);
       });
 
-      // Delete button for schedule option
+      // Delete button for activity schedule option
       const deleteOptionBtn = document.createElement("button");
       deleteOptionBtn.className = "chip-action-btn delete-btn";
       deleteOptionBtn.setAttribute("aria-label", "Eliminar opción de horario");
       deleteOptionBtn.textContent = "×";
       deleteOptionBtn.addEventListener("click", async (e) => {
         e.stopPropagation();
-        if (confirm(`¿Estás seguro de que quieres eliminar la Opción ${scheduleOptionIndex + 1}?`)) {
-          await deleteScheduleOption(scenarioManager, activityIndex, scheduleOptionIndex);
+        if (confirm(`¿Estás seguro de que quieres eliminar la Opción ${activityScheduleOptionIndex + 1}?`)) {
+          await deleteActivityScheduleOption(scheduleManager, activityIndex, activityScheduleOptionIndex);
         }
       });
 
       optionActions.appendChild(toggleOptionBtn);
       optionActions.appendChild(deleteOptionBtn);
-      scheduleOptionChip.appendChild(optionContent);
-      scheduleOptionChip.appendChild(optionActions);
+      activityScheduleOptionChip.appendChild(optionContent);
+      activityScheduleOptionChip.appendChild(optionActions);
 
       // Click handler for editing
-      scheduleOptionChip.addEventListener("click", () => {
-        editingScheduleOption(scenarioManager, activityIndex, scheduleOptionIndex);
+      activityScheduleOptionChip.addEventListener("click", () => {
+        editingActivityScheduleOption(scheduleManager, activityIndex, activityScheduleOptionIndex);
       });
 
-      scheduleOptionsContainer.appendChild(scheduleOptionChip);
+      activityScheduleOptionsContainer.appendChild(activityScheduleOptionChip);
     });
 
-    // Add schedule option button
-    const addScheduleOptionChip = document.createElement("div");
-    addScheduleOptionChip.classList.add("chip", "add-scheduleOption");
-    addScheduleOptionChip.textContent = "+ Agregar Opción de Horario";
-    addScheduleOptionChip.addEventListener("click", () => {
-      addScheduleOption(scenarioManager, activityIndex);
+    // Add activity schedule option button
+    const addActivityScheduleOptionChip = document.createElement("div");
+    addActivityScheduleOptionChip.classList.add("chip", "add-scheduleOption");
+    addActivityScheduleOptionChip.textContent = "+ Agregar Opción de Horario";
+    addActivityScheduleOptionChip.addEventListener("click", () => {
+      addActivityScheduleOption(scheduleManager, activityIndex);
     });
 
-    scheduleOptionsContainer.appendChild(addScheduleOptionChip);
+    activityScheduleOptionsContainer.appendChild(addActivityScheduleOptionChip);
 
     activityContainer.appendChild(activityHeader);
-    activityContainer.appendChild(scheduleOptionsContainer);
-    DOM.activitiesAndScheduleOptionsDiv.appendChild(activityContainer);
+    activityContainer.appendChild(activityScheduleOptionsContainer);
+    DOM.activitiesAndActivityScheduleOptionsDiv.appendChild(activityContainer);
   });
 }
 
-export function createActivity(scenarioManager) {
-  const activeScenario = scenarioManager.getActiveScenario();
-  if (!activeScenario) return;
-  const activityManager = activeScenario.activityManager;
+export function createActivity(scheduleManager) {
+  const activeSchedule = scheduleManager.getActiveSchedule();
+  if (!activeSchedule) return;
+  const activityManager = activeSchedule.activityManager;
 
   const newActivityName = DOM.newActivityName.value.trim();
 
@@ -239,11 +239,11 @@ export function createActivity(scenarioManager) {
     generatePastelColor(newActivityName)
   );
 
-  updateActivitiesAndScheduleOptions(scenarioManager);
+  updateActivitiesAndActivityScheduleOptions(scheduleManager);
 
   // Poner la primera hora de clase de la nueva asignatura en estado de edición
-  editingScheduleOption(
-    scenarioManager,
+  editingActivityScheduleOption(
+    scheduleManager,
     activityManager.activities.length - 1,
     0
   );
@@ -251,124 +251,124 @@ export function createActivity(scenarioManager) {
   DOM.newActivityName.value = "";
   
   // Auto-save when creating activity
-  apiService.scheduleAutoSave(scenarioManager);
+  apiService.scheduleAutoSave(scheduleManager);
 }
 
-async function deactivateActivity(scenarioManager, activityIndex) {
-  const activityManager = scenarioManager.getActiveScenario().activityManager;
+async function deactivateActivity(scheduleManager, activityIndex) {
+  const activityManager = scheduleManager.getActiveSchedule().activityManager;
   activityManager.activities[activityIndex].deactivate();
-  await updateCombinedSchedules(scenarioManager);
-  updateActivitiesAndScheduleOptions(scenarioManager);
+  await updateCombinedSchedules(scheduleManager);
+  updateActivitiesAndActivityScheduleOptions(scheduleManager);
   // Auto-save when deactivating activity
-  apiService.scheduleAutoSave(scenarioManager);
+  apiService.scheduleAutoSave(scheduleManager);
 }
 
-async function deleteActivity(scenarioManager, activityIndex) {
-  const activityManager = scenarioManager.getActiveScenario().activityManager;
-  let isAnyScheduleOptionEditing = activityManager.activities[
+async function deleteActivity(scheduleManager, activityIndex) {
+  const activityManager = scheduleManager.getActiveSchedule().activityManager;
+  let isAnyActivityScheduleOptionEditing = activityManager.activities[
     activityIndex
-  ].scheduleOptions.some((scheduleOption) => scheduleOption.isEditing);
+  ].activityScheduleOptions.some((activityScheduleOption) => activityScheduleOption.isEditing);
   const newActivityIndex = activityManager.deleteActivity(activityIndex);
   if (activityManager.activities.length <= 0) {
-    createInitialTable(scenarioManager);
-  } else if (isAnyScheduleOptionEditing) {
-    editingScheduleOption(scenarioManager, newActivityIndex, 0);
+    createInitialTable(scheduleManager);
+  } else if (isAnyActivityScheduleOptionEditing) {
+    editingActivityScheduleOption(scheduleManager, newActivityIndex, 0);
   }
 
-  await updateCombinedSchedules(scenarioManager);
-  updateActivitiesAndScheduleOptions(scenarioManager);
+  await updateCombinedSchedules(scheduleManager);
+  updateActivitiesAndActivityScheduleOptions(scheduleManager);
   // Auto-save when deleting activity
-  apiService.scheduleAutoSave(scenarioManager);
+  apiService.scheduleAutoSave(scheduleManager);
 }
 
-function addScheduleOption(scenarioManager, activityIndex) {
-  const activityManager = scenarioManager.getActiveScenario().activityManager;
-  const scheduleOptionIndex =
-    activityManager.activities[activityIndex].addScheduleOption();
-  updateActivitiesAndScheduleOptions(scenarioManager);
-  editingScheduleOption(scenarioManager, activityIndex, scheduleOptionIndex);
-  // Auto-save when adding schedule option
-  apiService.scheduleAutoSave(scenarioManager);
+function addActivityScheduleOption(scheduleManager, activityIndex) {
+  const activityManager = scheduleManager.getActiveSchedule().activityManager;
+  const activityScheduleOptionIndex =
+    activityManager.activities[activityIndex].addActivityScheduleOption();
+  updateActivitiesAndActivityScheduleOptions(scheduleManager);
+  editingActivityScheduleOption(scheduleManager, activityIndex, activityScheduleOptionIndex);
+  // Auto-save when adding activity schedule option
+  apiService.scheduleAutoSave(scheduleManager);
 }
 
-async function deactivateScheduleOption(
-  scenarioManager,
+async function deactivateActivityScheduleOption(
+  scheduleManager,
   activityIndex,
-  scheduleOptionIndex
+  activityScheduleOptionIndex
 ) {
-  const activityManager = scenarioManager.getActiveScenario().activityManager;
-  activityManager.activities[activityIndex].scheduleOptions[
-    scheduleOptionIndex
+  const activityManager = scheduleManager.getActiveSchedule().activityManager;
+  activityManager.activities[activityIndex].activityScheduleOptions[
+    activityScheduleOptionIndex
   ].deactivate();
-  await updateCombinedSchedules(scenarioManager);
-  updateActivitiesAndScheduleOptions(scenarioManager);
-  // Auto-save when deactivating schedule option
-  apiService.scheduleAutoSave(scenarioManager);
+  await updateCombinedSchedules(scheduleManager);
+  updateActivitiesAndActivityScheduleOptions(scheduleManager);
+  // Auto-save when deactivating activity schedule option
+  apiService.scheduleAutoSave(scheduleManager);
 }
 
-async function deleteScheduleOption(
-  scenarioManager,
+async function deleteActivityScheduleOption(
+  scheduleManager,
   activityIndex,
-  scheduleOptionIndex
+  activityScheduleOptionIndex
 ) {
-  const activityManager = scenarioManager.getActiveScenario().activityManager;
-  const scheduleOption =
-    activityManager.activities[activityIndex].scheduleOptions[
-      scheduleOptionIndex
+  const activityManager = scheduleManager.getActiveSchedule().activityManager;
+  const activityScheduleOption =
+    activityManager.activities[activityIndex].activityScheduleOptions[
+      activityScheduleOptionIndex
     ];
 
-  const newScheduleOptionIndex = activityManager.activities[
+  const newActivityScheduleOptionIndex = activityManager.activities[
     activityIndex
-  ].deleteScheduleOption(scheduleOptionIndex);
-  if (activityManager.activities[activityIndex].scheduleOptions.length > 0) {
-    if (scheduleOption.isEditing) {
-      editingScheduleOption(
-        scenarioManager,
+  ].deleteActivityScheduleOption(activityScheduleOptionIndex);
+  if (activityManager.activities[activityIndex].activityScheduleOptions.length > 0) {
+    if (activityScheduleOption.isEditing) {
+      editingActivityScheduleOption(
+        scheduleManager,
         activityIndex,
-        newScheduleOptionIndex
+        newActivityScheduleOptionIndex
       );
     }
   } else {
     const newActivityIndex = activityManager.deleteActivity(activityIndex);
     if (activityManager.activities.length > 0) {
-      if (scheduleOption.isEditing) {
-        editingScheduleOption(scenarioManager, newActivityIndex, 0);
+      if (activityScheduleOption.isEditing) {
+        editingActivityScheduleOption(scheduleManager, newActivityIndex, 0);
       }
     } else {
-      createInitialTable(scenarioManager);
+      createInitialTable(scheduleManager);
     }
   }
 
-  await updateCombinedSchedules(scenarioManager);
-  updateActivitiesAndScheduleOptions(scenarioManager);
-  // Auto-save when deleting schedule option
-  apiService.scheduleAutoSave(scenarioManager);
+  await updateCombinedSchedules(scheduleManager);
+  updateActivitiesAndActivityScheduleOptions(scheduleManager);
+  // Auto-save when deleting activity schedule option
+  apiService.scheduleAutoSave(scheduleManager);
 }
 
-export function editingScheduleOption(
-  scenarioManager,
+export function editingActivityScheduleOption(
+  scheduleManager,
   activityIndex,
-  scheduleOptionIndex
+  activityScheduleOptionIndex
 ) {
-  const activityManager = scenarioManager.getActiveScenario().activityManager;
+  const activityManager = scheduleManager.getActiveSchedule().activityManager;
   if (
-    !activityManager.activities[activityIndex]?.scheduleOptions[
-      scheduleOptionIndex
+    !activityManager.activities[activityIndex]?.activityScheduleOptions[
+      activityScheduleOptionIndex
     ]?.isActive
   ) {
     return;
   }
 
   activityManager.activities.forEach((activity) => {
-    activity.scheduleOptions.forEach((scheduleOption) => {
-      scheduleOption.stopEditing();
+    activity.activityScheduleOptions.forEach((activityScheduleOption) => {
+      activityScheduleOption.stopEditing();
     });
   });
 
-  activityManager.activities[activityIndex].scheduleOptions[
-    scheduleOptionIndex
+  activityManager.activities[activityIndex].activityScheduleOptions[
+    activityScheduleOptionIndex
   ].edit();
 
-  updateActivitiesAndScheduleOptions(scenarioManager);
-  loadScheduleOption(scenarioManager);
+  updateActivitiesAndActivityScheduleOptions(scheduleManager);
+  loadActivityScheduleOption(scheduleManager);
 }

@@ -154,7 +154,7 @@ class ApiService {
     }
   }
 
-  async saveScheduleData(scenarioManager) {
+  async saveScheduleData(scheduleManager) {
     if (!this.isAuthenticated()) return { success: false };
 
     try {
@@ -165,8 +165,8 @@ class ApiService {
           'x-auth-token': this.token,
         },
         body: JSON.stringify({
-          scenarios: scenarioManager.scenarios,
-          activeScenarioIndex: scenarioManager.activeScenarioIndex,
+          schedules: scheduleManager.schedules,
+          activeScheduleIndex: scheduleManager.activeScheduleIndex,
         }),
       });
 
@@ -185,7 +185,7 @@ class ApiService {
   }
 
   // Auto-save functionality
-  scheduleAutoSave(scenarioManager) {
+  scheduleAutoSave(scheduleManager) {
     if (!CONFIG.AUTO_SAVE_ENABLED || !this.isAuthenticated()) return;
 
     // Clear previous timeout
@@ -195,7 +195,7 @@ class ApiService {
 
     // Set new timeout for debounced auto-save
     this.autoSaveTimeout = setTimeout(async () => {
-      const result = await this.saveScheduleData(scenarioManager);
+      const result = await this.saveScheduleData(scheduleManager);
       if (result.success) {
         this.showAutoSaveIndicator();
       }
