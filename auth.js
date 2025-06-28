@@ -28,12 +28,6 @@ const AUTH_CONSTANTS = {
     flex-direction: column;
     gap: 1rem;
   `,
-  INPUT_STYLE: `
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1rem;
-  `,
   BUTTON_STYLE: `
     padding: 0.75rem;
     background: #007bff;
@@ -171,7 +165,6 @@ class AuthComponent {
         id="login-email" 
         placeholder="Correo electrónico" 
         required
-        style="${AUTH_CONSTANTS.INPUT_STYLE}"
       >
       
       <input 
@@ -179,7 +172,6 @@ class AuthComponent {
         id="login-password" 
         placeholder="Contraseña" 
         required
-        style="${AUTH_CONSTANTS.INPUT_STYLE}"
       >
       
       <div id="login-error" style="${AUTH_CONSTANTS.ERROR_STYLE}; display: none;"></div>
@@ -230,7 +222,6 @@ class AuthComponent {
         id="register-name" 
         placeholder="Nombre completo" 
         required
-        style="${AUTH_CONSTANTS.INPUT_STYLE}"
       >
       
       <input 
@@ -238,7 +229,6 @@ class AuthComponent {
         id="register-email" 
         placeholder="Correo electrónico" 
         required
-        style="${AUTH_CONSTANTS.INPUT_STYLE}"
       >
       
       <input 
@@ -247,7 +237,6 @@ class AuthComponent {
         placeholder="Contraseña (mínimo 6 caracteres)" 
         required
         minlength="6"
-        style="${AUTH_CONSTANTS.INPUT_STYLE}"
       >
       
       <input 
@@ -255,7 +244,6 @@ class AuthComponent {
         id="register-password-confirm" 
         placeholder="Confirmar contraseña" 
         required
-        style="${AUTH_CONSTANTS.INPUT_STYLE}"
       >
       
       <div id="register-error" style="${AUTH_CONSTANTS.ERROR_STYLE}; display: none;"></div>
