@@ -2,57 +2,6 @@
 
 import { apiService } from './api.js';
 
-const AUTH_CONSTANTS = {
-  MODAL_BACKDROP_STYLE: `
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-  `,
-  MODAL_CONTENT_STYLE: `
-    background: white;
-    padding: 2rem;
-    border-radius: 8px;
-    width: 90%;
-    max-width: 400px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  `,
-  FORM_STYLE: `
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  `,
-  BUTTON_STYLE: `
-    padding: 0.75rem;
-    background: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 1rem;
-    cursor: pointer;
-  `,
-  BUTTON_SECONDARY_STYLE: `
-    padding: 0.75rem;
-    background: #6c757d;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 1rem;
-    cursor: pointer;
-  `,
-  ERROR_STYLE: `
-    color: #dc3545;
-    font-size: 0.875rem;
-    margin-top: 0.5rem;
-  `
-};
-
 class AuthComponent {
   constructor() {
     this.currentModal = null;
@@ -73,22 +22,15 @@ class AuthComponent {
     // Create user status container
     const userStatusContainer = document.createElement('div');
     userStatusContainer.id = 'user-status-container';
-    userStatusContainer.style.cssText = `
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
-      padding: 1rem;
-      background: #f8f9fa;
-      border-radius: 8px;
-    `;
+    userStatusContainer.className = 'user-status-container';
 
     const userInfo = document.createElement('div');
     userInfo.id = 'user-info';
+    userInfo.className = 'user-info';
 
     const authButtons = document.createElement('div');
     authButtons.id = 'auth-buttons';
-    authButtons.style.cssText = 'display: flex; gap: 0.5rem;';
+    authButtons.className = 'auth-buttons';
 
     userStatusContainer.appendChild(userInfo);
     userStatusContainer.appendChild(authButtons);
@@ -108,15 +50,13 @@ class AuthComponent {
     if (apiService.isAuthenticated()) {
       const user = apiService.getUser();
       userInfo.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 0.5rem;">
-          <span style="color: #28a745; font-weight: bold;">●</span>
-          <span>Conectado como: <strong>${user.name}</strong></span>
-          <small style="color: #6c757d;">(${user.email})</small>
-        </div>
+        <span class="user-status-online">●</span>
+        <span>Conectado como: <strong>${user.name}</strong></span>
+        <small class="user-email">(${user.email})</small>
       `;
 
       authButtons.innerHTML = `
-        <button id="logout-btn" style="${AUTH_CONSTANTS.BUTTON_SECONDARY_STYLE}">
+        <button id="logout-btn" class="btn-secondary">
           Cerrar Sesión
         </button>
       `;
@@ -126,18 +66,16 @@ class AuthComponent {
       });
     } else {
       userInfo.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 0.5rem;">
-          <span style="color: #dc3545; font-weight: bold;">●</span>
-          <span>No conectado</span>
-          <small style="color: #6c757d;">(Los datos se guardan localmente)</small>
-        </div>
+        <span class="user-status-offline">●</span>
+        <span>No conectado</span>
+        <small class="user-email">(Los datos se guardan localmente)</small>
       `;
 
       authButtons.innerHTML = `
-        <button id="login-btn" style="${AUTH_CONSTANTS.BUTTON_STYLE}">
+        <button id="login-btn" class="btn-primary">
           Iniciar Sesión
         </button>
-        <button id="register-btn" style="${AUTH_CONSTANTS.BUTTON_SECONDARY_STYLE}">
+        <button id="register-btn" class="btn-secondary">
           Registrarse
         </button>
       `;
@@ -155,10 +93,10 @@ class AuthComponent {
   showLoginModal() {
     const modal = this.createModal('Iniciar Sesión');
     const form = document.createElement('form');
-    form.style.cssText = AUTH_CONSTANTS.FORM_STYLE;
+    form.className = 'auth-form';
 
     form.innerHTML = `
-      <h2 style="margin: 0 0 1rem 0; text-align: center;">Iniciar Sesión</h2>
+      <h2>Iniciar Sesión</h2>
       
       <input 
         type="email" 
@@ -174,21 +112,21 @@ class AuthComponent {
         required
       >
       
-      <div id="login-error" style="${AUTH_CONSTANTS.ERROR_STYLE}; display: none;"></div>
+      <div id="login-error" class="auth-error hidden"></div>
       
-      <div style="display: flex; gap: 0.5rem;">
-        <button type="submit" style="${AUTH_CONSTANTS.BUTTON_STYLE}">
+      <div class="auth-button-group">
+        <button type="submit" class="btn-primary">
           Iniciar Sesión
         </button>
-        <button type="button" id="cancel-login" style="${AUTH_CONSTANTS.BUTTON_SECONDARY_STYLE}">
+        <button type="button" id="cancel-login" class="btn-secondary">
           Cancelar
         </button>
       </div>
       
-      <div style="text-align: center; margin-top: 1rem;">
+      <div class="auth-form-link">
         <small>
           ¿No tienes cuenta? 
-          <a href="#" id="switch-to-register" style="color: #007bff; text-decoration: none;">
+          <a href="#" id="switch-to-register">
             Regístrate aquí
           </a>
         </small>
@@ -212,10 +150,10 @@ class AuthComponent {
   showRegisterModal() {
     const modal = this.createModal('Registrarse');
     const form = document.createElement('form');
-    form.style.cssText = AUTH_CONSTANTS.FORM_STYLE;
+    form.className = 'auth-form';
 
     form.innerHTML = `
-      <h2 style="margin: 0 0 1rem 0; text-align: center;">Crear Cuenta</h2>
+      <h2>Crear Cuenta</h2>
       
       <input 
         type="text" 
@@ -246,21 +184,21 @@ class AuthComponent {
         required
       >
       
-      <div id="register-error" style="${AUTH_CONSTANTS.ERROR_STYLE}; display: none;"></div>
+      <div id="register-error" class="auth-error hidden"></div>
       
-      <div style="display: flex; gap: 0.5rem;">
-        <button type="submit" style="${AUTH_CONSTANTS.BUTTON_STYLE}">
+      <div class="auth-button-group">
+        <button type="submit" class="btn-primary">
           Registrarse
         </button>
-        <button type="button" id="cancel-register" style="${AUTH_CONSTANTS.BUTTON_SECONDARY_STYLE}">
+        <button type="button" id="cancel-register" class="btn-secondary">
           Cancelar
         </button>
       </div>
       
-      <div style="text-align: center; margin-top: 1rem;">
+      <div class="auth-form-link">
         <small>
           ¿Ya tienes cuenta? 
-          <a href="#" id="switch-to-login" style="color: #007bff; text-decoration: none;">
+          <a href="#" id="switch-to-login">
             Inicia sesión aquí
           </a>
         </small>
@@ -298,11 +236,11 @@ class AuthComponent {
         this.showSuccessMessage('Inicio de sesión exitoso');
       } else {
         errorElement.textContent = result.error;
-        errorElement.style.display = 'block';
+        errorElement.classList.remove('hidden');
       }
     } catch (error) {
       errorElement.textContent = 'Error de conexión. Inténtalo de nuevo: ' + error;
-      errorElement.style.display = 'block';
+      errorElement.classList.remove('hidden');
     }
   }
 
@@ -318,7 +256,7 @@ class AuthComponent {
     // Validate password confirmation
     if (password !== passwordConfirm) {
       errorElement.textContent = 'Las contraseñas no coinciden';
-      errorElement.style.display = 'block';
+      errorElement.classList.remove('hidden');
       return;
     }
 
@@ -332,11 +270,11 @@ class AuthComponent {
         this.showSuccessMessage('Registro exitoso. ¡Bienvenido!');
       } else {
         errorElement.textContent = result.error;
-        errorElement.style.display = 'block';
+        errorElement.classList.remove('hidden');
       }
     } catch (error) {
       errorElement.textContent = 'Error de conexión. Inténtalo de nuevo: ' + error;
-      errorElement.style.display = 'block';
+      errorElement.classList.remove('hidden');
     }
   }
 
@@ -349,13 +287,13 @@ class AuthComponent {
 
   createModal(title) {
     const modal = document.createElement('div');
-    modal.style.cssText = AUTH_CONSTANTS.MODAL_CONTENT_STYLE;
+    modal.className = 'auth-modal-content';
     return modal;
   }
 
   showModal(modalContent) {
     const backdrop = document.createElement('div');
-    backdrop.style.cssText = AUTH_CONSTANTS.MODAL_BACKDROP_STYLE;
+    backdrop.className = 'auth-modal-backdrop';
     backdrop.appendChild(modalContent);
     
     // Close on backdrop click
@@ -378,18 +316,7 @@ class AuthComponent {
 
   showSuccessMessage(message) {
     const successElement = document.createElement('div');
-    successElement.style.cssText = `
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: #28a745;
-      color: white;
-      padding: 1rem;
-      border-radius: 4px;
-      z-index: 1001;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    `;
+    successElement.className = 'auth-success-toast';
     successElement.textContent = message;
     
     document.body.appendChild(successElement);

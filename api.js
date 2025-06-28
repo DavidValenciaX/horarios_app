@@ -208,19 +208,7 @@ class ApiService {
     if (!indicator) {
       indicator = document.createElement('div');
       indicator.id = 'auto-save-indicator';
-      indicator.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: #4CAF50;
-        color: white;
-        padding: 8px 16px;
-        border-radius: 4px;
-        font-size: 14px;
-        z-index: 1000;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-      `;
+      indicator.className = 'auto-save-indicator';
       document.body.appendChild(indicator);
     }
 
