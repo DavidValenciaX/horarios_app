@@ -1,8 +1,6 @@
 // API service layer for backend communication
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-console.log(API_BASE_URL);
+const getApiBaseUrl = () => import.meta.env.VITE_API_BASE_URL;
 
 // Constants for configuration
 const CONFIG = {
@@ -22,7 +20,7 @@ class ApiService {
   // Authentication methods
   async register(name, email, password) {
     try {
-      const response = await fetch(`${API_BASE_URL}/users`, {
+      const response = await fetch(`${getApiBaseUrl()}/users`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -47,7 +45,7 @@ class ApiService {
 
   async login(email, password) {
     try {
-      const response = await fetch(`${API_BASE_URL}/auth`, {
+      const response = await fetch(`${getApiBaseUrl()}/auth`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -85,7 +83,7 @@ class ApiService {
     if (!this.token) return null;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/auth`, {
+      const response = await fetch(`${getApiBaseUrl()}/auth`, {
         method: 'GET',
         headers: {
           'x-auth-token': this.token,
@@ -134,7 +132,7 @@ class ApiService {
     if (!this.isAuthenticated()) return null;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/schedules`, {
+      const response = await fetch(`${getApiBaseUrl()}/schedules`, {
         method: 'GET',
         headers: {
           'x-auth-token': this.token,
@@ -160,7 +158,7 @@ class ApiService {
     if (!this.isAuthenticated()) return { success: false };
 
     try {
-      const response = await fetch(`${API_BASE_URL}/schedules`, {
+      const response = await fetch(`${getApiBaseUrl()}/schedules`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -242,7 +240,7 @@ class ApiService {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/schedules/combinations`, {
+      const response = await fetch(`${getApiBaseUrl()}/schedules/combinations`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
