@@ -61,7 +61,7 @@ frontend/
 ├── dist/               # Archivos de producción (generados por `npm run build`)
 ├── node_modules/       # Dependencias del proyecto
 ├── components/         # Componentes reutilizables (íconos, etc.)
-├── classes.js          # Clases principales (ScenarioManager, Scenario, ActivityManager, Activity, TimeTable)
+├── classes.js          # Clases principales (ScheduleManager, Schedule, ActivityManager, Activity, TimeTable)
 ├── colors.js           # Utilidades para la gestión de colores
 ├── combinations.js     # Lógica para calcular las combinaciones de horarios
 ├── createTables.js     # Funciones para renderizar las tablas de horarios en el DOM

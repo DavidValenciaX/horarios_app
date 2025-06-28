@@ -13,8 +13,8 @@ import { apiService } from "./api.js";
 import { authComponent } from "./auth.js";
 
 function initDashboardListeners(scheduleManager) {
-  const createButton = document.getElementById("create-scenario-button");
-  const nameInput = document.getElementById("new-scenario-name");
+  const createButton = document.getElementById("create-schedule-button");
+  const nameInput = document.getElementById("new-schedule-name");
   const saveButton = document.getElementById("save-all-button");
   const fileInput = document.getElementById("file-input");
 

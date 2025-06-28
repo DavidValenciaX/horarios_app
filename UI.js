@@ -9,8 +9,8 @@ import { apiService } from "./api.js";
 const DOM = {
   dashboard: document.getElementById("dashboard"),
   mainContent: document.getElementById("main-content"),
-  scheduleList: document.getElementById("scenario-list"),
-  scheduleTitle: document.getElementById("scenario-title"),
+  scheduleList: document.getElementById("schedule-list"),
+  scheduleTitle: document.getElementById("schedule-title"),
   activitiesAndActivityScheduleOptionsDiv: document.getElementById(
     "activitiesAndScheduleOptions"
   ),
@@ -48,10 +48,10 @@ function renderDashboard(scheduleManager) {
 
   scheduleManager.schedules.forEach((schedule, index) => {
     const scheduleCard = document.createElement("div");
-    scheduleCard.className = "scenario-card";
+    scheduleCard.className = "schedule-card";
     
     const cardContent = document.createElement("div");
-    cardContent.className = "scenario-card-content";
+    cardContent.className = "schedule-card-content";
     cardContent.textContent = schedule.name;
     
     const deleteButton = document.createElement("button");
