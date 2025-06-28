@@ -82,7 +82,7 @@ async function loadUserDataIfAuthenticated(scenarioManager) {
       if (user) {
         // Load schedule data from server
         const scheduleData = await apiService.loadScheduleData();
-        if (scheduleData && scheduleData.scenarios) {
+        if (scheduleData?.scenarios) {
           // Merge server data with scenario manager
           Object.assign(scenarioManager, ScenarioManager.fromJSON(scheduleData));
         }
