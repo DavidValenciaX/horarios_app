@@ -103,6 +103,7 @@ class AuthComponent {
         id="login-email" 
         placeholder="Correo electrónico" 
         required
+        autocomplete="email"
       >
       
       <input 
@@ -110,6 +111,7 @@ class AuthComponent {
         id="login-password" 
         placeholder="Contraseña" 
         required
+        autocomplete="current-password"
       >
       
       <div id="login-error" class="auth-error hidden"></div>
@@ -160,6 +162,7 @@ class AuthComponent {
         id="register-name" 
         placeholder="Nombre completo" 
         required
+        autocomplete="name"
       >
       
       <input 
@@ -167,6 +170,7 @@ class AuthComponent {
         id="register-email" 
         placeholder="Correo electrónico" 
         required
+        autocomplete="email"
       >
       
       <input 
@@ -175,6 +179,7 @@ class AuthComponent {
         placeholder="Contraseña (mínimo 6 caracteres)" 
         required
         minlength="6"
+        autocomplete="new-password"
       >
       
       <input 
@@ -182,6 +187,7 @@ class AuthComponent {
         id="register-password-confirm" 
         placeholder="Confirmar contraseña" 
         required
+        autocomplete="new-password"
       >
       
       <div id="register-error" class="auth-error hidden"></div>
