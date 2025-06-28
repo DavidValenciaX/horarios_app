@@ -90,6 +90,10 @@ async function loadUserDataIfAuthenticated(scenarioManager) {
     } catch (error) {
       console.error('Error loading user data:', error);
     }
+  } else {
+    // User is not authenticated, clear all scenario data
+    scenarioManager.scenarios = [];
+    scenarioManager.activeScenarioIndex = -1;
   }
 }
 
