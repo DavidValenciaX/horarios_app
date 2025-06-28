@@ -453,6 +453,19 @@ tr:nth-child(even) {
   margin: 0; /* Remove default margins */
 }
 
+/* Specific override for file input label in data management section */
+.data-management-actions #file-input-label {
+  margin: 0;
+  padding: 0.75rem 1.5rem; /* Match other buttons */
+}
+
+.data-management-actions #file-name {
+  margin: 0;
+  padding: 0.75rem 0;
+  color: #6c757d;
+  font-style: italic;
+}
+
 .schedule-card {
   position: relative;
   padding: 1em;
@@ -634,6 +647,11 @@ tr:nth-child(even) {
     flex-direction: column;
     gap: 1rem;
     align-items: stretch;
+  }
+
+  .data-management-actions #file-input-label {
+    padding: 1rem;
+    text-align: center;
   }
 
   #generateCombinedSchedules {
