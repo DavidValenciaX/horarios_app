@@ -401,7 +401,7 @@ tr:nth-child(even) {
 /* Dashboard Styles */
 #dashboard {
   padding: 1em;
-  /*max-width: 800px; I will think about this later*/
+  max-width: 1200px;
   margin: auto;
 }
 
@@ -588,7 +588,7 @@ tr:nth-child(even) {
 #main-content {
   display: none;
   padding: 1rem;
-  /*max-width: 1200px; I will think about this later*/
+  max-width: 1920px;
   margin: 0 auto;
 }
 
