@@ -5,6 +5,7 @@ import "./components/eye-open-icon.js";
 import "./components/eye-off-icon.js";
 import "./components/arrow-left-icon.js";
 import { apiService } from "./api.js";
+import { debounce, addTouchSupport, addKeyboardSupport } from "./utils.js";
 
 const DOM = {
   dashboard: document.getElementById("dashboard"),
@@ -69,11 +70,20 @@ function renderDashboard(scheduleManager) {
     scheduleCard.appendChild(cardContent);
     scheduleCard.appendChild(deleteButton);
     
-    // Add click handler to the card content only
-    cardContent.addEventListener("click", async () => {
+    // Add click handler to the card content with mobile and keyboard support
+    const handleCardActivation = debounce(async () => {
       scheduleManager.setActiveSchedule(index);
       await showPlanningView(scheduleManager);
-    });
+    }, 150);
+
+    cardContent.addEventListener("click", handleCardActivation);
+    addTouchSupport(cardContent, handleCardActivation);
+    addKeyboardSupport(cardContent, handleCardActivation);
+    
+    // Make card content focusable for keyboard navigation
+    cardContent.setAttribute("tabindex", "0");
+    cardContent.setAttribute("role", "button");
+    cardContent.setAttribute("aria-label", `Abrir horario ${schedule.name}`);
 
     DOM.scheduleList.appendChild(scheduleCard);
   });
@@ -198,21 +208,40 @@ export function updateActivitiesAndActivityScheduleOptions(scheduleManager) {
       activityScheduleOptionChip.appendChild(optionContent);
       activityScheduleOptionChip.appendChild(optionActions);
 
-      // Click handler for editing
-      activityScheduleOptionChip.addEventListener("click", () => {
+      // Click handler for editing with mobile and keyboard support
+      const handleChipActivation = debounce(() => {
         editingActivityScheduleOption(scheduleManager, activityIndex, activityScheduleOptionIndex);
-      });
+      }, 100);
+
+      activityScheduleOptionChip.addEventListener("click", handleChipActivation);
+      addTouchSupport(activityScheduleOptionChip, handleChipActivation);
+      addKeyboardSupport(activityScheduleOptionChip, handleChipActivation);
+      
+      // Make chip focusable for keyboard navigation
+      activityScheduleOptionChip.setAttribute("tabindex", "0");
+      activityScheduleOptionChip.setAttribute("role", "button");
+      activityScheduleOptionChip.setAttribute("aria-label", `Editar Opción ${activityScheduleOptionIndex + 1} de ${activity.name}`);
 
       activityScheduleOptionsContainer.appendChild(activityScheduleOptionChip);
     });
 
-    // Add activity schedule option button
+    // Add activity schedule option button with mobile and keyboard support
     const addActivityScheduleOptionChip = document.createElement("div");
     addActivityScheduleOptionChip.classList.add("chip", "add-scheduleOption");
     addActivityScheduleOptionChip.textContent = "+ Agregar Opción de Horario";
-    addActivityScheduleOptionChip.addEventListener("click", () => {
+    
+    const handleAddOption = debounce(() => {
       addActivityScheduleOption(scheduleManager, activityIndex);
-    });
+    }, 150);
+
+    addActivityScheduleOptionChip.addEventListener("click", handleAddOption);
+    addTouchSupport(addActivityScheduleOptionChip, handleAddOption);
+    addKeyboardSupport(addActivityScheduleOptionChip, handleAddOption);
+    
+    // Make add button focusable for keyboard navigation
+    addActivityScheduleOptionChip.setAttribute("tabindex", "0");
+    addActivityScheduleOptionChip.setAttribute("role", "button");
+    addActivityScheduleOptionChip.setAttribute("aria-label", `Agregar nueva opción de horario para ${activity.name}`);
 
     activityScheduleOptionsContainer.appendChild(addActivityScheduleOptionChip);
 

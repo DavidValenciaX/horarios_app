@@ -1,6 +1,7 @@
 // Authentication module for login and registration functionality
 
 import { apiService } from './api.js';
+import { enhanceFormAccessibility, MOBILE_FORM_CONSTANTS } from './utils.js';
 
 class AuthComponent {
   constructor() {
@@ -137,13 +138,16 @@ class AuthComponent {
 
     modal.appendChild(form);
 
+    // Enhance form for mobile and accessibility
+    enhanceFormAccessibility(form);
+
     // Event listeners
     form.addEventListener('submit', (e) => this.handleLogin(e));
     form.querySelector('#cancel-login').addEventListener('click', () => this.closeModal());
     form.querySelector('#switch-to-register').addEventListener('click', (e) => {
       e.preventDefault();
       this.closeModal();
-      this.showRegisterModal();
+      setTimeout(() => this.showRegisterModal(), MOBILE_FORM_CONSTANTS.MODAL_ANIMATION_DURATION);
     });
 
     this.showModal(modal);
@@ -213,13 +217,16 @@ class AuthComponent {
 
     modal.appendChild(form);
 
+    // Enhance form for mobile and accessibility
+    enhanceFormAccessibility(form);
+
     // Event listeners
     form.addEventListener('submit', (e) => this.handleRegister(e));
     form.querySelector('#cancel-register').addEventListener('click', () => this.closeModal());
     form.querySelector('#switch-to-login').addEventListener('click', (e) => {
       e.preventDefault();
       this.closeModal();
-      this.showLoginModal();
+      setTimeout(() => this.showLoginModal(), MOBILE_FORM_CONSTANTS.MODAL_ANIMATION_DURATION);
     });
 
     this.showModal(modal);
@@ -309,12 +316,46 @@ class AuthComponent {
       }
     });
 
+    // Close on Escape key
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        this.closeModal();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    backdrop.handleKeyDown = handleKeyDown; // Store reference for cleanup
+
+    // Prevent body scroll when modal is open
+    document.body.style.overflow = 'hidden';
+    
+    // Focus management for accessibility
+    modalContent.setAttribute('tabindex', '-1');
+    modalContent.setAttribute('role', 'dialog');
+    modalContent.setAttribute('aria-modal', 'true');
+    
     document.body.appendChild(backdrop);
     this.currentModal = backdrop;
+    
+    // Focus the first input in the modal
+    setTimeout(() => {
+      const firstInput = modalContent.querySelector('input');
+      if (firstInput) {
+        firstInput.focus();
+      }
+    }, 100);
   }
 
   closeModal() {
     if (this.currentModal) {
+      // Clean up event listeners
+      if (this.currentModal.handleKeyDown) {
+        document.removeEventListener('keydown', this.currentModal.handleKeyDown);
+      }
+      
+      // Restore body scroll
+      document.body.style.overflow = '';
+      
+      // Remove modal from DOM
       document.body.removeChild(this.currentModal);
       this.currentModal = null;
     }
