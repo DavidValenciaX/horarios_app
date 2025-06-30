@@ -82,33 +82,53 @@
             </button>
             <h2 id="schedule-title">Selecciona un horario</h2>
         </div>
-        <hr>
 
         <div id="layoutActivitySchedule">
-            <div>
-                <div class="create-activity-section">
-                    <h3>Crea las actividades</h3>
-                    <div class="create-activity-actions">
-                        <input type="text" id="newActivityName" placeholder="Nombre de la Actividad">
-                        <button id="createActivityButton" type="button">Crear Actividad</button>
+            <!-- Activity Management Panel -->
+            <div class="activity-management-panel">
+                <div class="panel-header">
+                    <h3 class="panel-title">Gestión de Actividades</h3>
+                    <p class="panel-description">Crea y organiza las actividades de tu horario con múltiples opciones de tiempo</p>
+                </div>
+                <div class="panel-content">
+                    <div class="create-activity-section">
+                        <h3>Nueva Actividad</h3>
+                        <div class="create-activity-actions">
+                            <input type="text" id="newActivityName" placeholder="Nombre de la Actividad">
+                            <button id="createActivityButton" type="button">Crear Actividad</button>
+                        </div>
+                    </div>
+                    <div class="activities-list-section">
+                        <h3>Actividades y Opciones</h3>
+                        <div id="activitiesAndScheduleOptions"></div>
                     </div>
                 </div>
-                <div class="activities-list-section">
-                    <h3>Actividades y Opciones de Horario:</h3>
-                    <div id="activitiesAndScheduleOptions"></div>
-                </div>
             </div>
-            <div id="scheduleOptionTableContainer">
+
+            <!-- Schedule Editor Panel -->
+            <div class="schedule-editor-panel">
+                <div class="panel-header">
+                    <h3 class="panel-title">Editor de Horarios</h3>
+                    <p class="panel-description">Selecciona los horarios para cada actividad haciendo clic en las celdas</p>
+                </div>
+                <div class="schedule-editor-header">
+                    <h4 class="schedule-editor-title">Tabla de Horarios Semanal</h4>
+                    <p class="schedule-editor-subtitle">Haz clic y arrastra para seleccionar horarios</p>
+                </div>
+                <div class="schedule-table-container">
+                    <div id="scheduleOptionTableContainer"></div>
+                </div>
             </div>
         </div>
 
         <div class="generate-schedules-section">
-            <h3>Genera las combinaciones de horario posibles</h3>
+            <h3>Generador de Combinaciones</h3>
             <div id="generateCombinedSchedules">
                 <button id="generateCombinedSchedulesButton" type="button">Generar Horarios Combinados</button>
-                <!-- Switch para mostrar/ocultar horarios con conflictos -->
-                <label id="conflictLabel" for="toggleConflicts">Ocultar horarios con cruces:</label>
-                <input type="checkbox" id="toggleConflicts">
+                <div class="toggle-container">
+                    <label id="conflictLabel" for="toggleConflicts">Ocultar horarios con cruces:</label>
+                    <input type="checkbox" id="toggleConflicts">
+                </div>
             </div>
         </div>
 
