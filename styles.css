@@ -1287,10 +1287,6 @@ body {
     grid-template-columns: 1fr;
     gap: var(--spacing-xl);
   }
-  
-  .schedule-editor-panel {
-    order: -1;
-  }
 }
 
 @media (max-width: 768px) {
