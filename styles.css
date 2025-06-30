@@ -20,7 +20,7 @@ select {
   margin: 0;
   padding: 0.75rem;
   border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 0.25rem;
   font-size: 1rem;
   outline: none;
 }
@@ -45,8 +45,8 @@ button {
   border-radius: 0.3em;
   font-size: 1em;
   cursor: pointer;
-  min-height: 44px; /* Touch-friendly minimum size */
-  min-width: 44px;
+  min-height: 2.75rem; /* Touch-friendly minimum size */
+  min-width: 2.75rem;
   box-sizing: border-box;
   display: inline-block;
   text-align: center;
@@ -97,8 +97,8 @@ tr:nth-child(even) {
   outline: none;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  min-width: 44px;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
   box-sizing: border-box;
   text-decoration: none;
   vertical-align: middle;
@@ -127,7 +127,7 @@ tr:nth-child(even) {
   margin-bottom: 2rem;
   padding: 1rem;
   background-color: #f8f9fa;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   border: 1px solid #dee2e6;
 }
 
@@ -186,7 +186,7 @@ tr:nth-child(even) {
 .createNewActivity > div,
 .createNewActivity > input,
 .createNewActivity > button {
-  min-width: 300px;
+  min-width: 18.75rem;
   flex-grow: 1;
   flex-shrink: 1;
   flex-basis: auto;
@@ -207,14 +207,14 @@ tr:nth-child(even) {
   -webkit-user-select: none;
   user-select: none;
   padding: 0.5em;
-  min-height: 44px; /* Touch-friendly size */
+  min-height: 2.75rem; /* Touch-friendly size */
   transition: background-color 0.2s ease;
   position: relative;
 }
 
 #scheduleOptionTable td.selected {
   color: white;
-  border: 2px solid #333;
+  border: 0.125rem solid #333;
 }
 
 /* Active touch feedback */
@@ -225,7 +225,7 @@ tr:nth-child(even) {
 
 /* Visual feedback for currently editing */
 #scheduleOptionTable td.editing-highlight {
-  box-shadow: 0 0 0 2px #087f23;
+  box-shadow: 0 0 0 0.125rem #087f23;
 }
 
 #scheduleOptionTable th {
@@ -237,24 +237,24 @@ tr:nth-child(even) {
 /* Estilos para el switch para ver los horarios con cruces */
 #toggleConflicts {
   position: relative;
-  width: 80px;
-  height: 44px;
+  width: 5rem;
+  height: 2.75rem;
   margin: 0.5em;
   appearance: none;
   background-color: #ccc;
   outline: none;
   cursor: pointer;
-  border-radius: 22px;
+  border-radius: 1.375rem;
   transition: background-color 0.3s;
 }
 
 #toggleConflicts:before {
   content: "";
   position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 40px;
-  height: 40px;
+  top: 0.125rem;
+  left: 0.125rem;
+  width: 2.5rem;
+  height: 2.5rem;
   background-color: white;
   border-radius: 50%;
   transition: left 0.3s;
@@ -265,7 +265,7 @@ tr:nth-child(even) {
 }
 
 #toggleConflicts:checked:before {
-  left: 38px;
+  left: 2.375rem;
 }
 
 /* Chips - Refactored for mobile */
@@ -283,7 +283,7 @@ tr:nth-child(even) {
   font-size: 1em;
   cursor: pointer;
   transition: background-color 0.3s, transform 0.1s;
-  min-height: 44px; /* Touch-friendly */
+  min-height: 2.75rem; /* Touch-friendly */
   flex-wrap: wrap;
 }
 
@@ -299,7 +299,7 @@ tr:nth-child(even) {
 .chip-actions {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 0.25rem;
 }
 
 .chip-action-btn {
@@ -307,13 +307,13 @@ tr:nth-child(even) {
   border: none;
   color: white;
   border-radius: 50%;
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 0.875rem;
   line-height: 1;
   transition: background-color 0.2s;
 }
@@ -327,8 +327,8 @@ tr:nth-child(even) {
 }
 
 .icon {
-  width: 16px;
-  height: 16px;
+  width: 1rem;
+  height: 1rem;
   vertical-align: middle;
 }
 
@@ -361,7 +361,7 @@ tr:nth-child(even) {
 .chip.add-scheduleOption {
   background-color: white;
   color: #6c757d;
-  border: 2px dashed #6c757d;
+  border: 0.125rem dashed #6c757d;
   justify-content: center;
 }
 
@@ -401,7 +401,7 @@ tr:nth-child(even) {
 /* Dashboard Styles */
 #dashboard {
   padding: 1em;
-  max-width: 1200px;
+  max-width: 75rem;
   margin: auto;
 }
 
@@ -416,7 +416,7 @@ tr:nth-child(even) {
 
 #schedule-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(15.625rem, 1fr));
   gap: 1em;
   margin-bottom: 1.5em;
 }
@@ -429,13 +429,13 @@ tr:nth-child(even) {
   flex-wrap: wrap;
   padding: 1rem;
   background-color: #f8f9fa;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   border: 1px solid #dee2e6;
 }
 
 .schedule-actions input {
   flex: 1;
-  min-width: 250px;
+  min-width: 15.625rem;
   margin: 0; /* Remove default input margin */
 }
 
@@ -451,7 +451,7 @@ tr:nth-child(even) {
   margin-top: 2rem;
   padding: 1rem;
   background-color: #f8f9fa;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   border: 1px solid #dee2e6;
 }
 
@@ -491,7 +491,7 @@ tr:nth-child(even) {
   margin-bottom: 2rem;
   padding: 1rem;
   background-color: #f8f9fa;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   border: 1px solid #dee2e6;
 }
 
@@ -510,7 +510,7 @@ tr:nth-child(even) {
 
 .create-activity-actions input {
   flex: 1;
-  min-width: 250px;
+  min-width: 15.625rem;
   margin: 0;
 }
 
@@ -543,12 +543,12 @@ tr:nth-child(even) {
   justify-content: space-between;
   align-items: center;
   font-weight: bold;
-  min-height: 60px; /* Touch-friendly */
+  min-height: 3.75rem; /* Touch-friendly */
 }
 
 .schedule-card:hover {
   background-color: #e9ecef;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
 }
 
 .schedule-card:active {
@@ -565,9 +565,9 @@ tr:nth-child(even) {
   color: white;
   border: none;
   border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  font-size: 14px;
+  width: 2rem;
+  height: 2rem;
+  font-size: 0.875rem;
   cursor: pointer;
   transition: background-color 0.2s, transform 0.1s;
   margin: 0;
@@ -588,7 +588,7 @@ tr:nth-child(even) {
 #main-content {
   display: none;
   padding: 1rem;
-  max-width: 1920px;
+  max-width: 120rem;
   margin: 0 auto;
 }
 
@@ -618,7 +618,7 @@ tr:nth-child(even) {
 }
 
 /* Media query para pantallas de tamaño celular */
-@media (max-width: 1100px) {
+@media (max-width: 68.75em) {
   #layoutActivitySchedule {
     flex-direction: column;
   }
@@ -630,7 +630,7 @@ tr:nth-child(even) {
 
   #scheduleOptionTable td {
     padding: 0.75em 0.5em;
-    min-height: 48px;
+    min-height: 3rem;
   }
 
   #combinedSchedulesContainer table {
@@ -660,20 +660,20 @@ tr:nth-child(even) {
   }
 
   .chip-action-btn {
-    width: 36px;
-    height: 36px;
+    width: 2.25rem;
+    height: 2.25rem;
     font-size: 0.9em;
   }
 
   .schedule-card {
-    min-height: 70px;
+    min-height: 4.375rem;
     padding: 1.25em;
   }
 
   .schedule-card .delete-button {
-    width: 36px;
-    height: 36px;
-    font-size: 16px;
+    width: 2.25rem;
+    height: 2.25rem;
+    font-size: 1rem;
   }
 
   #main-content-header {
@@ -687,7 +687,7 @@ tr:nth-child(even) {
 }
 
 /* Extra small screens */
-@media (max-width: 600px) {
+@media (max-width: 37.5em) {
   .createNewActivity > div,
   .createNewActivity > input,
   .createNewActivity > button {
@@ -770,10 +770,10 @@ tr:nth-child(even) {
 .auth-modal-content {
   background: white;
   padding: 2rem;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   width: 90%;
-  max-width: 400px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 25rem;
+  box-shadow: 0 0.25rem 0.375rem rgba(0, 0, 0, 0.1);
 }
 
 .auth-form {
@@ -794,11 +794,11 @@ tr:nth-child(even) {
   background: #4caf50;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 0.25rem;
   font-size: 1rem;
   cursor: pointer;
   margin: 0;
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: background-color 0.2s, transform 0.1s;
 }
 
@@ -816,11 +816,11 @@ tr:nth-child(even) {
   background: #6c757d;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 0.25rem;
   font-size: 1rem;
   cursor: pointer;
   margin: 0;
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: background-color 0.2s, transform 0.1s;
 }
 
@@ -850,23 +850,23 @@ tr:nth-child(even) {
   margin-top: 0.5rem;
   padding: 0.5rem;
   background: rgba(220, 53, 69, 0.1);
-  border-radius: 4px;
-  border-left: 3px solid #dc3545;
+  border-radius: 0.25rem;
+  border-left: 0.1875rem solid #dc3545;
 }
 
 /* Success messages */
 .auth-success-toast {
   position: fixed;
-  top: 20px;
-  right: 20px;
+  top: 1.25rem;
+  right: 1.25rem;
   background: #28a745;
   color: white;
   padding: 1rem;
-  border-radius: 4px;
+  border-radius: 0.25rem;
   z-index: 1001;
   opacity: 0;
   transition: opacity 0.3s ease;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.25rem 0.375rem rgba(0, 0, 0, 0.1);
 }
 
 /* User status container */
@@ -877,7 +877,7 @@ tr:nth-child(even) {
   margin-bottom: 1rem;
   padding: 1rem;
   background: #f8f9fa;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   border: 1px solid #dee2e6;
 }
 
@@ -931,17 +931,17 @@ tr:nth-child(even) {
 /* Auto-save indicator */
 .auto-save-indicator {
   position: fixed;
-  top: 20px;
-  right: 20px;
+  top: 1.25rem;
+  right: 1.25rem;
   background: #4CAF50;
   color: white;
-  padding: 8px 16px;
-  border-radius: 4px;
-  font-size: 14px;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
   z-index: 1000;
   opacity: 0;
   transition: opacity 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
 }
 
 /* Utility classes */
@@ -950,7 +950,7 @@ tr:nth-child(even) {
 }
 
 /* Responsive adjustments for auth */
-@media (max-width: 600px) {
+@media (max-width: 37.5em) {
   .auth-modal-content {
     padding: 1.5rem;
     margin: 1rem;
