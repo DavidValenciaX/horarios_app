@@ -1160,7 +1160,7 @@ body {
 }
 
 .chip.activity {
-  color: white;
+  color: var(--secondary-800);
   cursor: default;
   border: 1px solid rgba(255,255,255,0.2);
 }
