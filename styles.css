@@ -965,7 +965,6 @@ body {
 .schedule-table-container {
   flex: 1;
   padding: var(--spacing-xl);
-  overflow: auto;
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -981,7 +980,6 @@ body {
 /* Enhanced Schedule Table */
 #scheduleOptionTable {
   width: 100%;
-  max-width: none;
   border-collapse: collapse;
   background: white;
   border-radius: var(--radius-lg);
@@ -989,6 +987,7 @@ body {
   box-shadow: var(--shadow-md);
   border: 1px solid var(--neutral-200);
   font-size: 0.8rem;
+  table-layout: fixed;
 }
 
 #scheduleOptionTable th {
