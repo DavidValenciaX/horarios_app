@@ -144,10 +144,13 @@ body {
 }
 
 .dashboard-stats {
+  margin-bottom: var(--spacing-3xl);
+}
+
+.dashboard-stats-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: var(--spacing-lg);
-  margin-bottom: var(--spacing-3xl);
 }
 
 .stat-card {
@@ -363,6 +366,7 @@ body {
   border: 1px solid var(--neutral-200);
   position: relative;
   overflow: hidden;
+  margin-bottom: var(--spacing-xl);
 }
 
 .create-schedule-section::before {
@@ -698,7 +702,7 @@ body {
 
 /* Responsive Design */
 @media (max-width: 1024px) {
-  .dashboard-stats {
+  .dashboard-stats-cards {
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   }
   
@@ -716,7 +720,7 @@ body {
     font-size: 2.5rem;
   }
   
-  .dashboard-stats {
+  .dashboard-stats-cards {
     grid-template-columns: 1fr;
     gap: var(--spacing-md);
   }

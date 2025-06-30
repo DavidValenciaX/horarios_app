@@ -19,28 +19,8 @@
             <p class="dashboard-subtitle">Organiza tus actividades de manera inteligente</p>
         </div>
 
-        <!-- Dashboard Stats -->
-        <div class="dashboard-stats">
-            <div class="stat-card">
-                <div class="stat-number" id="total-schedules">0</div>
-                <div class="stat-label">Horarios Creados</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="total-activities">0</div>
-                <div class="stat-label">Actividades Totales</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="active-activities">0</div>
-                <div class="stat-label">Actividades Activas</div>
-            </div>
-        </div>
-
         <!-- Schedule List Section -->
         <div id="schedule-list-container">
-            <div class="section-header">
-                <h2 class="section-title">Mis Horarios</h2>
-            </div>
-            <div id="schedule-list"></div>
             
             <!-- Create Schedule Section -->
             <div class="create-schedule-section">
@@ -51,6 +31,32 @@
                 <div class="schedule-actions">
                     <input type="text" id="new-schedule-name" placeholder="Ej: Semestre 2024-1, Horario Ideal, Actividades Deportivas...">
                     <button type="button" id="create-schedule-button" class="btn-primary">Crear Horario</button>
+                </div>
+            </div>
+
+            <div class="section-header">
+                <h2 class="section-title">Mis Horarios</h2>
+            </div>
+            <div id="schedule-list"></div>
+        </div>
+
+        <!-- Dashboard Stats -->
+        <div class="dashboard-stats">
+            <div class="section-header">
+                <h2 class="section-title">Estadísticas</h2>
+            </div>
+            <div id="stats-cards-container" class="dashboard-stats-cards">
+                <div class="stat-card">
+                    <div class="stat-number" id="total-schedules">0</div>
+                    <div class="stat-label">Horarios Creados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="total-activities">0</div>
+                    <div class="stat-label">Actividades Totales</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="active-activities">0</div>
+                    <div class="stat-label">Actividades Activas</div>
                 </div>
             </div>
         </div>

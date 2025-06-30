@@ -20,7 +20,7 @@ const DOM = {
 };
 
 function renderDashboardStats(scheduleManager) {
-  const statsContainer = document.querySelector('.dashboard-stats');
+  const statsContainer = document.getElementById('stats-cards-container');
   if (!statsContainer) return;
 
   const schedules = scheduleManager.schedules || [];
@@ -31,22 +31,22 @@ function renderDashboardStats(scheduleManager) {
 
   statsContainer.innerHTML = `
     <div class="stat-card">
-      <div class="stat-number">${totalSchedules}</div>
+      <div class="stat-number" id="total-schedules">${totalSchedules}</div>
       <div class="stat-label">Horarios</div>
     </div>
     <div class="stat-card">
-      <div class="stat-number">${totalActivities}</div>
+      <div class="stat-number" id="total-activities">${totalActivities}</div>
       <div class="stat-label">Actividades Totales</div>
     </div>
     <div class="stat-card">
-      <div class="stat-number">${totalOptions}</div>
+      <div class="stat-number" id="total-options">${totalOptions}</div>
       <div class="stat-label">Opciones Totales</div>
     </div>
   `;
 }
 
 export function clearDashboardStats() {
-  const statsContainer = document.querySelector('.dashboard-stats');
+  const statsContainer = document.getElementById('stats-cards-container');
   if (!statsContainer) return;
 
   statsContainer.innerHTML = `
