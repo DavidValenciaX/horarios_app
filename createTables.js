@@ -2,6 +2,61 @@ import { TimeTable } from "./classes.js";
 import { updateCombinedSchedules } from "./combinations.js";
 import { apiService } from "./api.js";
 
+// Utility function to darken a color
+function darkenColor(color, factor) {
+
+  // Handle hex colors
+  if (color.startsWith('#')) {
+    const hex = color.slice(1);
+    const num = parseInt(hex, 16);
+    const r = Math.max(0, Math.floor((num >> 16) * (1 - factor)));
+    const g = Math.max(0, Math.floor(((num >> 8) & 0x00FF) * (1 - factor)));
+    const b = Math.max(0, Math.floor((num & 0x0000FF) * (1 - factor)));
+    return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, '0')}`;
+  }
+  
+  // Handle rgb/rgba colors
+  if (color.startsWith('rgb')) {
+    const matches = color.match(/\d+/g);
+    if (matches) {
+      const r = Math.max(0, Math.floor(parseInt(matches[0]) * (1 - factor)));
+      const g = Math.max(0, Math.floor(parseInt(matches[1]) * (1 - factor)));
+      const b = Math.max(0, Math.floor(parseInt(matches[2]) * (1 - factor)));
+      const a = matches[3] ? parseFloat(matches[3]) : 1;
+      return color.includes('rgba') ? `rgba(${r}, ${g}, ${b}, ${a})` : `rgb(${r}, ${g}, ${b})`;
+    }
+  }
+  
+  // Handle hsl/hsla colors
+  if (color.startsWith('hsl')) {
+    const matches = color.match(/(\d+(?:\.\d+)?)/g);
+    if (matches && matches.length >= 3) {
+      const h = parseFloat(matches[0]); // Hue: 0-360
+      const s = parseFloat(matches[1]); // Saturation: 0-100
+      const l = Math.max(0, Math.floor(parseFloat(matches[2]) * (1 - factor))); // Lightness: darken by reducing
+      const a = matches[3] ? parseFloat(matches[3]) : 1;
+      return color.includes('hsla') ? `hsla(${h}, ${s}%, ${l}%, ${a})` : `hsl(${h}, ${s}%, ${l}%)`;
+    }
+  }
+  
+  // Handle named colors by converting to hex first
+  if (/^[a-zA-Z]+$/.test(color)) {
+    // Create a temporary element to get computed color
+    const tempElement = document.createElement('div');
+    tempElement.style.color = color;
+    document.body.appendChild(tempElement);
+    const computedColor = window.getComputedStyle(tempElement).color;
+    document.body.removeChild(tempElement);
+    
+    if (computedColor && computedColor !== color) {
+      return darkenColor(computedColor, factor);
+    }
+  }
+  
+  // Fallback: return original color if format not recognized
+  return color;
+}
+
 export function createScheduleTable() {
   const table = document.createElement("table");
   createTable(table);
@@ -135,9 +190,12 @@ async function toggleCell(scheduleManager, cell, forceValue = null) {
   if (shouldSelect) {
     cell.classList.add("selected");
     cell.style.backgroundColor = selectedColor;
+    // Set border color to a darker version of the background color
+    cell.style.borderColor = darkenColor(selectedColor, 0.1);
   } else {
     cell.classList.remove("selected");
     cell.style.backgroundColor = "";
+    cell.style.borderColor = "";
   }
 
   saveActivityScheduleOption(scheduleManager);
@@ -216,6 +274,7 @@ export function loadActivityScheduleOption(scheduleManager) {
 
       cell.classList.toggle("selected", isSelected);
       cell.style.backgroundColor = isSelected ? editingActivity?.color : "";
+      cell.style.borderColor = isSelected ? darkenColor(editingActivity?.color, 0.1) : "";
       
       // Add editing highlight to show which activity is being edited
       if (editingActivityScheduleOption) {

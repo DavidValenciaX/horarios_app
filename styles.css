@@ -1042,12 +1042,6 @@ body {
   transform: scale(1.02);
 }
 
-#scheduleOptionTable td.selected {
-  color: white;
-  border: 2px solid var(--secondary-800);
-  font-weight: 600;
-}
-
 #scheduleOptionTable td.editing-highlight {
   box-shadow: 0 0 0 2px var(--primary-500);
   z-index: 1;
