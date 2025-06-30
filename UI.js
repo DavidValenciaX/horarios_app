@@ -352,7 +352,7 @@ export function updateActivitiesAndActivityScheduleOptions(scheduleManager) {
 
     activityContainer.appendChild(activityHeader);
     activityContainer.appendChild(activityScheduleOptionsContainer);
-    DOM.activitiesAndActivityScheduleOptionsDiv.appendChild(activityContainer);
+    DOM.activitiesAndActivityScheduleOptionsDiv.prepend(activityContainer);
   });
 }
 
@@ -375,7 +375,7 @@ export function createActivity(scheduleManager) {
 
   updateActivitiesAndActivityScheduleOptions(scheduleManager);
 
-  // Poner la primera hora de clase de la nueva asignatura en estado de edición
+  // Poner la primera opción de horario de la nueva actividad en estado de edición
   editingActivityScheduleOption(
     scheduleManager,
     activityManager.activities.length - 1,
