@@ -224,9 +224,6 @@ body {
 .section-title::before {
   content: '';
   width: 4px;
-  height: 2rem;
-  background: linear-gradient(135deg, var(--primary-500), var(--accent-400));
-  border-radius: var(--radius-sm);
 }
 
 #schedule-list {
