@@ -19,6 +19,52 @@ const DOM = {
   combinedSchedulesContainer: document.getElementById("combinedSchedulesContainer"),
 };
 
+function renderDashboardStats(scheduleManager) {
+  const statsContainer = document.querySelector('.dashboard-stats');
+  if (!statsContainer) return;
+
+  const schedules = scheduleManager.schedules || [];
+  const totalSchedules = schedules.length;
+  const totalActivities = schedules.reduce((sum, schedule) => sum + schedule.activityManager.activities.length, 0);
+  const totalOptions = schedules.reduce((sum, schedule) => 
+    sum + schedule.activityManager.activities.reduce((s, activity) => s + activity.activityScheduleOptions.length, 0), 0);
+
+  statsContainer.innerHTML = `
+    <div class="stat-card">
+      <div class="stat-number">${totalSchedules}</div>
+      <div class="stat-label">Horarios</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">${totalActivities}</div>
+      <div class="stat-label">Actividades Totales</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">${totalOptions}</div>
+      <div class="stat-label">Opciones Totales</div>
+    </div>
+  `;
+}
+
+export function clearDashboardStats() {
+  const statsContainer = document.querySelector('.dashboard-stats');
+  if (!statsContainer) return;
+
+  statsContainer.innerHTML = `
+    <div class="stat-card">
+      <div class="stat-number">0</div>
+      <div class="stat-label">Horarios</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">0</div>
+      <div class="stat-label">Actividades Totales</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">0</div>
+      <div class="stat-label">Opciones Totales</div>
+    </div>
+  `;
+}
+
 export function showDashboard(scheduleManager) {
   DOM.dashboard.style.display = "block";
   DOM.mainContent.style.display = "none";
@@ -42,6 +88,7 @@ export async function showPlanningView(scheduleManager) {
 }
 
 function renderDashboard(scheduleManager) {
+  renderDashboardStats(scheduleManager);
   DOM.scheduleList.innerHTML = "";
   
   if (scheduleManager.schedules.length === 0) {

@@ -2,6 +2,7 @@
 
 import { apiService } from './api.js';
 import { enhanceFormAccessibility, MOBILE_FORM_CONSTANTS } from './utils.js';
+import { clearDashboardStats } from './UI.js';
 
 class AuthComponent {
   constructor() {
@@ -88,6 +89,8 @@ class AuthComponent {
       document.getElementById('register-btn').addEventListener('click', () => {
         this.showRegisterModal();
       });
+
+      clearDashboardStats();
     }
   }
 
