@@ -2,58 +2,55 @@ import { TimeTable } from "./classes.js";
 import { updateCombinedSchedules } from "./combinations.js";
 import { apiService } from "./api.js";
 
+function darkenHex(color, factor) {
+  const hex = color.slice(1);
+  const num = parseInt(hex, 16);
+  const r = Math.max(0, Math.floor((num >> 16) * (1 - factor)));
+  const g = Math.max(0, Math.floor(((num >> 8) & 0x00ff) * (1 - factor)));
+  const b = Math.max(0, Math.floor((num & 0x0000ff) * (1 - factor)));
+  return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, "0")}`;
+}
+
+function darkenRgb(color, factor) {
+  const matches = color.match(/\d+/g);
+  if (!matches) return color;
+
+  const r = Math.max(0, Math.floor(parseInt(matches[0]) * (1 - factor)));
+  const g = Math.max(0, Math.floor(parseInt(matches[1]) * (1 - factor)));
+  const b = Math.max(0, Math.floor(parseInt(matches[2]) * (1 - factor)));
+  const a = matches.length > 3 ? parseFloat(matches[3]) : 1;
+  return `rgb${a < 1 ? "a" : ""}(${r}, ${g}, ${b}${a < 1 ? `, ${a}` : ""})`;
+}
+
+function darkenHsl(color, factor) {
+  const matches = color.match(/(\d+(?:\.\d+)?)/g);
+  if (!matches || matches.length < 3) return color;
+
+  const h = parseFloat(matches[0]);
+  const s = parseFloat(matches[1]);
+  const l = Math.max(0, parseFloat(matches[2]) * (1 - factor));
+  const a = matches.length > 3 ? parseFloat(matches[3]) : 1;
+  return `hsl${a < 1 ? "a" : ""}(${h}, ${s}%, ${l}%${a < 1 ? `, ${a}` : ""})`;
+}
+
+function darkenNamedColor(color, factor) {
+  const temp = document.createElement("div");
+  temp.style.color = color;
+  document.body.appendChild(temp);
+  const computedColor = window.getComputedStyle(temp).color;
+  document.body.removeChild(temp);
+
+  return computedColor && computedColor !== color
+    ? darkenColor(computedColor, factor)
+    : color;
+}
+
 // Utility function to darken a color
 function darkenColor(color, factor) {
-
-  // Handle hex colors
-  if (color.startsWith('#')) {
-    const hex = color.slice(1);
-    const num = parseInt(hex, 16);
-    const r = Math.max(0, Math.floor((num >> 16) * (1 - factor)));
-    const g = Math.max(0, Math.floor(((num >> 8) & 0x00FF) * (1 - factor)));
-    const b = Math.max(0, Math.floor((num & 0x0000FF) * (1 - factor)));
-    return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, '0')}`;
-  }
-  
-  // Handle rgb/rgba colors
-  if (color.startsWith('rgb')) {
-    const matches = color.match(/\d+/g);
-    if (matches) {
-      const r = Math.max(0, Math.floor(parseInt(matches[0]) * (1 - factor)));
-      const g = Math.max(0, Math.floor(parseInt(matches[1]) * (1 - factor)));
-      const b = Math.max(0, Math.floor(parseInt(matches[2]) * (1 - factor)));
-      const a = matches[3] ? parseFloat(matches[3]) : 1;
-      return color.includes('rgba') ? `rgba(${r}, ${g}, ${b}, ${a})` : `rgb(${r}, ${g}, ${b})`;
-    }
-  }
-  
-  // Handle hsl/hsla colors
-  if (color.startsWith('hsl')) {
-    const matches = color.match(/(\d+(?:\.\d+)?)/g);
-    if (matches && matches.length >= 3) {
-      const h = parseFloat(matches[0]); // Hue: 0-360
-      const s = parseFloat(matches[1]); // Saturation: 0-100
-      const l = Math.max(0, Math.floor(parseFloat(matches[2]) * (1 - factor))); // Lightness: darken by reducing
-      const a = matches[3] ? parseFloat(matches[3]) : 1;
-      return color.includes('hsla') ? `hsla(${h}, ${s}%, ${l}%, ${a})` : `hsl(${h}, ${s}%, ${l}%)`;
-    }
-  }
-  
-  // Handle named colors by converting to hex first
-  if (/^[a-zA-Z]+$/.test(color)) {
-    // Create a temporary element to get computed color
-    const tempElement = document.createElement('div');
-    tempElement.style.color = color;
-    document.body.appendChild(tempElement);
-    const computedColor = window.getComputedStyle(tempElement).color;
-    document.body.removeChild(tempElement);
-    
-    if (computedColor && computedColor !== color) {
-      return darkenColor(computedColor, factor);
-    }
-  }
-  
-  // Fallback: return original color if format not recognized
+  if (color.startsWith("#")) return darkenHex(color, factor);
+  if (color.startsWith("rgb")) return darkenRgb(color, factor);
+  if (color.startsWith("hsl")) return darkenHsl(color, factor);
+  if (/^[a-zA-Z]+$/.test(color)) return darkenNamedColor(color, factor);
   return color;
 }
 
