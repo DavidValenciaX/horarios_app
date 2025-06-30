@@ -893,7 +893,6 @@ body {
   flex-direction: column;
   gap: var(--spacing-lg);
   max-height: 60vh;
-  overflow-y: auto;
   padding-right: var(--spacing-sm);
 }
 
@@ -1069,11 +1068,12 @@ body {
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid transparent;
+  border: 1px solid var(--neutral-300);
+  background: white;
   position: relative;
   overflow: hidden;
   min-height: 2.75rem;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
 }
 
 .chip::before {
