@@ -19,7 +19,11 @@ function darkenRgb(color, factor) {
   const g = Math.max(0, Math.floor(parseInt(matches[1]) * (1 - factor)));
   const b = Math.max(0, Math.floor(parseInt(matches[2]) * (1 - factor)));
   const a = matches.length > 3 ? parseFloat(matches[3]) : 1;
-  return `rgb${a < 1 ? "a" : ""}(${r}, ${g}, ${b}${a < 1 ? `, ${a}` : ""})`;
+  
+  if (a < 1) {
+    return `rgba(${r}, ${g}, ${b}, ${a})`;
+  }
+  return `rgb(${r}, ${g}, ${b})`;
 }
 
 function darkenHsl(color, factor) {
@@ -30,7 +34,11 @@ function darkenHsl(color, factor) {
   const s = parseFloat(matches[1]);
   const l = Math.max(0, parseFloat(matches[2]) * (1 - factor));
   const a = matches.length > 3 ? parseFloat(matches[3]) : 1;
-  return `hsl${a < 1 ? "a" : ""}(${h}, ${s}%, ${l}%${a < 1 ? `, ${a}` : ""})`;
+
+  if (a < 1) {
+    return `hsla(${h}, ${s}%, ${l}%, ${a})`;
+  }
+  return `hsl(${h}, ${s}%, ${l}%)`;
 }
 
 function darkenNamedColor(color, factor) {
