@@ -1,29 +1,68 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Planificador de Horarios</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
     <div id="dashboard">
-        <h2>Mis Horarios</h2>
-        <div id="schedule-list-container">
-            <div id="schedule-list"></div>
-            <div class="schedule-actions">
-                <input type="text" id="new-schedule-name" placeholder="Nombre del Horario">
-                <button type="button" id="create-schedule-button">Crear Horario</button>
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <h1 class="dashboard-title">Planificador de Horarios</h1>
+            <p class="dashboard-subtitle">Organiza tus actividades de manera inteligente</p>
+        </div>
+
+        <!-- Dashboard Stats -->
+        <div class="dashboard-stats">
+            <div class="stat-card">
+                <div class="stat-number" id="total-schedules">0</div>
+                <div class="stat-label">Horarios Creados</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="total-activities">0</div>
+                <div class="stat-label">Actividades Totales</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="active-activities">0</div>
+                <div class="stat-label">Actividades Activas</div>
             </div>
         </div>
+
+        <!-- Schedule List Section -->
+        <div id="schedule-list-container">
+            <div class="section-header">
+                <h2 class="section-title">Mis Horarios</h2>
+            </div>
+            <div id="schedule-list"></div>
+            
+            <!-- Create Schedule Section -->
+            <div class="create-schedule-section">
+                <div class="create-schedule-header">
+                    <h3 class="create-schedule-title">Crear Nuevo Horario</h3>
+                    <p class="create-schedule-description">Dale un nombre descriptivo a tu nuevo horario</p>
+                </div>
+                <div class="schedule-actions">
+                    <input type="text" id="new-schedule-name" placeholder="Ej: Semestre 2024-1, Horario Ideal, Actividades Deportivas...">
+                    <button type="button" id="create-schedule-button" class="btn-primary">Crear Horario</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Management Section -->
         <div class="data-management-section">
-            <h3>Gestionar Datos</h3>
+            <h3>Gestión de Datos</h3>
+            <p class="data-management-description">Guarda y carga tus horarios para mantener tu información segura</p>
             <div class="data-management-actions">
-                <button type="button" id="save-all-button">Descargar horarios</button>
+                <button type="button" id="save-all-button" class="btn-secondary">📥 Descargar Horarios</button>
                 <input type="file" id="file-input" accept=".json" aria-label="Cargar archivo JSON">
-                <label for="file-input" id="file-input-label" aria-label="Cargar horarios">Cargar horarios</label>
+                <label for="file-input" id="file-input-label" aria-label="Cargar horarios">📤 Cargar Horarios</label>
                 <span id="file-name" aria-label="Nombre del archivo cargado"></span>
             </div>
         </div>
@@ -66,7 +105,6 @@
                 <input type="checkbox" id="toggleConflicts">
             </div>
         </div>
-
 
         <div id="combinedSchedulesContainer"></div>
     </div>

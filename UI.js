@@ -43,17 +43,72 @@ export async function showPlanningView(scheduleManager) {
 
 function renderDashboard(scheduleManager) {
   DOM.scheduleList.innerHTML = "";
+  
   if (scheduleManager.schedules.length === 0) {
-    DOM.scheduleList.innerHTML = "<p>No hay horarios. ¡Crea uno nuevo!</p>";
+    DOM.scheduleList.innerHTML = `
+      <div class="empty-state animate-fade-in-up">
+        <div class="empty-state-icon">📅</div>
+        <h3 class="empty-state-title">No hay horarios creados</h3>
+        <p class="empty-state-description">¡Crea tu primer horario para comenzar a organizar tus actividades!</p>
+      </div>
+    `;
+    return;
   }
 
   scheduleManager.schedules.forEach((schedule, index) => {
     const scheduleCard = document.createElement("div");
-    scheduleCard.className = "schedule-card";
+    scheduleCard.className = "schedule-card animate-fade-in-up";
+    scheduleCard.style.animationDelay = `${index * 0.1}s`;
     
-    const cardContent = document.createElement("div");
-    cardContent.className = "schedule-card-content";
-    cardContent.textContent = schedule.name;
+    // Calculate schedule statistics
+    const activityCount = schedule.activityManager.activities.length;
+    const activeActivityCount = schedule.activityManager.activities.filter(a => a.isActive).length;
+    const totalOptions = schedule.activityManager.activities.reduce((sum, activity) => 
+      sum + activity.activityScheduleOptions.length, 0);
+    
+    const cardHeader = document.createElement("div");
+    cardHeader.className = "schedule-card-header";
+    
+    const cardTitle = document.createElement("h3");
+    cardTitle.className = "schedule-card-title";
+    cardTitle.textContent = schedule.name;
+    
+    const cardMeta = document.createElement("div");
+    cardMeta.className = "schedule-card-meta";
+    
+    if (activityCount > 0) {
+      cardMeta.innerHTML = `
+        <div class="schedule-meta-item">
+          <span>📚</span>
+          <span>${activityCount} actividad${activityCount !== 1 ? 'es' : ''}</span>
+        </div>
+        <div class="schedule-meta-item">
+          <span>✅</span>
+          <span>${activeActivityCount} activa${activeActivityCount !== 1 ? 's' : ''}</span>
+        </div>
+        <div class="schedule-meta-item">
+          <span>⚙️</span>
+          <span>${totalOptions} opción${totalOptions !== 1 ? 'es' : ''}</span>
+        </div>
+      `;
+    } else {
+      cardMeta.innerHTML = `
+        <div class="schedule-meta-item">
+          <span>📝</span>
+          <span>Sin actividades</span>
+        </div>
+      `;
+    }
+    
+    cardHeader.appendChild(cardTitle);
+    cardHeader.appendChild(cardMeta);
+    
+    const cardActions = document.createElement("div");
+    cardActions.className = "schedule-card-actions";
+    
+    const cardDate = document.createElement("div");
+    cardDate.className = "schedule-card-date";
+    cardDate.textContent = "Creado recientemente";
     
     const deleteButton = document.createElement("button");
     deleteButton.textContent = "×";
@@ -66,24 +121,27 @@ function renderDashboard(scheduleManager) {
         renderDashboard(scheduleManager);
       }
     };
-
-    scheduleCard.appendChild(cardContent);
-    scheduleCard.appendChild(deleteButton);
     
-    // Add click handler to the card content with mobile and keyboard support
+    cardActions.appendChild(cardDate);
+    cardActions.appendChild(deleteButton);
+    
+    scheduleCard.appendChild(cardHeader);
+    scheduleCard.appendChild(cardActions);
+    
+    // Add click handler to the card header with mobile and keyboard support
     const handleCardActivation = debounce(async () => {
       scheduleManager.setActiveSchedule(index);
       await showPlanningView(scheduleManager);
     }, 150);
 
-    cardContent.addEventListener("click", handleCardActivation);
-    addTouchSupport(cardContent, handleCardActivation);
-    addKeyboardSupport(cardContent, handleCardActivation);
+    cardHeader.addEventListener("click", handleCardActivation);
+    addTouchSupport(cardHeader, handleCardActivation);
+    addKeyboardSupport(cardHeader, handleCardActivation);
     
-    // Make card content focusable for keyboard navigation
-    cardContent.setAttribute("tabindex", "0");
-    cardContent.setAttribute("role", "button");
-    cardContent.setAttribute("aria-label", `Abrir horario ${schedule.name}`);
+    // Make card header focusable for keyboard navigation
+    cardHeader.setAttribute("tabindex", "0");
+    cardHeader.setAttribute("role", "button");
+    cardHeader.setAttribute("aria-label", `Abrir horario ${schedule.name}`);
 
     DOM.scheduleList.appendChild(scheduleCard);
   });

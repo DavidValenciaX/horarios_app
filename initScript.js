@@ -50,6 +50,46 @@ function initPlanningViewListeners(scheduleManager) {
     .addEventListener("click", async () => showDashboard(scheduleManager));
 }
 
+function updateDashboardStats(scheduleManager) {
+  const totalSchedules = scheduleManager.schedules.length;
+  let totalActivities = 0;
+  let activeActivities = 0;
+
+  scheduleManager.schedules.forEach(schedule => {
+    totalActivities += schedule.activityManager.activities.length;
+    activeActivities += schedule.activityManager.activities.filter(activity => activity.isActive).length;
+  });
+
+  // Update stat cards with animation
+  const totalSchedulesEl = document.getElementById("total-schedules");
+  const totalActivitiesEl = document.getElementById("total-activities");
+  const activeActivitiesEl = document.getElementById("active-activities");
+
+  if (totalSchedulesEl) animateNumber(totalSchedulesEl, totalSchedules);
+  if (totalActivitiesEl) animateNumber(totalActivitiesEl, totalActivities);
+  if (activeActivitiesEl) animateNumber(activeActivitiesEl, activeActivities);
+}
+
+function animateNumber(element, targetNumber) {
+  const currentNumber = parseInt(element.textContent) || 0;
+  const increment = targetNumber > currentNumber ? 1 : -1;
+  const duration = 500; // ms
+  const steps = Math.abs(targetNumber - currentNumber);
+  const stepDuration = steps > 0 ? duration / steps : 0;
+
+  if (steps === 0) return;
+
+  let current = currentNumber;
+  const timer = setInterval(() => {
+    current += increment;
+    element.textContent = current;
+    
+    if (current === targetNumber) {
+      clearInterval(timer);
+    }
+  }, stepDuration);
+}
+
 async function initApp() {
   const scheduleManager = new ScheduleManager();
   
@@ -71,7 +111,15 @@ async function initApp() {
     showDashboard(scheduleManager);
   });
   
+  // Override showDashboard to update stats
+  const originalShowDashboard = showDashboard;
+  window.showDashboard = function(sm) {
+    originalShowDashboard(sm);
+    updateDashboardStats(sm);
+  };
+  
   showDashboard(scheduleManager);
+  updateDashboardStats(scheduleManager);
 }
 
 async function loadUserDataIfAuthenticated(scheduleManager) {
@@ -98,7 +146,7 @@ async function loadUserDataIfAuthenticated(scheduleManager) {
 }
 
 function setupAutoSaveTriggers(scheduleManager) {
-  // Override ScheduleManager methods to trigger auto-save
+  // Override ScheduleManager methods to trigger auto-save and stats update
   const originalAddSchedule = scheduleManager.addSchedule.bind(scheduleManager);
   const originalDeleteSchedule = scheduleManager.deleteSchedule.bind(scheduleManager);
   const originalSetActiveSchedule = scheduleManager.setActiveSchedule.bind(scheduleManager);
@@ -106,12 +154,14 @@ function setupAutoSaveTriggers(scheduleManager) {
   scheduleManager.addSchedule = function(name) {
     const result = originalAddSchedule(name);
     apiService.scheduleAutoSave(this);
+    updateDashboardStats(this);
     return result;
   };
 
   scheduleManager.deleteSchedule = function(index) {
     const result = originalDeleteSchedule(index);
     apiService.scheduleAutoSave(this);
+    updateDashboardStats(this);
     return result;
   };
 
