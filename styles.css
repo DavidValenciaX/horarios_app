@@ -964,58 +964,66 @@ body {
 
 .schedule-table-container {
   flex: 1;
-  padding: var(--spacing-xl);
+  padding: clamp(var(--spacing-md), 3vw, var(--spacing-xl));
   display: flex;
   justify-content: center;
   align-items: flex-start;
+  overflow: auto;
+  min-height: 0;
 }
 
 #scheduleOptionTableContainer {
   width: 100%;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow: auto;
 }
 
 /* Enhanced Schedule Table */
 #scheduleOptionTable {
   width: 100%;
+  max-width: 100%;
   border-collapse: collapse;
   background: white;
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-md);
   border: 1px solid var(--neutral-200);
-  font-size: 0.8rem;
-  table-layout: fixed;
+  font-size: clamp(0.6rem, 2vw, 0.75rem);
+  table-layout: auto;
 }
 
 #scheduleOptionTable th {
   background: var(--secondary-800);
   color: white;
-  padding: var(--spacing-md);
+  padding: clamp(var(--spacing-xs), 1.5vw, var(--spacing-sm));
   font-weight: 600;
   text-align: center;
   border: none;
-  font-size: 0.75rem;
+  font-size: clamp(0.55rem, 1.8vw, 0.7rem);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 #scheduleOptionTable th:first-child {
   background: var(--secondary-900);
-  min-width: 120px;
+  min-width: clamp(80px, 15vw, 120px);
+  max-width: 150px;
 }
 
 #scheduleOptionTable td {
-  padding: var(--spacing-sm);
+  padding: clamp(var(--spacing-xs), 1vw, var(--spacing-sm));
   border: 1px solid var(--neutral-200);
   text-align: center;
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
-  min-height: 2.5rem;
+  min-height: clamp(1.8rem, 4vw, 2.5rem);
   background: white;
+  font-size: clamp(0.5rem, 1.6vw, 0.65rem);
+  vertical-align: middle;
 }
 
 #scheduleOptionTable td:first-child {
@@ -1023,7 +1031,10 @@ body {
   font-weight: 600;
   color: var(--secondary-700);
   cursor: default;
-  font-size: 0.7rem;
+  font-size: clamp(0.45rem, 1.4vw, 0.6rem);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 #scheduleOptionTable td:not(:first-child):hover {
@@ -1306,12 +1317,24 @@ body {
   }
   
   #scheduleOptionTable {
-    font-size: 0.7rem;
+    font-size: clamp(0.5rem, 3vw, 0.65rem);
   }
   
   #scheduleOptionTable th,
   #scheduleOptionTable td {
     padding: var(--spacing-xs);
+  }
+  
+  #scheduleOptionTable th:first-child {
+    min-width: clamp(60px, 20vw, 100px);
+  }
+  
+  #scheduleOptionTable td {
+    min-height: clamp(1.5rem, 5vw, 2rem);
+  }
+  
+  .schedule-table-container {
+    padding: var(--spacing-md);
   }
   
   .chip {
@@ -1408,6 +1431,36 @@ body {
   
   .schedule-card-actions {
     padding: var(--spacing-sm) var(--spacing-lg);
+  }
+  
+  /* Extra small screens - mobile */
+  #scheduleOptionTable {
+    font-size: 0.5rem;
+  }
+  
+  #scheduleOptionTable th,
+  #scheduleOptionTable td {
+    padding: 2px 4px;
+  }
+  
+  #scheduleOptionTable th:first-child {
+    min-width: 60px;
+    max-width: 80px;
+    font-size: 0.45rem;
+  }
+  
+  #scheduleOptionTable td {
+    min-height: 1.5rem;
+    font-size: 0.45rem;
+  }
+  
+  .schedule-table-container {
+    padding: var(--spacing-sm);
+  }
+  
+  #layoutActivitySchedule {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
   }
 }
 
