@@ -1486,7 +1486,7 @@ tr:nth-child(even) {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 0;
+  margin-bottom: var(--spacing-md);
   flex-wrap: wrap;
   gap: var(--spacing-lg);
   background: white;
@@ -1702,6 +1702,12 @@ tr:nth-child(even) {
   #schedule-list {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   }
+
+  #combinedSchedulesContainer table {
+    font-size: clamp(0.5rem, 3vw, 0.65rem);
+    width: 100%;
+  }
+
 }
 
 @media (max-width: 768px) {
@@ -1808,6 +1814,14 @@ tr:nth-child(even) {
     padding-left: 0;
     padding-right: 0;
   }
+
+  .activity-management-panel {
+    margin-left: 0;
+    margin-right: 0;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
   
   /* Full-width container for schedule editor panel */
   .schedule-editor-panel {
@@ -1855,13 +1869,7 @@ tr:nth-child(even) {
   
   /* Full-width tables in combined schedules */
   #combinedSchedulesContainer table {
-    font-size: clamp(0.5rem, 3vw, 0.65rem);
-    width: 100%;
     min-width: 100vw;
-    border-radius: 0;
-    border-left: none;
-    border-right: none;
-    margin: 0;
   }
   
   /* Adjust panel content padding to accommodate full-width tables */
@@ -1936,18 +1944,9 @@ tr:nth-child(even) {
   #main-content-header {
     margin-left: var(--spacing-md);
     margin-right: var(--spacing-md);
-    margin-bottom: var(--spacing-md);
   }
   
   /* Full-width activity management panel */
-  .activity-management-panel {
-    margin-left: 0;
-    margin-right: 0;
-    border-radius: 0;
-    border-left: none;
-    border-right: none;
-    margin-bottom: var(--spacing-md);
-  }
   
   /* Restore some padding for activity management content */
   .activity-management-panel .panel-content {
@@ -1962,7 +1961,6 @@ tr:nth-child(even) {
     border-radius: 0;
     border-left: none;
     border-right: none;
-    margin-bottom: 0;
     padding-left: var(--spacing-md);
     padding-right: var(--spacing-md);
   }
