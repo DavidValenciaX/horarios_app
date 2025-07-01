@@ -961,6 +961,7 @@ body {
   align-items: flex-start;
   overflow: auto;
   min-height: 0;
+  width: 100%;
 }
 
 #scheduleOptionTableContainer {
@@ -984,6 +985,7 @@ body {
   border: 1px solid var(--neutral-200);
   font-size: clamp(0.6rem, 2vw, 0.75rem);
   table-layout: auto;
+  min-width: 700px;
 }
 
 #scheduleOptionTable th {
@@ -1612,7 +1614,8 @@ tr:nth-child(even) {
 }
 
 #combinedSchedulesContainer {
-  margin-top: 2em;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 #combinedSchedulesContainer div {
@@ -1641,13 +1644,16 @@ tr:nth-child(even) {
   margin: 0 auto;
   background: linear-gradient(135deg, var(--primary-50) 0%, var(--secondary-50) 100%);
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2xl);
 }
 
 #main-content-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--spacing-2xl);
+  margin-bottom: 0;
   flex-wrap: wrap;
   gap: var(--spacing-lg);
   background: white;
@@ -1855,4 +1861,31 @@ tr:nth-child(even) {
 *:focus-visible {
   outline: 2px solid var(--primary-500);
   outline-offset: 2px;
+}
+
+.panel {
+  background: white;
+  padding: var(--spacing-2xl);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--neutral-200);
+  position: relative;
+  overflow: auto;
+}
+
+.panel-accent-top::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+}
+
+.panel-accent-gradient-1::before {
+  background: linear-gradient(90deg, var(--success-500), var(--primary-400));
+}
+
+.panel-accent-gradient-2::before {
+  background: linear-gradient(90deg, var(--secondary-500), var(--primary-400));
 }
