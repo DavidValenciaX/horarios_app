@@ -1301,10 +1301,6 @@ body {
     gap: var(--spacing-md);
   }
   
-  #scheduleOptionTable {
-    font-size: clamp(0.5rem, 3vw, 0.65rem);
-  }
-  
   #scheduleOptionTable th,
   #scheduleOptionTable td {
     padding: var(--spacing-xs);
@@ -1316,10 +1312,6 @@ body {
   
   #scheduleOptionTable td {
     min-height: clamp(1.5rem, 5vw, 2rem);
-  }
-  
-  .schedule-table-container {
-    padding: var(--spacing-md);
   }
   
   .chip {
@@ -1371,11 +1363,11 @@ body {
     margin-right: 0;
     padding: 0;
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
   }
   
   /* Ensure table takes full width */
   #scheduleOptionTable {
+    font-size: clamp(0.5rem, 3vw, 0.65rem);
     width: 100%;
     min-width: 100vw;
     border-radius: 0;
