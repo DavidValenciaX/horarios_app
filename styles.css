@@ -1291,6 +1291,17 @@ body {
   }
 }
 
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .dashboard-stats-cards {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+  
+  #schedule-list {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+}
+
 @media (max-width: 768px) {
   /* Dashboard and Main Components */
   #dashboard {
@@ -1485,19 +1496,6 @@ body {
     background-color: white !important;
   }
 }
-
-/* Responsive Design */
-@media (max-width: 1024px) {
-  .dashboard-stats-cards {
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  }
-  
-  #schedule-list {
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  }
-}
-
-
 
 @media (max-width: 480px) {
   .dashboard-title {
