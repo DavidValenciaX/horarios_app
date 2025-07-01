@@ -71,6 +71,22 @@ export const MOBILE_FORM_CONSTANTS = {
 export function enhanceFormAccessibility(form) {
   const inputs = form.querySelectorAll('input');
   
+  // Add form submission handler to clear custom validations
+  form.addEventListener('submit', (e) => {
+    // Mark form as being submitted to prevent real-time validation interference
+    form.checkingSubmission = true;
+    
+    // Clear all custom validations before submission to let native validation work
+    inputs.forEach(input => {
+      input.setCustomValidity('');
+    });
+    
+    // Reset the flag after a short delay
+    setTimeout(() => {
+      form.checkingSubmission = false;
+    }, 100);
+  });
+  
   inputs.forEach(input => {
     // Add mobile-optimized input attributes
     if (input.type === 'email') {
@@ -89,18 +105,42 @@ export function enhanceFormAccessibility(form) {
       input.setAttribute('autocapitalize', 'words');
     }
     
-    // Add real-time validation feedback
+    // Add real-time validation feedback with mobile-friendly debouncing
     const debouncedValidation = debounce(() => {
-      validateInput(input);
+      // Only validate if not during form submission
+      if (!form.checkingSubmission) {
+        validateInput(input);
+      }
     }, MOBILE_FORM_CONSTANTS.FORM_VALIDATION_DEBOUNCE);
     
-    input.addEventListener('input', debouncedValidation);
-    input.addEventListener('blur', () => validateInput(input));
+    // Use different validation strategies for mobile vs desktop
+    const isMobile = window.innerWidth <= 768;
+    
+    if (isMobile) {
+      // On mobile, be less aggressive with real-time validation
+      input.addEventListener('blur', () => {
+        if (!form.checkingSubmission) {
+          validateInput(input);
+        }
+      });
+    } else {
+      // On desktop, use both input and blur events
+      input.addEventListener('input', debouncedValidation);
+      input.addEventListener('blur', () => {
+        if (!form.checkingSubmission) {
+          validateInput(input);
+        }
+      });
+    }
   });
 }
 
 // Input validation with visual feedback
 export function validateInput(input) {
+  // Always reset custom validity first to avoid interference
+  input.setCustomValidity('');
+  
+  // Check validity after resetting custom messages
   const isValid = input.checkValidity();
   
   // Remove previous validation classes
@@ -111,8 +151,9 @@ export function validateInput(input) {
     input.classList.add(isValid ? 'input-valid' : 'input-invalid');
   }
   
-  // Custom validation messages
-  if (!isValid && input.value.trim() !== '') {
+  // Only set custom validation messages if the field is actually invalid
+  // and has content, and only during real-time validation (not form submission)
+  if (!isValid && input.value.trim() !== '' && !input.form?.checkingSubmission) {
     const errorMessages = {
       'valueMissing': 'Este campo es obligatorio',
       'typeMismatch': input.type === 'email' ? 'Ingresa un email válido' : 'Formato inválido',
@@ -120,12 +161,18 @@ export function validateInput(input) {
       'patternMismatch': 'El formato no es válido'
     };
     
-    const errorType = Object.keys(input.validity).find(key => 
-      input.validity[key] === true && key !== 'valid'
-    );
+    // More robust error type detection
+    const validityState = input.validity;
+    let errorType = null;
     
-    input.setCustomValidity(errorMessages[errorType] || 'Valor inválido');
-  } else {
-    input.setCustomValidity('');
+    if (validityState.valueMissing) errorType = 'valueMissing';
+    else if (validityState.typeMismatch) errorType = 'typeMismatch';
+    else if (validityState.tooShort) errorType = 'tooShort';
+    else if (validityState.patternMismatch) errorType = 'patternMismatch';
+    
+    // Only set custom message if we have a specific error type
+    if (errorType && errorMessages[errorType]) {
+      input.setCustomValidity(errorMessages[errorType]);
+    }
   }
 } 

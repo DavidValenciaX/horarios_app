@@ -1517,6 +1517,54 @@ select:focus {
   box-shadow: 0 0 0.5em rgba(76, 175, 80, 0.25);
 }
 
+/* Enhanced input validation states */
+input.input-valid {
+  border-color: var(--success-500) !important;
+  box-shadow: 0 0 0 3px var(--success-100) !important;
+  background-color: var(--success-50);
+}
+
+input.input-invalid {
+  border-color: var(--error-500) !important;
+  box-shadow: 0 0 0 3px var(--error-100) !important;
+  background-color: var(--error-50);
+}
+
+/* Mobile-specific input improvements */
+@media (max-width: 768px) {
+  input[type="text"],
+  input[type="number"],
+  input[type="email"],
+  input[type="password"],
+  select {
+    font-size: 16px; /* Prevents zoom on iOS */
+    padding: 1rem;
+    border-radius: var(--radius-lg);
+    border-width: 2px;
+    transition: all 0.2s ease;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  
+  input[type="text"]:focus,
+  input[type="number"]:focus,
+  input[type="email"]:focus,
+  input[type="password"]:focus,
+  select:focus {
+    outline: none;
+    transform: scale(1.02);
+    z-index: 1;
+    position: relative;
+  }
+  
+  /* Remove invalid styling during typing on mobile */
+  input:focus.input-invalid {
+    border-color: var(--primary-500) !important;
+    box-shadow: 0 0 0 3px var(--primary-100) !important;
+    background-color: white !important;
+  }
+}
+
 button {
   margin: 0.5em;
   padding: 0.5em;
