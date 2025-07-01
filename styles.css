@@ -1167,7 +1167,6 @@ tr:nth-child(even) {
   overflow: hidden;
   box-shadow: var(--shadow-md);
   border: 1px solid var(--neutral-200);
-  font-size: clamp(0.5rem, 3vw, 0.65rem);
   table-layout: fixed;
 }
 
@@ -1178,7 +1177,7 @@ tr:nth-child(even) {
   font-weight: 600;
   text-align: center;
   border: none;
-  font-size: clamp(0.55rem, 1.8vw, 0.7rem);
+  font-size: clamp(0.5rem, 3vw, 0.55rem);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -1704,7 +1703,6 @@ tr:nth-child(even) {
 
   #combinedSchedulesContainer table {
     font-size: clamp(0.5rem, 3vw, 0.65rem);
-    width: 100%;
   }
 
 }
