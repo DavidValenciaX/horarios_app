@@ -1341,6 +1341,74 @@ body {
   .schedule-options {
     gap: 2px;
   }
+  
+  /* Timetable Full-Width Styles for Small Screens */
+  /* Remove padding from main content on small screens for timetables */
+  #main-content {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  
+  /* Full-width container for schedule editor panel */
+  .schedule-editor-panel {
+    margin-left: calc(-1 * var(--spacing-xl));
+    margin-right: calc(-1 * var(--spacing-xl));
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+  
+  /* Remove padding from schedule table container */
+  .schedule-table-container {
+    padding: 0;
+    margin: 0;
+  }
+  
+  /* Full-width table container */
+  #scheduleOptionTableContainer {
+    width: 100vw;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Ensure table takes full width */
+  #scheduleOptionTable {
+    width: 100%;
+    min-width: 100vw;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    margin: 0;
+  }
+  
+  /* Full-width combined schedules container */
+  #combinedSchedulesContainer {
+    margin-left: calc(-1 * var(--spacing-xl));
+    margin-right: calc(-1 * var(--spacing-xl));
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+  
+  /* Full-width tables in combined schedules */
+  #combinedSchedulesContainer table {
+    width: 100%;
+    min-width: 100vw;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    margin: 0;
+  }
+  
+  /* Adjust panel content padding to accommodate full-width tables */
+  .schedule-editor-panel .panel-content {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  
 }
 
 /* Responsive Design */
@@ -1427,29 +1495,88 @@ body {
     padding: var(--spacing-sm) var(--spacing-lg);
   }
   
-  /* Extra small screens - mobile */
+  /* Even more aggressive full-width on very small screens */
+  #main-content {
+    padding: 0;
+    gap: 0;
+  }
+  
+  /* Ensure main content header doesn't interfere */
+  #main-content-header {
+    margin-left: var(--spacing-md);
+    margin-right: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+  }
+  
+  /* Full-width activity management panel */
+  .activity-management-panel {
+    margin-left: 0;
+    margin-right: 0;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    margin-bottom: var(--spacing-md);
+  }
+  
+  /* Restore some padding for activity management content */
+  .activity-management-panel .panel-content {
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+  }
+  
+  /* Full-width generate schedules section */
+  .generate-schedules-section {
+    margin-left: 0;
+    margin-right: 0;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    margin-bottom: 0;
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+  }
+  
+  /* Ultra-compact table styles */
   #scheduleOptionTable {
-    font-size: 0.5rem;
+    font-size: 0.4rem;
   }
   
   #scheduleOptionTable th,
   #scheduleOptionTable td {
-    padding: 2px 4px;
+    padding: 1px 2px;
+    font-size: 0.4rem;
   }
   
   #scheduleOptionTable th:first-child {
-    min-width: 60px;
-    max-width: 80px;
-    font-size: 0.45rem;
+    min-width: 50px;
+    max-width: 70px;
+    font-size: 0.35rem;
   }
   
   #scheduleOptionTable td {
-    min-height: 1.5rem;
-    font-size: 0.45rem;
+    min-height: 1.25rem;
+  }
+  
+  /* Combined schedules tables */
+  #combinedSchedulesContainer table th,
+  #combinedSchedulesContainer table td {
+    padding: 1px 2px;
+    font-size: 0.4rem;
+  }
+  
+  #combinedSchedulesContainer table th:first-child {
+    min-width: 50px;
+    max-width: 70px;
+    font-size: 0.35rem;
+  }
+  
+  #combinedSchedulesContainer table td {
+    min-height: 1.25rem;
   }
   
   .schedule-table-container {
-    padding: var(--spacing-sm);
+    padding: 0;
+    margin: 0;
   }
   
   #layoutActivitySchedule {
@@ -1488,6 +1615,8 @@ body {
     padding: var(--spacing-md);
   }
 }
+
+
 
 /* Preserve existing styles for other components */
 label {
