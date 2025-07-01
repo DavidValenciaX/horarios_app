@@ -1705,6 +1705,10 @@ tr:nth-child(even) {
 }
 
 @media (max-width: 768px) {
+  .panel {
+    padding: 0;
+  }
+
   /* Dashboard and Main Components */
   #dashboard {
     padding: var(--spacing-md);
@@ -1807,8 +1811,8 @@ tr:nth-child(even) {
   
   /* Full-width container for schedule editor panel */
   .schedule-editor-panel {
-    margin-left: calc(-1 * var(--spacing-xl));
-    margin-right: calc(-1 * var(--spacing-xl));
+    margin-left: 0;
+    margin-right: 0;
     border-radius: 0;
     border-left: none;
     border-right: none;
@@ -1842,8 +1846,8 @@ tr:nth-child(even) {
   
   /* Full-width combined schedules container */
   #combinedSchedulesContainer {
-    margin-left: calc(-1 * var(--spacing-xl));
-    margin-right: calc(-1 * var(--spacing-xl));
+    margin-left: 0;
+    margin-right: 0;
     border-radius: 0;
     border-left: none;
     border-right: none;
