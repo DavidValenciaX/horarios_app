@@ -1167,7 +1167,7 @@ tr:nth-child(even) {
   overflow: hidden;
   box-shadow: var(--shadow-md);
   border: 1px solid var(--neutral-200);
-  font-size: clamp(0.6rem, 2vw, 0.75rem);
+  font-size: clamp(0.5rem, 3vw, 0.65rem);
   table-layout: fixed;
 }
 
@@ -1848,7 +1848,6 @@ tr:nth-child(even) {
   
   /* Ensure table takes full width */
   #scheduleOptionTable {
-    font-size: clamp(0.5rem, 3vw, 0.65rem);
     min-width: 100vw;
     border-radius: 0;
     border-left: none;
