@@ -1855,6 +1855,7 @@ tr:nth-child(even) {
   
   /* Full-width tables in combined schedules */
   #combinedSchedulesContainer table {
+    font-size: clamp(0.5rem, 3vw, 0.65rem);
     width: 100%;
     min-width: 100vw;
     border-radius: 0;
