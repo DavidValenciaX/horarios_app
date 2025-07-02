@@ -979,6 +979,7 @@ tr:nth-child(even) {
   border: 1px solid var(--primary-200);
   position: relative;
   flex-shrink: 0;
+  overflow: hidden;
 }
 
 .create-activity-section::before {
@@ -989,7 +990,6 @@ tr:nth-child(even) {
   right: 0;
   height: 3px;
   background: linear-gradient(90deg, var(--primary-400), var(--primary-600));
-  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
 }
 
 .create-activity-section h3 {
