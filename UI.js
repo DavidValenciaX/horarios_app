@@ -354,6 +354,14 @@ export function updateActivitiesAndActivityScheduleOptions(scheduleManager) {
     activityContainer.appendChild(activityScheduleOptionsContainer);
     DOM.activitiesAndActivityScheduleOptionsDiv.prepend(activityContainer);
   });
+
+  // Add title at the top after processing all activities
+  if (activityManager.activities.length > 0) {
+    const titleElement = document.createElement("h3");
+    titleElement.textContent = "Actividades y Opciones";
+    titleElement.className = "activities-title";
+    DOM.activitiesAndActivityScheduleOptionsDiv.prepend(titleElement);
+  }
 }
 
 export function createActivity(scheduleManager) {

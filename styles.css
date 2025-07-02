@@ -1079,6 +1079,23 @@ tr:nth-child(even) {
   font-size: 1rem;
 }
 
+/* Dynamic activities title styling */
+.activities-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--secondary-800);
+  margin: 0 0 var(--spacing-md) 0;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-shrink: 0;
+}
+
+.activities-title::before {
+  content: '📋';
+  font-size: 1rem;
+}
+
 #activitiesAndScheduleOptions {
   display: flex;
   flex-direction: column;
@@ -2027,7 +2044,8 @@ tr:nth-child(even) {
     gap: var(--spacing-xs);
   }
   
-  .activities-list-section h3 {
+  .activities-list-section h3,
+  .activities-title {
     font-size: 1rem;
     margin-bottom: var(--spacing-xs);
     margin-left: var(--spacing-md);
