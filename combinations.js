@@ -58,17 +58,34 @@ export async function generateCombinedSchedules(scheduleManager) {
       const clone = table.cloneNode(true);
       clone.style.background = "white";
       clone.style.width = table.offsetWidth + "px";
+      clone.style.fontFamily = "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
       document.body.appendChild(clone);
 
       toPng(clone, {
         pixelRatio: 3,
         backgroundColor: "white",
+        useCORS: false,
+        allowTaint: false,
+        preferredFontFormat: "woff2"
       }).then(function (dataUrl) {
         let link = document.createElement("a");
         link.download = `horario-combinado-${index + 1}.png`;
         link.href = dataUrl;
         link.click();
         document.body.removeChild(clone);
+      }).catch(function (error) {
+        console.warn('Error al generar imagen:', error);
+        // Fallback con configuración simplificada
+        toPng(clone, {
+          pixelRatio: 2,
+          backgroundColor: "white"
+        }).then(function (dataUrl) {
+          let link = document.createElement("a");
+          link.download = `horario-combinado-${index + 1}.png`;
+          link.href = dataUrl;
+          link.click();
+          document.body.removeChild(clone);
+        });
       });
     };
 
