@@ -4,8 +4,20 @@ import generatePastelColor from "./colors.js";
 import "./components/eye-open-icon.js";
 import "./components/eye-off-icon.js";
 import "./components/arrow-left-icon.js";
+import "./components/three-dots-icon.js";
+import "./components/trash-icon.js";
 import { apiService } from "./api.js";
 import { debounce, addTouchSupport, addKeyboardSupport } from "./utils.js";
+
+document.addEventListener('click', (e) => {
+    // Solo cerrar menús si el click no es dentro del menú o el botón del menú
+    if (!e.target.closest('.chip-menu-container')) {
+        document.querySelectorAll('.chip-menu.visible').forEach(menu => {
+            menu.classList.remove('visible');
+            menu.parentElement.classList.remove('menu-open');
+        });
+    }
+});
 
 const DOM = {
   dashboard: document.getElementById("dashboard"),
@@ -18,6 +30,115 @@ const DOM = {
   newActivityName: document.getElementById("newActivityName"),
   combinedSchedulesContainer: document.getElementById("combinedSchedulesContainer"),
 };
+
+function createChipMenu(items) {
+    const menuContainer = document.createElement('div');
+    menuContainer.className = 'chip-menu-container';
+
+    const menuToggleBtn = document.createElement('button');
+    menuToggleBtn.className = 'chip-action-btn menu-toggle-btn';
+    menuToggleBtn.setAttribute('aria-label', 'Más opciones');
+    menuToggleBtn.innerHTML = '<three-dots-icon></three-dots-icon>';
+    
+    const menu = document.createElement('div');
+    menu.className = 'chip-menu';
+
+    items.forEach(item => {
+        const menuItem = document.createElement('button');
+        menuItem.className = 'chip-menu-item';
+        if(item.className) menuItem.classList.add(item.className);
+        menuItem.setAttribute('aria-label', item.label);
+        
+        const icon = document.createElement(item.iconComponent);
+        icon.classList.add('icon');
+        
+        const text = document.createElement('span');
+        text.textContent = item.text;
+        
+        menuItem.appendChild(icon);
+        menuItem.appendChild(text);
+        
+        menuItem.addEventListener('click', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            menu.classList.remove('visible');
+            menuContainer.classList.remove('menu-open');
+            try {
+                await item.onClick(e);
+            } catch (error) {
+                console.error('Error ejecutando acción del menú:', error);
+            }
+        });
+        menu.appendChild(menuItem);
+    });
+
+    menuContainer.appendChild(menuToggleBtn);
+    menuContainer.appendChild(menu);
+
+    function positionMenu() {
+        const buttonRect = menuToggleBtn.getBoundingClientRect();
+        const menuWidth = 150; // min-width del menú
+        const menuHeight = menu.scrollHeight || 100; // altura estimada del menú
+        
+        // Calcular posición por defecto (abajo a la derecha del botón)
+        let top = buttonRect.bottom + 8;
+        let left = buttonRect.right - menuWidth;
+        
+        // Verificar si el menú se sale por la derecha
+        if (left < 8) {
+            left = buttonRect.left;
+        }
+        
+        // Verificar si el menú se sale por abajo
+        if (top + menuHeight > window.innerHeight - 8) {
+            top = buttonRect.top - menuHeight - 8;
+        }
+        
+        // Verificar si se sale por arriba
+        if (top < 8) {
+            top = buttonRect.bottom + 8;
+        }
+        
+        menu.style.top = `${top}px`;
+        menu.style.left = `${left}px`;
+    }
+
+    menuToggleBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // Cerrar otros menús primero
+        document.querySelectorAll('.chip-menu.visible').forEach(m => {
+            if (m !== menu) {
+                m.classList.remove('visible');
+                m.parentElement.classList.remove('menu-open');
+            }
+        });
+        
+        // Si se va a mostrar el menú, calcular posición
+        if (!menu.classList.contains('visible')) {
+            positionMenu();
+            menuContainer.classList.add('menu-open');
+        } else {
+            menuContainer.classList.remove('menu-open');
+        }
+        
+        // Toggle el menú actual
+        menu.classList.toggle('visible');
+    });
+
+    // Recalcular posición en resize y scroll
+    const recalculatePosition = debounce(() => {
+        if (menu.classList.contains('visible')) {
+            positionMenu();
+        }
+    }, 100);
+
+    window.addEventListener('resize', recalculatePosition);
+    window.addEventListener('scroll', recalculatePosition, true);
+
+    return menuContainer;
+}
 
 function renderDashboardStats(scheduleManager) {
   const statsContainer = document.getElementById('stats-cards-container');
@@ -220,38 +341,31 @@ export function updateActivitiesAndActivityScheduleOptions(scheduleManager) {
     const activityActions = document.createElement("div");
     activityActions.className = "chip-actions";
 
-    // Toggle button
-    const toggleBtn = document.createElement("button");
-    toggleBtn.className = "chip-action-btn toggle-btn";
-    toggleBtn.setAttribute("aria-label", activity.isActive ? "Desactivar actividad" : "Activar actividad");
-    
-    const toggleIcon = document.createElement(activity.isActive ? "eye-open-icon" : "eye-off-icon");
-    toggleIcon.classList.add("icon");
-    toggleBtn.appendChild(toggleIcon);
+    const menuItems = [
+      {
+          label: activity.isActive ? "Desactivar actividad" : "Activar actividad",
+          iconComponent: activity.isActive ? "eye-open-icon" : "eye-off-icon",
+          text: activity.isActive ? 'Desactivar' : 'Activar',
+          onClick: async () => {
+              await deactivateActivity(scheduleManager, activityIndex);
+          }
+      },
+      {
+          label: "Eliminar actividad",
+          iconComponent: 'trash-icon',
+          text: 'Eliminar',
+          className: 'delete-btn',
+          onClick: async () => {
+              if (confirm(`¿Estás seguro de que quieres eliminar "${activity.name}"?`)) {
+                  await deleteActivity(scheduleManager, activityIndex);
+              }
+          }
+      }
+    ];
 
-    if (!activity.isActive) {
-      toggleBtn.classList.add("inactive");
-      activityChip.classList.add("inactive");
-    }
-          toggleBtn.addEventListener("click", async (e) => {
-        e.stopPropagation();
-        await deactivateActivity(scheduleManager, activityIndex);
-      });
+    const menu = createChipMenu(menuItems);
+    activityActions.appendChild(menu);
 
-    // Delete button
-    const deleteBtn = document.createElement("button");
-    deleteBtn.className = "chip-action-btn delete-btn";
-    deleteBtn.setAttribute("aria-label", "Eliminar actividad");
-    deleteBtn.textContent = "×";
-          deleteBtn.addEventListener("click", async (e) => {
-        e.stopPropagation();
-        if (confirm(`¿Estás seguro de que quieres eliminar "${activity.name}"?`)) {
-          await deleteActivity(scheduleManager, activityIndex);
-        }
-      });
-
-    activityActions.appendChild(toggleBtn);
-    activityActions.appendChild(deleteBtn);
     activityChip.appendChild(activityContent);
     activityChip.appendChild(activityActions);
     activityHeader.appendChild(activityChip);
@@ -271,6 +385,31 @@ export function updateActivitiesAndActivityScheduleOptions(scheduleManager) {
       const optionActions = document.createElement("div");
       optionActions.className = "chip-actions";
 
+      const optionMenuItems = [
+        {
+            label: activityScheduleOption.isActive ? "Desactivar opción" : "Activar opción",
+            iconComponent: activityScheduleOption.isActive ? "eye-open-icon" : "eye-off-icon",
+            text: activityScheduleOption.isActive ? 'Desactivar' : 'Activar',
+            onClick: async () => {
+                await deactivateActivityScheduleOption(scheduleManager, activityIndex, activityScheduleOptionIndex);
+            }
+        },
+        {
+            label: "Eliminar opción de horario",
+            iconComponent: 'trash-icon',
+            text: 'Eliminar',
+            className: 'delete-btn',
+            onClick: async () => {
+                 if (confirm(`¿Estás seguro de que quieres eliminar la Opción ${activityScheduleOptionIndex + 1}?`)) {
+                    await deleteActivityScheduleOption(scheduleManager, activityIndex, activityScheduleOptionIndex);
+                }
+            }
+        }
+      ];
+
+      const optionMenu = createChipMenu(optionMenuItems);
+      optionActions.appendChild(optionMenu);
+      
       if (activityScheduleOption.isEditing) {
         activityScheduleOptionChip.classList.add("editing");
       }
@@ -279,42 +418,15 @@ export function updateActivitiesAndActivityScheduleOptions(scheduleManager) {
         activityScheduleOptionChip.classList.add("inactive");
       }
 
-      // Toggle button for activity schedule option
-      const toggleOptionBtn = document.createElement("button");
-      toggleOptionBtn.className = "chip-action-btn toggle-btn";
-      toggleOptionBtn.setAttribute("aria-label", activityScheduleOption.isActive ? "Desactivar opción" : "Activar opción");
-      
-      const toggleOptionIcon = document.createElement(activityScheduleOption.isActive ? "eye-open-icon" : "eye-off-icon");
-      toggleOptionIcon.classList.add("icon");
-      toggleOptionBtn.appendChild(toggleOptionIcon);
-
-      if (!activityScheduleOption.isActive) {
-        toggleOptionBtn.classList.add("inactive");
-      }
-      toggleOptionBtn.addEventListener("click", async (e) => {
-        e.stopPropagation();
-        await deactivateActivityScheduleOption(scheduleManager, activityIndex, activityScheduleOptionIndex);
-      });
-
-      // Delete button for activity schedule option
-      const deleteOptionBtn = document.createElement("button");
-      deleteOptionBtn.className = "chip-action-btn delete-btn";
-      deleteOptionBtn.setAttribute("aria-label", "Eliminar opción de horario");
-      deleteOptionBtn.textContent = "×";
-      deleteOptionBtn.addEventListener("click", async (e) => {
-        e.stopPropagation();
-        if (confirm(`¿Estás seguro de que quieres eliminar la Opción ${activityScheduleOptionIndex + 1}?`)) {
-          await deleteActivityScheduleOption(scheduleManager, activityIndex, activityScheduleOptionIndex);
-        }
-      });
-
-      optionActions.appendChild(toggleOptionBtn);
-      optionActions.appendChild(deleteOptionBtn);
       activityScheduleOptionChip.appendChild(optionContent);
       activityScheduleOptionChip.appendChild(optionActions);
 
       // Click handler for editing with mobile and keyboard support
-      const handleChipActivation = debounce(() => {
+      const handleChipActivation = debounce((e) => {
+        // No activar edición si se hizo click en el menú
+        if (e.target.closest('.chip-menu-container')) {
+            return;
+        }
         editingActivityScheduleOption(scheduleManager, activityIndex, activityScheduleOptionIndex);
       }, 100);
 
@@ -335,7 +447,9 @@ export function updateActivitiesAndActivityScheduleOptions(scheduleManager) {
     addActivityScheduleOptionChip.classList.add("chip", "add-scheduleOption");
     addActivityScheduleOptionChip.textContent = "+ Agregar Opción de Horario";
     
-    const handleAddOption = debounce(() => {
+    const handleAddOption = debounce((e) => {
+      e.preventDefault();
+      e.stopPropagation();
       addActivityScheduleOption(scheduleManager, activityIndex);
     }, 150);
 

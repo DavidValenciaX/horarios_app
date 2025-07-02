@@ -1254,38 +1254,32 @@ tr:nth-child(even) {
   font-size: 0.8rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid var(--neutral-300);
   background: white;
   position: relative;
-  overflow: hidden;
   min-height: 2.25rem;
   box-shadow: var(--shadow-sm);
   flex-shrink: 0;
+  -webkit-user-select: none;
+  user-select: none;
+  transition: box-shadow 0.2s ease;
 }
 
 .chip::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-  transition: left 0.5s;
-}
-
-.chip:hover::before {
-  left: 100%;
+  display: none;
 }
 
 .chip:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-md);
 }
 
-.chip:active {
-  transform: translateY(0);
+/* Disable hover effects when menu is open */
+.chip:has(.chip-menu.visible) {
+  transform: none !important;
+}
+
+.chip:has(.chip-menu.visible)::before {
+  display: none !important;
 }
 
 .chip-content {
@@ -1312,13 +1306,12 @@ tr:nth-child(even) {
   align-items: center;
   cursor: pointer;
   font-size: 0.75rem;
-  transition: all 0.2s ease;
   box-shadow: var(--shadow-sm);
+  transition: background-color 0.2s ease;
 }
 
 .chip-action-btn:hover {
   background: rgba(0, 0, 0, 0.4);
-  transform: scale(1.1);
 }
 
 .chip-action-btn.delete-btn {
@@ -1334,16 +1327,27 @@ tr:nth-child(even) {
 }
 
 .chip.inactive {
-  opacity: 0.6;
   background: var(--secondary-300) !important;
   color: var(--secondary-600);
+}
+
+.chip.inactive .chip-content {
+  opacity: 0.6;
+}
+
+.chip.inactive .chip-actions .menu-toggle-btn {
+  opacity: 0.8;
+  z-index: 9999 !important;
+}
+
+.chip.inactive .chip-menu {
+  z-index: 10000 !important;
 }
 
 .chip.editing {
   background: var(--primary-600);
   color: white;
   box-shadow: 0 0 0 3px var(--primary-200);
-  transform: scale(1.02);
 }
 
 .chip.add-scheduleOption {
@@ -1364,6 +1368,127 @@ tr:nth-child(even) {
   color: var(--secondary-800);
   cursor: default;
   border: 1px solid rgba(255,255,255,0.2);
+}
+
+.chip-menu-container {
+  position: relative;
+  z-index: 5;
+  isolation: isolate;
+}
+
+.chip-menu-container.menu-open {
+  z-index: 9998;
+}
+
+.menu-toggle-btn {
+  background: rgba(0, 0, 0, 0.2) !important;
+  border: none;
+  color: white;
+  border-radius: 50%;
+  width: 1.75rem;
+  height: 1.75rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 0.75rem;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  z-index: 9999;
+  transition: background-color 0.2s ease !important;
+}
+
+.menu-toggle-btn:hover {
+  background: rgba(0, 0, 0, 0.4) !important;
+}
+
+.menu-toggle-btn:active {
+  transform: none !important;
+}
+
+.chip-menu {
+  visibility: hidden;
+  opacity: 0;
+  position: fixed;
+  background-color: white;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xl);
+  padding: var(--spacing-sm);
+  z-index: 10000;
+  min-width: 150px;
+  border: 1px solid var(--neutral-200);
+  transform: translateY(-10px);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.chip-menu.visible {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.chip-menu::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  right: 12px;
+  width: 12px;
+  height: 12px;
+  background: white;
+  border: 1px solid var(--neutral-200);
+  border-right: none;
+  border-bottom: none;
+  transform: rotate(45deg);
+  z-index: -1;
+}
+
+.chip-menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  color: var(--secondary-700);
+  transition: background-color 0.15s ease;
+  white-space: nowrap;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.chip-menu-item:hover {
+  background-color: var(--neutral-100);
+}
+
+.chip-menu-item:active {
+  background-color: var(--neutral-200);
+}
+
+.chip-menu-item .icon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--secondary-500);
+  flex-shrink: 0;
+}
+
+.chip-menu-item.delete-btn {
+  color: var(--error-600);
+}
+
+.chip-menu-item.delete-btn:hover {
+  background-color: var(--error-50);
+  color: var(--error-700);
+}
+
+.chip-menu-item.delete-btn .icon {
+  color: var(--error-600);
 }
 
 /* Enhanced Generate Schedules Section */
@@ -1480,6 +1605,11 @@ tr:nth-child(even) {
 
 #toggleConflicts:checked::before {
   left: 1.5rem;
+}
+
+/* Prevent menu from affecting chip hover states */
+.chip:hover .chip-menu-container {
+  z-index: 10;
 }
 
 /* ========================================
@@ -2058,6 +2188,3 @@ tr:nth-child(even) {
     margin-top: var(--spacing-md);
   }
 }
-
-
-
