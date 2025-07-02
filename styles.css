@@ -1837,7 +1837,6 @@ tr:nth-child(even) {
   
   /* Full-width table container */
   #scheduleOptionTableContainer {
-    width: 100vw;
     margin-left: 0;
     margin-right: 0;
     padding: 0;
@@ -1852,6 +1851,16 @@ tr:nth-child(even) {
     border-right: none;
     margin: 0;
   }
+
+    /* Full-width generate schedules section */
+    .generate-schedules-section {
+      margin-left: 0;
+      margin-right: 0;
+      border-radius: 0;
+      border-left: none;
+      border-right: none;
+      padding: var(--spacing-md);
+    }
   
   /* Full-width combined schedules container */
   #combinedSchedulesContainer {
@@ -1945,17 +1954,6 @@ tr:nth-child(even) {
   
   /* Restore some padding for activity management content */
   .activity-management-panel .panel-content {
-    padding-left: var(--spacing-md);
-    padding-right: var(--spacing-md);
-  }
-  
-  /* Full-width generate schedules section */
-  .generate-schedules-section {
-    margin-left: 0;
-    margin-right: 0;
-    border-radius: 0;
-    border-left: none;
-    border-right: none;
     padding-left: var(--spacing-md);
     padding-right: var(--spacing-md);
   }
