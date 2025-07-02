@@ -1263,6 +1263,9 @@ tr:nth-child(even) {
   -webkit-user-select: none;
   user-select: none;
   transition: box-shadow 0.2s ease;
+  /* Better touch handling for chips */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .chip::before {
@@ -1299,6 +1302,8 @@ tr:nth-child(even) {
   position: relative;
   z-index: 10;
   pointer-events: auto;
+  /* Ensure actions are always touchable */
+  isolation: isolate;
 }
 
 .chip-action-btn {
@@ -1406,6 +1411,9 @@ tr:nth-child(even) {
   /* Improved touch handling */
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
+  /* Ensure button is always on top and clickable */
+  pointer-events: auto;
+  isolation: isolate;
 }
 
 .menu-toggle-btn:hover {
@@ -1431,6 +1439,9 @@ tr:nth-child(even) {
   transform: translateY(-10px);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: none;
+  /* Better touch isolation */
+  isolation: isolate;
+  will-change: transform, opacity;
 }
 
 .chip-menu.visible {
@@ -1473,6 +1484,12 @@ tr:nth-child(even) {
   -webkit-user-select: none;
   user-select: none;
   margin: 0;
+  /* Better touch support */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+  pointer-events: auto;
+  position: relative;
+  z-index: 1;
 }
 
 .chip-menu-item:hover {
