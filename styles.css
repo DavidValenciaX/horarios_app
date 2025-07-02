@@ -1810,7 +1810,16 @@ tr:nth-child(even) {
   #main-content {
     padding-left: 0;
     padding-right: 0;
+    padding-top: 0;
   }
+
+    /* Ensure main content header doesn't interfere */
+    #main-content-header {
+      margin-left: 0;
+      margin-right: 0;
+      margin-top: 0;
+      border-radius: 0;
+    }
 
   .activity-management-panel {
     margin-left: 0;
@@ -1943,14 +1952,6 @@ tr:nth-child(even) {
     padding: 0;
     gap: 0;
   }
-  
-  /* Ensure main content header doesn't interfere */
-  #main-content-header {
-    margin-left: var(--spacing-md);
-    margin-right: var(--spacing-md);
-  }
-  
-  /* Full-width activity management panel */
   
   /* Restore some padding for activity management content */
   .activity-management-panel .panel-content {
