@@ -2016,6 +2016,7 @@ tr:nth-child(even) {
 
   .activity-container {
     border-radius: 0;
+    box-shadow: var(--shadow-md);
   }
 
   .schedule-options {
@@ -2025,6 +2026,8 @@ tr:nth-child(even) {
   .activities-list-section h3 {
     font-size: 1rem;
     margin-bottom: var(--spacing-xs);
+    margin-left: var(--spacing-md);
+    margin-right: var(--spacing-md);
   }
   
   .create-activity-section {
