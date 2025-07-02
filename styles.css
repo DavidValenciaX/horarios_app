@@ -1944,11 +1944,9 @@ tr:nth-child(even) {
     padding: 0;
     gap: 0;
   }
-  
-  /* Restore some padding for activity management content */
-  .activity-management-panel .panel-content {
-    padding-left: var(--spacing-md);
-    padding-right: var(--spacing-md);
+
+  .panel-content {
+    padding: 0;
   }
   
   /* Ultra-compact table styles */
@@ -2016,6 +2014,10 @@ tr:nth-child(even) {
     font-size: 0.65rem;
   }
 
+  .activity-container {
+    border-radius: 0;
+  }
+
   .schedule-options {
     gap: var(--spacing-xs);
   }
@@ -2026,7 +2028,9 @@ tr:nth-child(even) {
   }
   
   .create-activity-section {
-    padding: var(--spacing-md);
+    margin-left: var(--spacing-md);
+    margin-right: var(--spacing-md);
+    margin-top: var(--spacing-md);
   }
 }
 
