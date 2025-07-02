@@ -1669,6 +1669,12 @@ tr:nth-child(even) {
    COMBINED SCHEDULES OVERRIDES
    ======================================== */
 
+.combined-schedule-header {
+  margin-top: 1em;
+  margin-right: 1em;
+  margin-left: 1em;
+}
+
 #combinedSchedulesContainer {
   margin-top: 0;
   margin-bottom: 0;

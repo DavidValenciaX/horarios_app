@@ -73,6 +73,7 @@ export async function generateCombinedSchedules(scheduleManager) {
     };
 
     const headerDiv = document.createElement("div");
+    headerDiv.classList.add("combined-schedule-header");
     headerDiv.appendChild(header);
     headerDiv.appendChild(downloadButton);
 
