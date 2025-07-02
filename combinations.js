@@ -54,40 +54,7 @@ export async function generateCombinedSchedules(scheduleManager) {
 
     const downloadButton = document.createElement("button");
     downloadButton.textContent = "Descargar Imagen";
-    downloadButton.onclick = function () {
-      const clone = table.cloneNode(true);
-      clone.style.background = "white";
-      clone.style.width = table.offsetWidth + "px";
-      clone.style.fontFamily = "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
-      document.body.appendChild(clone);
-
-      toPng(clone, {
-        pixelRatio: 3,
-        backgroundColor: "white",
-        useCORS: false,
-        allowTaint: false,
-        preferredFontFormat: "woff2"
-      }).then(function (dataUrl) {
-        let link = document.createElement("a");
-        link.download = `horario-combinado-${index + 1}.png`;
-        link.href = dataUrl;
-        link.click();
-        document.body.removeChild(clone);
-      }).catch(function (error) {
-        console.warn('Error al generar imagen:', error);
-        // Fallback con configuración simplificada
-        toPng(clone, {
-          pixelRatio: 2,
-          backgroundColor: "white"
-        }).then(function (dataUrl) {
-          let link = document.createElement("a");
-          link.download = `horario-combinado-${index + 1}.png`;
-          link.href = dataUrl;
-          link.click();
-          document.body.removeChild(clone);
-        });
-      });
-    };
+    downloadButton.onclick = () => downloadScheduleAsImage(table, index);
 
     const headerDiv = document.createElement("div");
     headerDiv.classList.add("combined-schedule-header");
@@ -181,6 +148,46 @@ function populateScheduleTable(table, schedules) {
     }
   }
   return hasScheduleConflict;
+}
+
+function triggerDownload(dataUrl, filename) {
+  const link = document.createElement("a");
+  link.download = filename;
+  link.href = dataUrl;
+  link.click();
+}
+
+async function downloadScheduleAsImage(table, index) {
+  const clone = table.cloneNode(true);
+  clone.style.background = "white";
+  clone.style.width = `${table.offsetWidth}px`;
+  clone.style.fontFamily = "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+  document.body.appendChild(clone);
+
+  try {
+    let dataUrl;
+    try {
+      dataUrl = await toPng(clone, {
+        pixelRatio: 3,
+        backgroundColor: "white",
+        useCORS: false,
+        allowTaint: false,
+        preferredFontFormat: "woff2",
+      });
+    } catch (error) {
+      console.warn("Error al generar imagen, reintentando con configuración simple:", error);
+      dataUrl = await toPng(clone, {
+        pixelRatio: 2,
+        backgroundColor: "white",
+      });
+    }
+    triggerDownload(dataUrl, `horario-combinado-${index + 1}.png`);
+  } catch (error) {
+    console.error("Fallo la generación de la imagen del horario:", error);
+    // Aquí podrías notificar al usuario que la descarga falló.
+  } finally {
+    document.body.removeChild(clone);
+  }
 }
 
 export function toggleConflictSchedules() {
