@@ -140,7 +140,7 @@ function populateScheduleTable(table, schedules) {
         cell.innerHTML = schedulesInCell
           .map((schedule) =>
             schedule.totalActivityScheduleOptions > 1
-              ? `${schedule.name} H${schedule.index + 1}`
+              ? `${schedule.name} O${schedule.index + 1}`
               : schedule.name
           )
           .join(" - ");
