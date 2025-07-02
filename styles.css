@@ -1112,7 +1112,7 @@ tr:nth-child(even) {
 .schedule-options {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--spacing-xs);
+  gap: var(--spacing-md);
   margin-top: var(--spacing-sm);
 }
 
@@ -1797,14 +1797,6 @@ tr:nth-child(even) {
     font-size: 0.7rem;
   }
   
-  .activity-container {
-    padding: var(--spacing-sm);
-  }
-  
-  .schedule-options {
-    gap: 2px;
-  }
-  
   /* Timetable Full-Width Styles for Small Screens */
   /* Remove padding from main content on small screens for timetables */
   #main-content {
@@ -2023,10 +2015,9 @@ tr:nth-child(even) {
     height: 1.25rem;
     font-size: 0.65rem;
   }
-  
-  .activity-container {
-    padding: var(--spacing-xs);
-    border-radius: var(--radius-sm);
+
+  .schedule-options {
+    gap: var(--spacing-xs);
   }
   
   .activities-list-section h3 {
