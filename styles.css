@@ -1472,6 +1472,7 @@ tr:nth-child(even) {
   white-space: nowrap;
   -webkit-user-select: none;
   user-select: none;
+  margin: 0;
 }
 
 .chip-menu-item:hover {
