@@ -344,7 +344,7 @@ export function updateActivitiesAndActivityScheduleOptions(scheduleManager) {
     const menuItems = [
       {
           label: activity.isActive ? "Desactivar actividad" : "Activar actividad",
-          iconComponent: activity.isActive ? "eye-open-icon" : "eye-off-icon",
+          iconComponent: activity.isActive ? "eye-off-icon" : "eye-open-icon",
           text: activity.isActive ? 'Desactivar' : 'Activar',
           onClick: async () => {
               await deactivateActivity(scheduleManager, activityIndex);
@@ -388,7 +388,7 @@ export function updateActivitiesAndActivityScheduleOptions(scheduleManager) {
       const optionMenuItems = [
         {
             label: activityScheduleOption.isActive ? "Desactivar opción" : "Activar opción",
-            iconComponent: activityScheduleOption.isActive ? "eye-open-icon" : "eye-off-icon",
+            iconComponent: activityScheduleOption.isActive ? "eye-off-icon" : "eye-open-icon",
             text: activityScheduleOption.isActive ? 'Desactivar' : 'Activar',
             onClick: async () => {
                 await deactivateActivityScheduleOption(scheduleManager, activityIndex, activityScheduleOptionIndex);
