@@ -1787,7 +1787,6 @@ tr:nth-child(even) {
   
   .chip {
     font-size: 0.75rem;
-    padding: var(--spacing-xs) var(--spacing-sm);
     min-height: 2rem;
   }
   
@@ -2004,7 +2003,6 @@ tr:nth-child(even) {
   
   .chip {
     font-size: 0.7rem;
-    padding: var(--spacing-xs);
     min-height: 1.75rem;
   }
   
