@@ -103,9 +103,10 @@ function createChipMenu(items) {
         menu.style.left = `${left}px`;
     }
 
-    menuToggleBtn.addEventListener('click', (e) => {
+    const toggleMenu = (e) => {
         e.preventDefault();
         e.stopPropagation();
+        e.stopImmediatePropagation();
         
         // Cerrar otros menús primero
         document.querySelectorAll('.chip-menu.visible').forEach(m => {
@@ -125,6 +126,15 @@ function createChipMenu(items) {
         
         // Toggle el menú actual
         menu.classList.toggle('visible');
+    };
+
+    // Agregar tanto click como touchend para mejor soporte en dispositivos táctiles
+    menuToggleBtn.addEventListener('click', toggleMenu);
+    menuToggleBtn.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        toggleMenu(e);
     });
 
     // Recalcular posición en resize y scroll
@@ -423,13 +433,30 @@ export function updateActivitiesAndActivityScheduleOptions(scheduleManager) {
 
       // Click handler for editing with mobile and keyboard support
       const handleChipActivation = debounce((e) => {
-        // No activar edición si se hizo click en el menú
-        if (e.target.closest('.chip-menu-container')) {
+        // No activar edición si se hizo click en el menú o sus botones
+        if (e.target.closest('.chip-menu-container') || 
+            e.target.closest('.chip-actions') ||
+            e.target.closest('.menu-toggle-btn') ||
+            e.target.closest('.chip-menu') ||
+            e.target.closest('.chip-action-btn')) {
             return;
         }
-        editingActivityScheduleOption(scheduleManager, activityIndex, activityScheduleOptionIndex);
-      }, 100);
+        
+        // Solo activar edición si se hizo click en el contenido del chip
+        if (e.target.closest('.chip-content') || e.target === activityScheduleOptionChip) {
+          editingActivityScheduleOption(scheduleManager, activityIndex, activityScheduleOptionIndex);
+        }
+      }, 50); // Reducir debounce para mejor responsividad en touch
 
+      // Agregar event listener solo al contenido del chip
+      const chipContent = activityScheduleOptionChip.querySelector('.chip-content');
+      if (chipContent) {
+        chipContent.addEventListener("click", handleChipActivation);
+        addTouchSupport(chipContent, handleChipActivation);
+        addKeyboardSupport(chipContent, handleChipActivation);
+      }
+      
+      // Agregar también al chip completo como fallback, pero con lógica más estricta
       activityScheduleOptionChip.addEventListener("click", handleChipActivation);
       addTouchSupport(activityScheduleOptionChip, handleChipActivation);
       addKeyboardSupport(activityScheduleOptionChip, handleChipActivation);
