@@ -1423,7 +1423,6 @@ tr:nth-child(even) {
 /* Estilos para activity chips inactivos */
 .chip.activity.inactive {
   cursor: not-allowed !important;
-  opacity: 0.6;
 }
 
 .chip.activity.inactive:hover {
