@@ -1504,21 +1504,6 @@ tr:nth-child(even) {
   pointer-events: auto;
 }
 
-.chip-menu::before {
-  content: '';
-  position: absolute;
-  top: -6px;
-  right: 12px;
-  width: 12px;
-  height: 12px;
-  background: white;
-  border: 1px solid var(--neutral-200);
-  border-right: none;
-  border-bottom: none;
-  transform: rotate(45deg);
-  z-index: -1;
-}
-
 .chip-menu-item {
   display: flex;
   align-items: center;
