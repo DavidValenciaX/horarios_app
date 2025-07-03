@@ -10,6 +10,7 @@ import "./components/check-icon.js";
 import "./components/x-icon.js";
 import { apiService } from "./api.js";
 import { debounce, addTouchSupport, addKeyboardSupport } from "./utils.js";
+import { ScheduleManager } from "./classes.js";
 
 /**
  * Función helper para sincronizar automáticamente el estado de una actividad con sus schedule options
@@ -797,8 +798,10 @@ async function startEditingActivityName(scheduleManager, activityIndex) {
       if (result.success) {
         // Update local data with server response
         if (result.scheduleData) {
-          scheduleManager.schedules = result.scheduleData.schedules;
-          scheduleManager.activeScheduleIndex = result.scheduleData.activeScheduleIndex;
+          Object.assign(
+            scheduleManager,
+            ScheduleManager.fromJSON(result.scheduleData)
+          );
         } else {
           // Fallback: update locally
           activity.name = newName;

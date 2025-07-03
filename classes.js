@@ -197,7 +197,7 @@ export class ScheduleManager {
     if (data && Array.isArray(data.schedules)) {
       scheduleManager.schedules = data.schedules.map(Schedule.fromJSON);
     }
-    scheduleManager.activeScheduleIndex = -1;
+    scheduleManager.activeScheduleIndex = data.activeScheduleIndex ?? -1;
     return scheduleManager;
   }
 }
