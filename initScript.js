@@ -11,6 +11,7 @@ import {
 import { saveToFile, loadFromFile } from "./files.js";
 import { apiService } from "./api.js";
 import { authComponent } from "./auth.js";
+import Swal from "sweetalert2";
 
 function initDashboardListeners(scheduleManager) {
   const createButton = document.getElementById("create-schedule-button");
@@ -27,7 +28,12 @@ function initDashboardListeners(scheduleManager) {
       apiService.scheduleAutoSave(scheduleManager);
       await showPlanningView(scheduleManager);
     } else {
-      alert("Por favor, introduce un nombre para el horario.");
+      Swal.fire({
+        icon: 'warning',
+        title: 'Nombre requerido',
+        text: 'Por favor, introduce un nombre para el horario.',
+        confirmButtonText: 'Entendido'
+      });
     }
   });
 

@@ -3,6 +3,7 @@
 import { ScheduleManager } from "./classes.js";
 import { showDashboard } from "./UI.js";
 import { apiService } from "./api.js";
+import Swal from "sweetalert2";
 
 export async function saveToFile(scheduleManager) {
   const dataStr = JSON.stringify(scheduleManager, null, 2); // Prettify JSON
@@ -26,10 +27,20 @@ export async function saveToFile(scheduleManager) {
       const writableStream = await fileHandle.createWritable();
       await writableStream.write(dataBlob);
       await writableStream.close();
-      alert("Horarios guardados con éxito.");
+      Swal.fire({
+        icon: 'success',
+        title: '¡Éxito!',
+        text: 'Horarios guardados con éxito.',
+        confirmButtonText: 'Perfecto'
+      });
     } catch (error) {
       console.error(error);
-      alert("No se pudo guardar el archivo.");
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se pudo guardar el archivo.',
+        confirmButtonText: 'Entendido'
+      });
     }
   } else {
     const dataUrl = URL.createObjectURL(dataBlob);
@@ -64,12 +75,22 @@ export function loadFromFile(scheduleManager) {
         Object.assign(scheduleManager, ScheduleManager.fromJSON(data));
 
         showDashboard(scheduleManager);
-        alert("Horarios cargados correctamente.");
+        Swal.fire({
+          icon: 'success',
+          title: '¡Éxito!',
+          text: 'Horarios cargados correctamente.',
+          confirmButtonText: 'Perfecto'
+        });
         
         // Auto-save loaded data if user is authenticated
         apiService.scheduleAutoSave(scheduleManager);
       } catch (error) {
-        alert("Error al subir el archivo: " + error.message);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Error al subir el archivo: ' + error.message,
+          confirmButtonText: 'Entendido'
+        });
       }
     };
 

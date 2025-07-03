@@ -11,6 +11,7 @@ import "./components/x-icon.js";
 import { apiService } from "./api.js";
 import { debounce, addTouchSupport, addKeyboardSupport } from "./utils.js";
 import { ScheduleManager } from "./classes.js";
+import Swal from "sweetalert2";
 
 /**
  * Función helper para sincronizar automáticamente el estado de una actividad con sus schedule options
@@ -358,10 +359,21 @@ function renderDashboard(scheduleManager) {
     deleteButton.setAttribute("aria-label", `Eliminar horario ${schedule.name}`);
     deleteButton.onclick = (e) => {
       e.stopPropagation();
-      if (confirm(`¿Estás seguro de que quieres eliminar "${schedule.name}"?`)) {
-        scheduleManager.deleteSchedule(index);
-        renderDashboard(scheduleManager);
-      }
+      Swal.fire({
+        title: '¿Estás seguro?',
+        text: `¿Estás seguro de que quieres eliminar "${schedule.name}"?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          scheduleManager.deleteSchedule(index);
+          renderDashboard(scheduleManager);
+        }
+      });
     };
     
     cardActions.appendChild(cardDate);
@@ -448,7 +460,18 @@ export function updateActivitiesAndActivityScheduleOptions(scheduleManager) {
           text: 'Eliminar',
           className: 'delete-btn',
           onClick: async () => {
-              if (confirm(`¿Estás seguro de que quieres eliminar "${activity.name}"?`)) {
+              const result = await Swal.fire({
+                title: '¿Estás seguro?',
+                text: `¿Estás seguro de que quieres eliminar "${activity.name}"?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+              });
+              
+              if (result.isConfirmed) {
                   await deleteActivity(scheduleManager, activityIndex);
               }
           }
@@ -545,7 +568,18 @@ export function updateActivitiesAndActivityScheduleOptions(scheduleManager) {
             text: 'Eliminar',
             className: 'delete-btn',
             onClick: async () => {
-                 if (confirm(`¿Estás seguro de que quieres eliminar la Opción ${activityScheduleOptionIndex + 1}?`)) {
+                 const result = await Swal.fire({
+                   title: '¿Estás seguro?',
+                   text: `¿Estás seguro de que quieres eliminar la Opción ${activityScheduleOptionIndex + 1}?`,
+                   icon: 'warning',
+                   showCancelButton: true,
+                   confirmButtonColor: '#d33',
+                   cancelButtonColor: '#3085d6',
+                   confirmButtonText: 'Sí, eliminar',
+                   cancelButtonText: 'Cancelar'
+                 });
+                 
+                 if (result.isConfirmed) {
                     await deleteActivityScheduleOption(scheduleManager, activityIndex, activityScheduleOptionIndex);
                 }
             }
@@ -639,7 +673,12 @@ export function createActivity(scheduleManager) {
   const newActivityName = DOM.newActivityName.value.trim();
 
   if (!newActivityName) {
-    alert("Por favor ingrese un nombre de actividad válido");
+    Swal.fire({
+      icon: 'warning',
+      title: 'Nombre requerido',
+      text: 'Por favor ingrese un nombre de actividad válido',
+      confirmButtonText: 'Entendido'
+    });
     return;
   }
 
@@ -777,7 +816,12 @@ async function startEditingActivityName(scheduleManager, activityIndex) {
     const newName = input.value.trim();
     
     if (!newName) {
-      alert('El nombre no puede estar vacío');
+      Swal.fire({
+        icon: 'warning',
+        title: 'Nombre requerido',
+        text: 'El nombre no puede estar vacío',
+        confirmButtonText: 'Entendido'
+      });
       input.focus();
       return;
     }
@@ -814,7 +858,12 @@ async function startEditingActivityName(scheduleManager, activityIndex) {
         // Show success feedback
         showEditSuccessFeedback(activityChip);
       } else {
-        alert(result.error || 'Error al actualizar el nombre');
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: result.error || 'Error al actualizar el nombre',
+          confirmButtonText: 'Entendido'
+        });
         // Restore UI to pre-edit state on failure, since cleanup is already done
         activityChip.classList.remove('editing-name');
         activityContent.innerHTML = '';
@@ -822,7 +871,12 @@ async function startEditingActivityName(scheduleManager, activityIndex) {
       }
     } catch (error) {
       console.error('Error updating activity name:', error);
-      alert('Error al actualizar el nombre');
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Error al actualizar el nombre',
+        confirmButtonText: 'Entendido'
+      });
       // Restore UI to pre-edit state on error
       activityChip.classList.remove('editing-name');
       activityContent.innerHTML = '';

@@ -1,6 +1,7 @@
 import { TimeTable } from "./classes.js";
 import { updateCombinedSchedules } from "./combinations.js";
 import { apiService } from "./api.js";
+import Swal from "sweetalert2";
 
 function darkenHex(color, factor) {
   const hex = color.slice(1);
@@ -179,7 +180,12 @@ async function toggleCell(scheduleManager, cell, forceValue = null) {
   });
 
   if (!editingActivityScheduleOption) {
-    alert("Selecciona primero una actividad y una opción de horario");
+    Swal.fire({
+      icon: 'info',
+      title: 'Actividad requerida',
+      text: 'Selecciona primero una actividad y una opción de horario',
+      confirmButtonText: 'Entendido'
+    });
     return;
   }
 
