@@ -18,7 +18,7 @@ export class TimeTable {
       if (formattedHour === 0) {
         formattedHour = 12;
       }
-      return `${formattedHour}:00 ${ampm}`;
+      return `${formattedHour} ${ampm}`;
     };
 
     for (let i = 0; i < 24; i++) {
