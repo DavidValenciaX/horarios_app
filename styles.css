@@ -1335,6 +1335,7 @@ tr:nth-child(even) {
   box-shadow: var(--shadow-sm);
   transition: background-color 0.2s ease;
   -webkit-user-select: none;
+  user-select: none;
 }
 
 .chip-action-btn:hover {
