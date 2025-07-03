@@ -71,7 +71,8 @@ export function createScheduleTable() {
 function createTable(table) {
   let header = "<thead><tr><th>Horas/días</th>";
   for (let day of TimeTable.days) {
-    header += `<th>${day}</th>`;
+    const initial = day.charAt(0);
+    header += `<th><span class="day-full">${day}</span><span class="day-initial">${initial}</span></th>`;
   }
   header += "</tr></thead>";
   table.innerHTML = header;

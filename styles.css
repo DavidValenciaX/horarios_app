@@ -1202,13 +1202,20 @@ tr:nth-child(even) {
 #scheduleOptionTable th {
   background: var(--secondary-800);
   color: white;
-  padding: clamp(var(--spacing-xs), 1.5vw, var(--spacing-sm));
   font-weight: 600;
   text-align: center;
   border: none;
   font-size: clamp(0.5rem, 3vw, 0.55rem);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+
+#scheduleOptionTable th .day-initial {
+  display: none;
+}
+
+#scheduleOptionTable th .day-full {
+  display: inline;
 }
 
 #scheduleOptionTable th:first-child {
@@ -1991,10 +1998,9 @@ tr:nth-child(even) {
     flex-direction: column;
     gap: var(--spacing-md);
   }
-  
-  #scheduleOptionTable th,
-  #scheduleOptionTable td {
-    padding: var(--spacing-xs);
+
+  #scheduleOptionTable th{
+    padding: clamp(var(--spacing-xs), 1.5vw, var(--spacing-sm));
   }
   
   #scheduleOptionTable th:first-child {
@@ -2168,17 +2174,7 @@ tr:nth-child(even) {
     padding: 0;
   }
   
-  /* Ultra-compact table styles */
-  #scheduleOptionTable {
-    font-size: 0.4rem;
-  }
-  
-  #scheduleOptionTable th,
-  #scheduleOptionTable td {
-    padding: 1px 2px;
-    font-size: 0.4rem;
-  }
-  
+  /* Ultra-compact table styles */  
   #scheduleOptionTable th:first-child {
     min-width: 50px;
     max-width: 70px;
@@ -2187,6 +2183,14 @@ tr:nth-child(even) {
   
   #scheduleOptionTable td {
     min-height: 1.25rem;
+  }
+  
+  #scheduleOptionTable th .day-initial {
+    display: inline;
+  }
+
+  #scheduleOptionTable th .day-full {
+    display: none;
   }
   
   /* Combined schedules tables */
