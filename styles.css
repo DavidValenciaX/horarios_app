@@ -295,6 +295,18 @@ tr:nth-child(even) {
   }
 }
 
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
 /* Enhanced Dashboard Styles */
 #dashboard {
   padding: var(--spacing-xl);
@@ -1378,8 +1390,46 @@ tr:nth-child(even) {
 
 .chip.activity {
   color: var(--secondary-800);
-  cursor: default;
+  cursor: pointer;
   border: 1px solid rgba(255,255,255,0.2);
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.chip.activity:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(255,255,255,0.4);
+}
+
+.chip.activity:active {
+  transform: translateY(0);
+}
+
+/* Indicador visual para actividades con opciones activas */
+.chip.activity.has-active-options::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background: var(--success-500);
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Estilos para activity chips inactivos */
+.chip.activity.inactive {
+  cursor: not-allowed !important;
+  opacity: 0.6;
+}
+
+.chip.activity.inactive:hover {
+  transform: none !important;
+  box-shadow: var(--shadow-sm) !important;
+  border-color: rgba(255,255,255,0.2) !important;
 }
 
 .chip-menu-container {

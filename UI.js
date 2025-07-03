@@ -373,6 +373,16 @@ export function updateActivitiesAndActivityScheduleOptions(scheduleManager) {
     const activityChip = document.createElement("div");
     activityChip.classList.add("chip", "activity");
     activityChip.style.backgroundColor = activity.color;
+    
+    if (!activity.isActive) {
+      activityChip.classList.add("inactive");
+    } else {
+      // Verificar si tiene opciones activas
+      const hasActiveOptions = activity.activityScheduleOptions.some(option => option.isActive);
+      if (hasActiveOptions) {
+        activityChip.classList.add("has-active-options");
+      }
+    }
 
     const activityContent = document.createElement("div");
     activityContent.className = "chip-content";
@@ -408,6 +418,59 @@ export function updateActivitiesAndActivityScheduleOptions(scheduleManager) {
 
     activityChip.appendChild(activityContent);
     activityChip.appendChild(activityActions);
+
+    // Click handler for activity chip - editar primera opción activa
+    const handleActivityActivation = debounce((e) => {
+      // Prevenir activación durante interacciones con el menú o sus elementos
+      if (e.target.closest('.chip-menu-container') || 
+          e.target.closest('.chip-actions') ||
+          e.target.closest('.menu-toggle-btn') ||
+          e.target.closest('.chip-menu') ||
+          e.target.closest('.chip-action-btn')) {
+          e.preventDefault();
+          e.stopPropagation();
+          return;
+      }
+      
+      // Solo activar si la actividad está activa
+      if (activity.isActive) {
+        // Encontrar el primer schedule option que no esté inactivo
+        const firstActiveOptionIndex = activity.activityScheduleOptions.findIndex(option => option.isActive);
+        if (firstActiveOptionIndex !== -1) {
+          editingActivityScheduleOption(scheduleManager, activityIndex, firstActiveOptionIndex);
+        } else {
+          // Feedback visual cuando no hay opciones activas
+          activityChip.style.animation = 'shake 0.5s ease-in-out';
+          setTimeout(() => {
+            activityChip.style.animation = '';
+          }, 500);
+        }
+      }
+    }, 100);
+
+    // Agregar event listeners para click, touch y keyboard
+    activityChip.addEventListener("click", handleActivityActivation);
+    addTouchSupport(activityChip, handleActivityActivation);
+    addKeyboardSupport(activityChip, handleActivityActivation);
+    
+    // Make chip focusable for keyboard navigation
+    activityChip.setAttribute("tabindex", "0");
+    activityChip.setAttribute("role", "button");
+    
+    // Configurar aria-label según el estado de la actividad
+    let ariaLabel;
+    if (!activity.isActive) {
+      ariaLabel = `${activity.name} (inactiva)`;
+    } else {
+      const hasActiveOptions = activity.activityScheduleOptions.some(option => option.isActive);
+      if (hasActiveOptions) {
+        ariaLabel = `Editar primera opción activa de ${activity.name}`;
+      } else {
+        ariaLabel = `${activity.name} (sin opciones activas)`;
+      }
+    }
+    activityChip.setAttribute("aria-label", ariaLabel);
+
     activityHeader.appendChild(activityChip);
 
     // Activity schedule options container
