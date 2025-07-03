@@ -1218,6 +1218,15 @@ tr:nth-child(even) {
   display: inline;
 }
 
+/* Ensure combined schedules tables always show full day names at all screen sizes */
+#combinedSchedulesContainer table th .day-initial {
+  display: none !important;
+}
+
+#combinedSchedulesContainer table th .day-full {
+  display: inline !important;
+}
+
 #scheduleOptionTable th:first-child {
   background: var(--secondary-900);
   min-width: clamp(80px, 15vw, 120px);
@@ -2191,6 +2200,15 @@ tr:nth-child(even) {
 
   #scheduleOptionTable th .day-full {
     display: none;
+  }
+  
+  /* Ensure combined schedules tables always show full day names */
+  #combinedSchedulesContainer table th .day-initial {
+    display: none !important;
+  }
+
+  #combinedSchedulesContainer table th .day-full {
+    display: inline !important;
   }
   
   /* Combined schedules tables */
