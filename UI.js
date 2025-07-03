@@ -9,6 +9,29 @@ import "./components/trash-icon.js";
 import { apiService } from "./api.js";
 import { debounce, addTouchSupport, addKeyboardSupport } from "./utils.js";
 
+/**
+ * Función helper para sincronizar automáticamente el estado de una actividad con sus schedule options
+ * 
+ * Reglas de sincronización:
+ * - Si todas las schedule options están inactive → la actividad se pone inactive
+ * - Si al menos una schedule option está active → la actividad se pone active
+ * 
+ * @param {Activity} activity - La actividad a sincronizar
+ * @returns {boolean} - true si hubo un cambio de estado, false si no
+ */
+function syncActivityStateWithOptions(activity) {
+  const activeOptionsCount = activity.activityScheduleOptions.filter(option => option.isActive).length;
+  const shouldBeActive = activeOptionsCount > 0;
+  
+  // Solo cambiar el estado si es necesario para evitar ciclos
+  if (activity.isActive !== shouldBeActive) {
+    activity.isActive = shouldBeActive;
+    return true; // Indica que hubo un cambio
+  }
+  
+  return false; // No hubo cambio
+}
+
 // Cerrar menús cuando se hace click fuera de ellos
 document.addEventListener('click', (e) => {
     // Solo cerrar menús si el click no es dentro del menú o el botón del menú
@@ -650,8 +673,13 @@ async function deleteActivity(scheduleManager, activityIndex) {
 
 function addActivityScheduleOption(scheduleManager, activityIndex) {
   const activityManager = scheduleManager.getActiveSchedule().activityManager;
-  const activityScheduleOptionIndex =
-    activityManager.activities[activityIndex].addActivityScheduleOption();
+  const activity = activityManager.activities[activityIndex];
+  
+  const activityScheduleOptionIndex = activity.addActivityScheduleOption();
+  
+  // Sincronizar el estado de la actividad (una nueva opción activa podría activar la actividad)
+  syncActivityStateWithOptions(activity);
+  
   updateActivitiesAndActivityScheduleOptions(scheduleManager);
   editingActivityScheduleOption(scheduleManager, activityIndex, activityScheduleOptionIndex);
   // Auto-save when adding activity schedule option
@@ -664,9 +692,22 @@ async function deactivateActivityScheduleOption(
   activityScheduleOptionIndex
 ) {
   const activityManager = scheduleManager.getActiveSchedule().activityManager;
-  activityManager.activities[activityIndex].activityScheduleOptions[
-    activityScheduleOptionIndex
-  ].deactivate();
+  const activity = activityManager.activities[activityIndex];
+  const activityScheduleOption = activity.activityScheduleOptions[activityScheduleOptionIndex];
+  
+  // Cambiar el estado de la schedule option
+  activityScheduleOption.deactivate();
+  
+  // Sincronizar automáticamente el estado de la actividad padre
+  const activityStateChanged = syncActivityStateWithOptions(activity);
+  
+  // Si la actividad cambió a inactive y había una opción en edición, parar la edición
+  if (activityStateChanged && !activity.isActive) {
+    activity.activityScheduleOptions.forEach(option => {
+      option.stopEditing();
+    });
+  }
+  
   await updateCombinedSchedules(scheduleManager);
   updateActivitiesAndActivityScheduleOptions(scheduleManager);
   // Auto-save when deactivating activity schedule option
@@ -679,21 +720,29 @@ async function deleteActivityScheduleOption(
   activityScheduleOptionIndex
 ) {
   const activityManager = scheduleManager.getActiveSchedule().activityManager;
-  const activityScheduleOption =
-    activityManager.activities[activityIndex].activityScheduleOptions[
-      activityScheduleOptionIndex
-    ];
+  const activity = activityManager.activities[activityIndex];
+  const activityScheduleOption = activity.activityScheduleOptions[activityScheduleOptionIndex];
 
-  const newActivityScheduleOptionIndex = activityManager.activities[
-    activityIndex
-  ].deleteActivityScheduleOption(activityScheduleOptionIndex);
-  if (activityManager.activities[activityIndex].activityScheduleOptions.length > 0) {
-    if (activityScheduleOption.isEditing) {
-      editingActivityScheduleOption(
-        scheduleManager,
-        activityIndex,
-        newActivityScheduleOptionIndex
-      );
+  const newActivityScheduleOptionIndex = activity.deleteActivityScheduleOption(activityScheduleOptionIndex);
+  
+  if (activity.activityScheduleOptions.length > 0) {
+    // Sincronizar el estado de la actividad después de eliminar una opción
+    const activityStateChanged = syncActivityStateWithOptions(activity);
+    
+    // Si la actividad cambió a inactive, parar todas las ediciones
+    if (activityStateChanged && !activity.isActive) {
+      activity.activityScheduleOptions.forEach(option => {
+        option.stopEditing();
+      });
+    } else if (activityScheduleOption.isEditing) {
+      // Solo continuar editando si la actividad sigue activa
+      if (activity.isActive) {
+        editingActivityScheduleOption(
+          scheduleManager,
+          activityIndex,
+          newActivityScheduleOptionIndex
+        );
+      }
     }
   } else {
     const newActivityIndex = activityManager.deleteActivity(activityIndex);
