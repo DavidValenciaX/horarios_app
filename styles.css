@@ -1278,6 +1278,7 @@ tr:nth-child(even) {
   /* Better touch handling for chips */
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
+  isolation: isolate;
 }
 
 .chip::before {
@@ -1297,6 +1298,10 @@ tr:nth-child(even) {
   display: none !important;
 }
 
+.chip.menu-open {
+  z-index: 9999;
+}
+
 .chip-content {
   flex: 1;
   text-align: left;
@@ -1312,10 +1317,7 @@ tr:nth-child(even) {
   align-items: center;
   gap: var(--spacing-xs);
   position: relative;
-  z-index: 10;
   pointer-events: auto;
-  /* Ensure actions are always touchable */
-  isolation: isolate;
 }
 
 .chip-action-btn {
@@ -1332,6 +1334,7 @@ tr:nth-child(even) {
   font-size: 0.75rem;
   box-shadow: var(--shadow-sm);
   transition: background-color 0.2s ease;
+  -webkit-user-select: none;
 }
 
 .chip-action-btn:hover {

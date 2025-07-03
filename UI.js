@@ -39,6 +39,7 @@ document.addEventListener('click', (e) => {
         document.querySelectorAll('.chip-menu.visible').forEach(menu => {
             menu.classList.remove('visible');
             menu.parentElement.classList.remove('menu-open');
+            menu.closest('.chip')?.classList.remove('menu-open');
         });
     }
 });
@@ -49,6 +50,7 @@ document.addEventListener('touchend', (e) => {
         document.querySelectorAll('.chip-menu.visible').forEach(menu => {
             menu.classList.remove('visible');
             menu.parentElement.classList.remove('menu-open');
+            menu.closest('.chip')?.classList.remove('menu-open');
         });
     }
 });
@@ -98,6 +100,7 @@ function createChipMenu(items) {
             e.stopImmediatePropagation();
             menu.classList.remove('visible');
             menuContainer.classList.remove('menu-open');
+            menuContainer.closest('.chip')?.classList.remove('menu-open');
             try {
                 await item.onClick(e);
             } catch (error) {
@@ -152,11 +155,14 @@ function createChipMenu(items) {
         e.stopPropagation();
         e.stopImmediatePropagation();
         
+        const chip = menuContainer.closest('.chip');
+
         // Cerrar otros menús primero
         document.querySelectorAll('.chip-menu.visible').forEach(m => {
             if (m !== menu) {
                 m.classList.remove('visible');
                 m.parentElement.classList.remove('menu-open');
+                m.closest('.chip')?.classList.remove('menu-open');
             }
         });
         
@@ -164,8 +170,10 @@ function createChipMenu(items) {
         if (!menu.classList.contains('visible')) {
             positionMenu();
             menuContainer.classList.add('menu-open');
+            chip?.classList.add('menu-open');
         } else {
             menuContainer.classList.remove('menu-open');
+            chip?.classList.remove('menu-open');
         }
         
         // Toggle el menú actual
