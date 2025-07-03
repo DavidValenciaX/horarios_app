@@ -753,6 +753,24 @@ async function startEditingActivityName(scheduleManager, activityIndex) {
   input.focus();
   input.select();
   
+  // --- Event Handling and Cleanup ---
+
+  const stopPropagation = (e) => e.stopPropagation();
+
+  // Handle click outside to cancel editing
+  const handleClickOutside = (e) => {
+    if (!activityChip.contains(e.target)) {
+      cancelEdit();
+    }
+  };
+
+  // Function to remove all temporary listeners
+  const cleanupEventListeners = () => {
+    document.removeEventListener('click', handleClickOutside, true);
+    inputContainer.removeEventListener('click', stopPropagation);
+    inputContainer.removeEventListener('keydown', stopPropagation);
+  };
+  
   // Handle confirm action
   const confirmEdit = async () => {
     const newName = input.value.trim();
@@ -768,6 +786,8 @@ async function startEditingActivityName(scheduleManager, activityIndex) {
       return;
     }
     
+    cleanupEventListeners();
+
     try {
       confirmBtn.disabled = true;
       cancelBtn.disabled = true;
@@ -792,27 +812,40 @@ async function startEditingActivityName(scheduleManager, activityIndex) {
         showEditSuccessFeedback(activityChip);
       } else {
         alert(result.error || 'Error al actualizar el nombre');
-        cancelEdit();
+        // Restore UI to pre-edit state on failure, since cleanup is already done
+        activityChip.classList.remove('editing-name');
+        activityContent.innerHTML = '';
+        activityContent.textContent = originalName;
       }
     } catch (error) {
       console.error('Error updating activity name:', error);
       alert('Error al actualizar el nombre');
-      cancelEdit();
+      // Restore UI to pre-edit state on error
+      activityChip.classList.remove('editing-name');
+      activityContent.innerHTML = '';
+      activityContent.textContent = originalName;
     }
   };
   
   // Handle cancel action
   const cancelEdit = () => {
+    cleanupEventListeners();
     activityChip.classList.remove('editing-name');
     activityContent.innerHTML = '';
     activityContent.textContent = originalName;
   };
   
-  // Event listeners
+  // --- Attach Event Listeners ---
+  
+  // Stop propagation to prevent chip's own handlers from firing
+  inputContainer.addEventListener('click', stopPropagation);
+  inputContainer.addEventListener('keydown', stopPropagation);
+
+  // Event listeners for buttons and input
   confirmBtn.addEventListener('click', confirmEdit);
   cancelBtn.addEventListener('click', cancelEdit);
   
-  // Handle Enter key
+  // Handle Enter/Escape keys on the input
   input.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -823,17 +856,9 @@ async function startEditingActivityName(scheduleManager, activityIndex) {
     }
   });
   
-  // Handle click outside
-  const handleClickOutside = (e) => {
-    if (!activityChip.contains(e.target)) {
-      cancelEdit();
-      document.removeEventListener('click', handleClickOutside);
-    }
-  };
-  
-  // Add click outside listener after a short delay to avoid immediate trigger
+  // Add click outside listener with capture to ensure it runs
   setTimeout(() => {
-    document.addEventListener('click', handleClickOutside);
+    document.addEventListener('click', handleClickOutside, true);
   }, 100);
 }
 
