@@ -248,6 +248,36 @@ class ApiService {
       return null; // Fallback to client-side
     }
   }
+
+  // Activity management methods
+  async updateActivityName(scheduleIndex, activityIndex, newName) {
+    if (!this.isAuthenticated()) return { success: false };
+
+    try {
+      const response = await fetch(`${getApiBaseUrl()}/schedules/activities/${scheduleIndex}/${activityIndex}/name`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-auth-token': this.token,
+        },
+        body: JSON.stringify({ name: newName }),
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          this.logout();
+        }
+        const errorData = await response.json();
+        return { success: false, error: errorData.msg || 'Error al actualizar el nombre' };
+      }
+
+      const updatedScheduleData = await response.json();
+      return { success: true, scheduleData: updatedScheduleData };
+    } catch (error) {
+      console.error('Update activity name error:', error);
+      return { success: false, error: error.message };
+    }
+  }
 }
 
 // Export singleton instance

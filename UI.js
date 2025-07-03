@@ -6,6 +6,8 @@ import "./components/eye-off-icon.js";
 import "./components/arrow-left-icon.js";
 import "./components/three-dots-icon.js";
 import "./components/trash-icon.js";
+import "./components/check-icon.js";
+import "./components/x-icon.js";
 import { apiService } from "./api.js";
 import { debounce, addTouchSupport, addKeyboardSupport } from "./utils.js";
 
@@ -424,6 +426,14 @@ export function updateActivitiesAndActivityScheduleOptions(scheduleManager) {
 
     const menuItems = [
       {
+          label: "Editar nombre",
+          iconComponent: "three-dots-icon",
+          text: 'Editar nombre',
+          onClick: async () => {
+              await startEditingActivityName(scheduleManager, activityIndex);
+          }
+      },
+      {
           label: activity.isActive ? "Desactivar actividad" : "Activar actividad",
           iconComponent: activity.isActive ? "eye-off-icon" : "eye-open-icon",
           text: activity.isActive ? 'Desactivar' : 'Activar',
@@ -677,6 +687,161 @@ async function deleteActivity(scheduleManager, activityIndex) {
   updateActivitiesAndActivityScheduleOptions(scheduleManager);
   // Auto-save when deleting activity
   apiService.scheduleAutoSave(scheduleManager);
+}
+
+async function startEditingActivityName(scheduleManager, activityIndex) {
+  const activityManager = scheduleManager.getActiveSchedule().activityManager;
+  const activity = activityManager.activities[activityIndex];
+  const scheduleIndex = scheduleManager.activeScheduleIndex;
+  
+  // Find the activity chip element
+  // Como las actividades se añaden con prepend, el orden visual está invertido
+  // Convertir el índice del array al índice visual
+  const totalActivities = activityManager.activities.length;
+  const visualIndex = totalActivities - 1 - activityIndex;
+  
+  const activityChips = document.querySelectorAll('.chip.activity');
+  const activityChip = activityChips[visualIndex];
+  
+  if (!activityChip) return;
+  
+  const activityContent = activityChip.querySelector('.chip-content');
+  if (!activityContent) return;
+  
+  // Store original content
+  const originalName = activity.name;
+  activityContent.innerHTML = '';
+  
+  // Create input container
+  const inputContainer = document.createElement('div');
+  inputContainer.className = 'edit-name-container';
+  
+  // Create input field
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.value = originalName;
+  input.className = 'edit-name-input';
+  input.setAttribute('maxlength', '50');
+  
+  // Create button container
+  const buttonContainer = document.createElement('div');
+  buttonContainer.className = 'edit-name-buttons';
+  
+  // Create confirm button
+  const confirmBtn = document.createElement('button');
+  confirmBtn.className = 'edit-confirm-btn';
+  confirmBtn.setAttribute('aria-label', 'Confirmar cambios');
+  confirmBtn.innerHTML = '<check-icon></check-icon>';
+  
+  // Create cancel button
+  const cancelBtn = document.createElement('button');
+  cancelBtn.className = 'edit-cancel-btn';
+  cancelBtn.setAttribute('aria-label', 'Cancelar edición');
+  cancelBtn.innerHTML = '<x-icon></x-icon>';
+  
+  buttonContainer.appendChild(confirmBtn);
+  buttonContainer.appendChild(cancelBtn);
+  
+  inputContainer.appendChild(input);
+  inputContainer.appendChild(buttonContainer);
+  activityContent.appendChild(inputContainer);
+  
+  // Add editing class to chip
+  activityChip.classList.add('editing-name');
+  
+  // Focus and select input text
+  input.focus();
+  input.select();
+  
+  // Handle confirm action
+  const confirmEdit = async () => {
+    const newName = input.value.trim();
+    
+    if (!newName) {
+      alert('El nombre no puede estar vacío');
+      input.focus();
+      return;
+    }
+    
+    if (newName === originalName) {
+      cancelEdit();
+      return;
+    }
+    
+    try {
+      confirmBtn.disabled = true;
+      cancelBtn.disabled = true;
+      
+      const result = await apiService.updateActivityName(scheduleIndex, activityIndex, newName);
+      
+      if (result.success) {
+        // Update local data with server response
+        if (result.scheduleData) {
+          scheduleManager.schedules = result.scheduleData.schedules;
+          scheduleManager.activeScheduleIndex = result.scheduleData.activeScheduleIndex;
+        } else {
+          // Fallback: update locally
+          activity.name = newName;
+        }
+        
+        // Update UI
+        updateActivitiesAndActivityScheduleOptions(scheduleManager);
+        updateCombinedSchedules(scheduleManager);
+        
+        // Show success feedback
+        showEditSuccessFeedback(activityChip);
+      } else {
+        alert(result.error || 'Error al actualizar el nombre');
+        cancelEdit();
+      }
+    } catch (error) {
+      console.error('Error updating activity name:', error);
+      alert('Error al actualizar el nombre');
+      cancelEdit();
+    }
+  };
+  
+  // Handle cancel action
+  const cancelEdit = () => {
+    activityChip.classList.remove('editing-name');
+    activityContent.innerHTML = '';
+    activityContent.textContent = originalName;
+  };
+  
+  // Event listeners
+  confirmBtn.addEventListener('click', confirmEdit);
+  cancelBtn.addEventListener('click', cancelEdit);
+  
+  // Handle Enter key
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      confirmEdit();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      cancelEdit();
+    }
+  });
+  
+  // Handle click outside
+  const handleClickOutside = (e) => {
+    if (!activityChip.contains(e.target)) {
+      cancelEdit();
+      document.removeEventListener('click', handleClickOutside);
+    }
+  };
+  
+  // Add click outside listener after a short delay to avoid immediate trigger
+  setTimeout(() => {
+    document.addEventListener('click', handleClickOutside);
+  }, 100);
+}
+
+function showEditSuccessFeedback(activityChip) {
+  activityChip.style.animation = 'pulse 0.3s ease-in-out';
+  setTimeout(() => {
+    activityChip.style.animation = '';
+  }, 300);
 }
 
 function addActivityScheduleOption(scheduleManager, activityIndex) {

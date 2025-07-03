@@ -1451,6 +1451,101 @@ tr:nth-child(even) {
   border-color: rgba(255,255,255,0.2) !important;
 }
 
+/* Activity name editing styles */
+.chip.editing-name {
+  background-color: var(--primary-50) !important;
+  border: 2px solid var(--primary-400);
+  padding: 0.25rem 0.5rem;
+}
+
+.edit-name-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.edit-name-input {
+  flex: 1;
+  border: 1px solid var(--primary-300);
+  border-radius: var(--radius-sm);
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  background-color: white;
+  min-width: 120px;
+  margin: 0;
+}
+
+.edit-name-input:focus {
+  outline: none;
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 2px var(--primary-100);
+}
+
+.edit-name-buttons {
+  display: flex;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.edit-confirm-btn,
+.edit-cancel-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: var(--radius-sm);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin: 0;
+  padding: 0;
+}
+
+.edit-confirm-btn {
+  background-color: var(--success-500);
+  color: white;
+}
+
+.edit-confirm-btn:hover:not(:disabled) {
+  background-color: var(--success-600);
+  transform: scale(1.05);
+}
+
+.edit-confirm-btn:active:not(:disabled) {
+  background-color: var(--success-700);
+  transform: scale(0.95);
+}
+
+.edit-cancel-btn {
+  background-color: var(--error-500);
+  color: white;
+}
+
+.edit-cancel-btn:hover:not(:disabled) {
+  background-color: var(--error-600);
+  transform: scale(1.05);
+}
+
+.edit-cancel-btn:active:not(:disabled) {
+  background-color: var(--error-700);
+  transform: scale(0.95);
+}
+
+.edit-confirm-btn:disabled,
+.edit-cancel-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.edit-confirm-btn .icon,
+.edit-cancel-btn .icon {
+  width: 1rem;
+  height: 1rem;
+}
+
 .chip-menu-container {
   position: relative;
   z-index: 5;
