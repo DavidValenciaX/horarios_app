@@ -501,6 +501,16 @@ tr:nth-child(even) {
   border-radius: var(--radius-md);
 }
 
+.schedule-card.editing-name .schedule-card-header,
+.schedule-card.editing-name .schedule-card-actions {
+  cursor: default;
+}
+
+.schedule-card.editing-name .schedule-card-actions .card-action-buttons button {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
 .schedule-card.editing-name .edit-name-container {
   display: flex;
   align-items: center;

@@ -400,6 +400,9 @@ function renderDashboard(scheduleManager) {
     
     // Add click handler to the card header with mobile and keyboard support
     const handleCardActivation = debounce(async () => {
+      if (scheduleCard.classList.contains('editing-name')) {
+        return;
+      }
       scheduleManager.setActiveSchedule(index);
       await showPlanningView(scheduleManager);
     }, 150);
