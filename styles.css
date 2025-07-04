@@ -1346,7 +1346,6 @@ tr:nth-child(even) {
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-md);
-  border: 1px solid var(--neutral-200);
   table-layout: fixed;
 }
 
@@ -1429,7 +1428,6 @@ tr:nth-child(even) {
 }
 
 #scheduleOptionTable td.editing-highlight {
-  box-shadow: 0 0 0 2px var(--primary-500);
   z-index: 1;
 }
 
