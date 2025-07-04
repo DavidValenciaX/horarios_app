@@ -8,6 +8,7 @@ import "./components/three-dots-icon.js";
 import "./components/trash-icon.js";
 import "./components/check-icon.js";
 import "./components/x-icon.js";
+import "./components/edit-icon.js";
 import { apiService } from "./api.js";
 import { debounce, addTouchSupport, addKeyboardSupport } from "./utils.js";
 import { ScheduleManager } from "./classes.js";
@@ -353,10 +354,22 @@ function renderDashboard(scheduleManager) {
     cardDate.className = "schedule-card-date";
     cardDate.textContent = "Creado recientemente";
     
+    const actionsButtonsContainer = document.createElement("div");
+    actionsButtonsContainer.className = "card-action-buttons";
+    
+    const editButton = document.createElement("button");
+    editButton.className = "edit-button";
+    editButton.setAttribute("aria-label", `Editar nombre del horario ${schedule.name}`);
+    editButton.innerHTML = '<edit-icon></edit-icon>';
+    editButton.onclick = (e) => {
+      e.stopPropagation();
+      startEditingScheduleName(scheduleManager, index);
+    };
+    
     const deleteButton = document.createElement("button");
-    deleteButton.textContent = "×";
     deleteButton.className = "delete-button";
     deleteButton.setAttribute("aria-label", `Eliminar horario ${schedule.name}`);
+    deleteButton.innerHTML = '×';
     deleteButton.onclick = (e) => {
       e.stopPropagation();
       Swal.fire({
@@ -371,13 +384,16 @@ function renderDashboard(scheduleManager) {
       }).then((result) => {
         if (result.isConfirmed) {
           scheduleManager.deleteSchedule(index);
-          renderDashboard(scheduleManager);
+          showDashboard(scheduleManager);
         }
       });
     };
     
+    actionsButtonsContainer.appendChild(editButton);
+    actionsButtonsContainer.appendChild(deleteButton);
+    
     cardActions.appendChild(cardDate);
-    cardActions.appendChild(deleteButton);
+    cardActions.appendChild(actionsButtonsContainer);
     
     scheduleCard.appendChild(cardHeader);
     scheduleCard.appendChild(cardActions);
@@ -934,11 +950,209 @@ async function startEditingActivityName(scheduleManager, activityIndex) {
   }, 100);
 }
 
-function showEditSuccessFeedback(activityChip) {
-  activityChip.style.animation = 'pulse 0.3s ease-in-out';
+function showEditSuccessFeedback(element) {
+  element.style.animation = 'pulse 0.3s ease-in-out';
   setTimeout(() => {
-    activityChip.style.animation = '';
+    element.style.animation = '';
   }, 300);
+}
+
+async function startEditingScheduleName(scheduleManager, scheduleIndex) {
+  const schedule = scheduleManager.schedules[scheduleIndex];
+  if (!schedule) return;
+  
+  // Find the schedule card element
+  const scheduleCards = document.querySelectorAll('.schedule-card');
+  const scheduleCard = scheduleCards[scheduleIndex];
+  
+  if (!scheduleCard) return;
+  
+  const scheduleTitle = scheduleCard.querySelector('.schedule-card-title');
+  if (!scheduleTitle) return;
+  
+  // Store original content
+  const originalName = schedule.name;
+  scheduleTitle.innerHTML = '';
+  
+  // Create input container
+  const inputContainer = document.createElement('div');
+  inputContainer.className = 'edit-name-container';
+  
+  // Create input field
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.value = originalName;
+  input.className = 'edit-name-input';
+  input.setAttribute('maxlength', '100');
+  
+  // Create button container
+  const buttonContainer = document.createElement('div');
+  buttonContainer.className = 'edit-name-buttons';
+  
+  // Create confirm button
+  const confirmBtn = document.createElement('button');
+  confirmBtn.className = 'edit-confirm-btn';
+  confirmBtn.setAttribute('aria-label', 'Confirmar cambios');
+  confirmBtn.innerHTML = '<check-icon></check-icon>';
+  
+  // Create cancel button
+  const cancelBtn = document.createElement('button');
+  cancelBtn.className = 'edit-cancel-btn';
+  cancelBtn.setAttribute('aria-label', 'Cancelar edición');
+  cancelBtn.innerHTML = '<x-icon></x-icon>';
+  
+  buttonContainer.appendChild(confirmBtn);
+  buttonContainer.appendChild(cancelBtn);
+  
+  inputContainer.appendChild(input);
+  inputContainer.appendChild(buttonContainer);
+  scheduleTitle.appendChild(inputContainer);
+  
+  // Add editing class to card
+  scheduleCard.classList.add('editing-name');
+  
+  // Focus and select input text with mobile device support
+  setTimeout(() => {
+    input.focus();
+    input.select();
+    
+    // For mobile devices, ensure proper focus
+    if ('ontouchstart' in window) {
+      input.setSelectionRange(0, input.value.length);
+    }
+  }, 50);
+  
+  // --- Event Handling and Cleanup ---
+
+  const stopPropagation = (e) => e.stopPropagation();
+
+  // Handle click/touch outside to cancel editing
+  const handleClickOrTouchOutside = (e) => {
+    if (!scheduleCard.contains(e.target)) {
+      cancelEdit();
+    }
+  };
+
+  // Function to remove all temporary listeners
+  const cleanupEventListeners = () => {
+    document.removeEventListener('click', handleClickOrTouchOutside, true);
+    document.removeEventListener('touchend', handleClickOrTouchOutside, true);
+    inputContainer.removeEventListener('click', stopPropagation);
+    inputContainer.removeEventListener('keydown', stopPropagation);
+    inputContainer.removeEventListener('touchend', stopPropagation);
+  };
+  
+  // Handle confirm action
+  const confirmEdit = async () => {
+    const newName = input.value.trim();
+    
+    if (!newName) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Nombre requerido',
+        text: 'El nombre no puede estar vacío',
+        confirmButtonText: 'Entendido'
+      });
+      input.focus();
+      return;
+    }
+    
+    if (newName === originalName) {
+      cancelEdit();
+      return;
+    }
+    
+    cleanupEventListeners();
+
+    try {
+      confirmBtn.disabled = true;
+      cancelBtn.disabled = true;
+      
+      const result = await apiService.updateScheduleName(scheduleIndex, newName);
+      
+      if (result.success) {
+        // Update local data with server response
+        if (result.scheduleData) {
+          Object.assign(
+            scheduleManager,
+            ScheduleManager.fromJSON(result.scheduleData)
+          );
+        } else {
+          // Fallback: update locally
+          schedule.name = newName;
+        }
+        
+        // Update UI
+        showDashboard(scheduleManager);
+        
+        // Show success feedback
+        showEditSuccessFeedback(scheduleCard);
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: result.error || 'Error al actualizar el nombre del horario',
+          confirmButtonText: 'Entendido'
+        });
+        // Restore UI to pre-edit state on failure
+        scheduleCard.classList.remove('editing-name');
+        scheduleTitle.innerHTML = '';
+        scheduleTitle.textContent = originalName;
+      }
+    } catch (error) {
+      console.error('Error updating schedule name:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Error al actualizar el nombre del horario',
+        confirmButtonText: 'Entendido'
+      });
+      // Restore UI to pre-edit state on error
+      scheduleCard.classList.remove('editing-name');
+      scheduleTitle.innerHTML = '';
+      scheduleTitle.textContent = originalName;
+    }
+  };
+  
+  // Handle cancel action
+  const cancelEdit = () => {
+    cleanupEventListeners();
+    scheduleCard.classList.remove('editing-name');
+    scheduleTitle.innerHTML = '';
+    scheduleTitle.textContent = originalName;
+  };
+  
+  // --- Attach Event Listeners ---
+  
+  // Stop propagation to prevent card's own handlers from firing
+  inputContainer.addEventListener('click', stopPropagation);
+  inputContainer.addEventListener('keydown', stopPropagation);
+  inputContainer.addEventListener('touchend', stopPropagation);
+
+  // Event listeners for buttons and input with touch support
+  confirmBtn.addEventListener('click', confirmEdit);
+  cancelBtn.addEventListener('click', cancelEdit);
+  
+  // Add touch support for mobile devices
+  addTouchSupport(confirmBtn, confirmEdit);
+  addTouchSupport(cancelBtn, cancelEdit);
+  
+  // Handle Enter/Escape keys on the input
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      confirmEdit();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      cancelEdit();
+    }
+  });
+  
+  // Add click and touch outside listeners with capture to ensure they run
+  setTimeout(() => {
+    document.addEventListener('click', handleClickOrTouchOutside, true);
+    document.addEventListener('touchend', handleClickOrTouchOutside, true);
+  }, 100);
 }
 
 function addActivityScheduleOption(scheduleManager, activityIndex) {
