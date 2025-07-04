@@ -1258,8 +1258,7 @@ tr:nth-child(even) {
 }
 
 #scheduleOptionTable td:not(:first-child):hover {
-  background: var(--primary-50);
-  border-color: var(--primary-300);
+  background: var(--primary-50) !important;
   transform: scale(1.02);
 }
 
