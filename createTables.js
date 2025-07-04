@@ -203,11 +203,15 @@ async function toggleCell(scheduleManager, cell, forceValue = null) {
     cell.classList.add("selected");
     cell.style.backgroundColor = selectedColor;
     // Set border color to a darker version of the background color
-    cell.style.borderColor = darkenColor(selectedColor, 0.1);
+    cell.style.outline = `1px solid ${darkenColor(selectedColor, 0.1)}`;
+    cell.style.outlineOffset = "-1px";
+    cell.style.zIndex = "2";
   } else {
     cell.classList.remove("selected");
     cell.style.backgroundColor = "";
-    cell.style.borderColor = "";
+    cell.style.outline = "";
+    cell.style.outlineOffset = "";
+    cell.style.zIndex = "";
   }
 
   saveActivityScheduleOption(scheduleManager);
@@ -268,6 +272,7 @@ export function loadActivityScheduleOption(scheduleManager) {
 
   const hasEditingOption = !!editingActivityScheduleOption;
 
+  const selectedColor = editingActivity.color;
   for (let i = 1; i < table.rows.length; i++) {
     for (let j = 1; j < table.rows[i].cells.length; j++) {
       const cell = table.rows[i].cells[j];
@@ -278,8 +283,10 @@ export function loadActivityScheduleOption(scheduleManager) {
         editingActivityScheduleOption?.timeTable[day]?.[timeSlot] === true;
 
       cell.classList.toggle("selected", isSelected);
-      cell.style.backgroundColor = isSelected ? editingActivity?.color : "";
-      cell.style.borderColor = isSelected ? darkenColor(editingActivity?.color, 0.1) : "";
+      cell.style.backgroundColor = isSelected ? selectedColor : "";
+      cell.style.outline = isSelected ? `1px solid ${darkenColor(selectedColor, 0.1)}` : "";
+      cell.style.outlineOffset = isSelected ? "-1px" : "";
+      cell.style.zIndex = isSelected ? "2" : "";
       cell.classList.toggle("editing-highlight", hasEditingOption);
     }
   }
