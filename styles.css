@@ -1274,6 +1274,7 @@ tr:nth-child(even) {
   bottom: 0;
   border: 1px solid var(--primary-200);
   pointer-events: none;
+  box-shadow: var(--shadow-md);
 }
 
 #scheduleOptionTable td.editing-highlight {
