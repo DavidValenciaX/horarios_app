@@ -261,18 +261,31 @@ function getEditingInfo(activityManager) {
   return { editingActivity: null, editingActivityScheduleOption: null };
 }
 
+function styleCell(cell, isSelected, color, hasEditingOption) {
+  cell.classList.toggle("selected", isSelected);
+  cell.style.backgroundColor = isSelected ? color : "";
+  cell.style.outline = isSelected
+    ? `1px solid ${darkenColor(color, 0.1)}`
+    : "";
+  cell.style.outlineOffset = isSelected ? "-1px" : "";
+  cell.style.zIndex = isSelected ? "2" : "";
+  cell.classList.toggle("editing-highlight", hasEditingOption);
+}
+
 export function loadActivityScheduleOption(scheduleManager) {
   const activeSchedule = scheduleManager.getActiveSchedule();
   if (!activeSchedule) return;
 
-  const { editingActivity, editingActivityScheduleOption } = getEditingInfo(activeSchedule.activityManager);
+  const { editingActivity, editingActivityScheduleOption } = getEditingInfo(
+    activeSchedule.activityManager
+  );
 
   const table = document.getElementById("scheduleOptionTable");
   if (!table) return;
 
   const hasEditingOption = !!editingActivityScheduleOption;
+  const selectedColor = editingActivity?.color || "";
 
-  const selectedColor = editingActivity.color;
   for (let i = 1; i < table.rows.length; i++) {
     for (let j = 1; j < table.rows[i].cells.length; j++) {
       const cell = table.rows[i].cells[j];
@@ -282,12 +295,7 @@ export function loadActivityScheduleOption(scheduleManager) {
       const isSelected =
         editingActivityScheduleOption?.timeTable[day]?.[timeSlot] === true;
 
-      cell.classList.toggle("selected", isSelected);
-      cell.style.backgroundColor = isSelected ? selectedColor : "";
-      cell.style.outline = isSelected ? `1px solid ${darkenColor(selectedColor, 0.1)}` : "";
-      cell.style.outlineOffset = isSelected ? "-1px" : "";
-      cell.style.zIndex = isSelected ? "2" : "";
-      cell.classList.toggle("editing-highlight", hasEditingOption);
+      styleCell(cell, isSelected, selectedColor, hasEditingOption);
     }
   }
 }
