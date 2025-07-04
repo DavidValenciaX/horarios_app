@@ -789,16 +789,29 @@ async function startEditingActivityName(scheduleManager, activityIndex) {
   // Add editing class to chip
   activityChip.classList.add('editing-name');
   
-  // Focus and select input text
-  input.focus();
-  input.select();
+  // Focus and select input text with mobile device support
+  setTimeout(() => {
+    input.focus();
+    input.select();
+    
+    // For mobile devices, ensure proper focus
+    if ('ontouchstart' in window) {
+      input.setSelectionRange(0, input.value.length);
+    }
+  }, 50);
   
   // --- Event Handling and Cleanup ---
 
   const stopPropagation = (e) => e.stopPropagation();
 
-  // Handle click outside to cancel editing
+  // Handle click/touch outside to cancel editing
   const handleClickOutside = (e) => {
+    if (!activityChip.contains(e.target)) {
+      cancelEdit();
+    }
+  };
+  
+  const handleTouchOutside = (e) => {
     if (!activityChip.contains(e.target)) {
       cancelEdit();
     }
@@ -807,8 +820,10 @@ async function startEditingActivityName(scheduleManager, activityIndex) {
   // Function to remove all temporary listeners
   const cleanupEventListeners = () => {
     document.removeEventListener('click', handleClickOutside, true);
+    document.removeEventListener('touchend', handleTouchOutside, true);
     inputContainer.removeEventListener('click', stopPropagation);
     inputContainer.removeEventListener('keydown', stopPropagation);
+    inputContainer.removeEventListener('touchend', stopPropagation);
   };
   
   // Handle confirm action
@@ -897,10 +912,15 @@ async function startEditingActivityName(scheduleManager, activityIndex) {
   // Stop propagation to prevent chip's own handlers from firing
   inputContainer.addEventListener('click', stopPropagation);
   inputContainer.addEventListener('keydown', stopPropagation);
+  inputContainer.addEventListener('touchend', stopPropagation);
 
-  // Event listeners for buttons and input
+  // Event listeners for buttons and input with touch support
   confirmBtn.addEventListener('click', confirmEdit);
   cancelBtn.addEventListener('click', cancelEdit);
+  
+  // Add touch support for mobile devices
+  addTouchSupport(confirmBtn, confirmEdit);
+  addTouchSupport(cancelBtn, cancelEdit);
   
   // Handle Enter/Escape keys on the input
   input.addEventListener('keydown', (e) => {
@@ -913,9 +933,10 @@ async function startEditingActivityName(scheduleManager, activityIndex) {
     }
   });
   
-  // Add click outside listener with capture to ensure it runs
+  // Add click and touch outside listeners with capture to ensure they run
   setTimeout(() => {
     document.addEventListener('click', handleClickOutside, true);
+    document.addEventListener('touchend', handleTouchOutside, true);
   }, 100);
 }
 
