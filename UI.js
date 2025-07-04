@@ -836,7 +836,7 @@ async function startEditingActivityName(scheduleManager, activityIndex) {
   // Handle click/touch outside to cancel editing
   const handleClickOrTouchOutside = (e) => {
     if (!activityChip.contains(e.target)) {
-      cancelEdit();
+      cancelEdit(e);
     }
   };
 
@@ -859,7 +859,7 @@ async function startEditingActivityName(scheduleManager, activityIndex) {
     }
     
     if (newName === originalName) {
-      cancelEdit();
+      cancelEdit(e);
       return;
     }
     
@@ -917,7 +917,8 @@ async function startEditingActivityName(scheduleManager, activityIndex) {
   };
   
   // Handle cancel action
-  const cancelEdit = () => {
+  const cancelEdit = (e) => {
+    if (e) e.stopPropagation();
     cleanupEventListeners();
     activityChip.classList.remove('editing-name');
     activityContent.innerHTML = '';
@@ -946,7 +947,7 @@ async function startEditingActivityName(scheduleManager, activityIndex) {
       confirmEdit();
     } else if (e.key === 'Escape') {
       e.preventDefault();
-      cancelEdit();
+      cancelEdit(e);
     }
   });
   
@@ -1036,7 +1037,7 @@ async function startEditingScheduleName(scheduleManager, scheduleIndex) {
   // Handle click/touch outside to cancel editing
   const handleClickOrTouchOutside = (e) => {
     if (!scheduleCard.contains(e.target)) {
-      cancelEdit();
+      cancelEdit(e);
     }
   };
 
@@ -1059,7 +1060,7 @@ async function startEditingScheduleName(scheduleManager, scheduleIndex) {
     }
     
     if (newName === originalName) {
-      cancelEdit();
+      cancelEdit(e);
       return;
     }
     
@@ -1116,7 +1117,8 @@ async function startEditingScheduleName(scheduleManager, scheduleIndex) {
   };
   
   // Handle cancel action
-  const cancelEdit = () => {
+  const cancelEdit = (e) => {
+    if (e) e.stopPropagation();
     cleanupEventListeners();
     scheduleCard.classList.remove('editing-name');
     scheduleTitle.innerHTML = '';
@@ -1145,7 +1147,7 @@ async function startEditingScheduleName(scheduleManager, scheduleIndex) {
       confirmEdit();
     } else if (e.key === 'Escape') {
       e.preventDefault();
-      cancelEdit();
+      cancelEdit(e);
     }
   });
   
