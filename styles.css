@@ -1259,7 +1259,9 @@ tr:nth-child(even) {
 
 #scheduleOptionTable td:not(:first-child):hover {
   background: var(--primary-50) !important;
-  transform: scale(1.02);
+  transform: scaleX(1.1) scaleY(1.5);
+  z-index: 10;
+  position: relative;
 }
 
 #scheduleOptionTable td.editing-highlight {
