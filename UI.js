@@ -369,7 +369,7 @@ function renderDashboard(scheduleManager) {
     const deleteButton = document.createElement("button");
     deleteButton.className = "delete-button";
     deleteButton.setAttribute("aria-label", `Eliminar horario ${schedule.name}`);
-    deleteButton.innerHTML = '×';
+    deleteButton.innerHTML = '<trash-icon></trash-icon>';
     deleteButton.onclick = (e) => {
       e.stopPropagation();
       Swal.fire({
@@ -745,6 +745,16 @@ async function deleteActivity(scheduleManager, activityIndex) {
   apiService.scheduleAutoSave(scheduleManager);
 }
 
+function createCleanupEventListeners(handleClickOrTouchOutside, inputContainer, stopPropagation) {
+  return () => {
+    document.removeEventListener('click', handleClickOrTouchOutside, true);
+    document.removeEventListener('touchend', handleClickOrTouchOutside, true);
+    inputContainer.removeEventListener('click', stopPropagation);
+    inputContainer.removeEventListener('keydown', stopPropagation);
+    inputContainer.removeEventListener('touchend', stopPropagation);
+  };
+}
+
 async function startEditingActivityName(scheduleManager, activityIndex) {
   const activityManager = scheduleManager.getActiveSchedule().activityManager;
   const activity = activityManager.activities[activityIndex];
@@ -828,13 +838,7 @@ async function startEditingActivityName(scheduleManager, activityIndex) {
   };
 
   // Function to remove all temporary listeners
-  const cleanupEventListeners = () => {
-    document.removeEventListener('click', handleClickOrTouchOutside, true);
-    document.removeEventListener('touchend', handleClickOrTouchOutside, true);
-    inputContainer.removeEventListener('click', stopPropagation);
-    inputContainer.removeEventListener('keydown', stopPropagation);
-    inputContainer.removeEventListener('touchend', stopPropagation);
-  };
+  const cleanupEventListeners = createCleanupEventListeners(handleClickOrTouchOutside, inputContainer, stopPropagation);
   
   // Handle confirm action
   const confirmEdit = async () => {
@@ -1034,13 +1038,7 @@ async function startEditingScheduleName(scheduleManager, scheduleIndex) {
   };
 
   // Function to remove all temporary listeners
-  const cleanupEventListeners = () => {
-    document.removeEventListener('click', handleClickOrTouchOutside, true);
-    document.removeEventListener('touchend', handleClickOrTouchOutside, true);
-    inputContainer.removeEventListener('click', stopPropagation);
-    inputContainer.removeEventListener('keydown', stopPropagation);
-    inputContainer.removeEventListener('touchend', stopPropagation);
-  };
+  const cleanupEventListeners = createCleanupEventListeners(handleClickOrTouchOutside, inputContainer, stopPropagation);
   
   // Handle confirm action
   const confirmEdit = async () => {
