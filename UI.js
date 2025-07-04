@@ -805,13 +805,7 @@ async function startEditingActivityName(scheduleManager, activityIndex) {
   const stopPropagation = (e) => e.stopPropagation();
 
   // Handle click/touch outside to cancel editing
-  const handleClickOutside = (e) => {
-    if (!activityChip.contains(e.target)) {
-      cancelEdit();
-    }
-  };
-  
-  const handleTouchOutside = (e) => {
+  const handleClickOrTouchOutside = (e) => {
     if (!activityChip.contains(e.target)) {
       cancelEdit();
     }
@@ -819,8 +813,8 @@ async function startEditingActivityName(scheduleManager, activityIndex) {
 
   // Function to remove all temporary listeners
   const cleanupEventListeners = () => {
-    document.removeEventListener('click', handleClickOutside, true);
-    document.removeEventListener('touchend', handleTouchOutside, true);
+    document.removeEventListener('click', handleClickOrTouchOutside, true);
+    document.removeEventListener('touchend', handleClickOrTouchOutside, true);
     inputContainer.removeEventListener('click', stopPropagation);
     inputContainer.removeEventListener('keydown', stopPropagation);
     inputContainer.removeEventListener('touchend', stopPropagation);
@@ -935,8 +929,8 @@ async function startEditingActivityName(scheduleManager, activityIndex) {
   
   // Add click and touch outside listeners with capture to ensure they run
   setTimeout(() => {
-    document.addEventListener('click', handleClickOutside, true);
-    document.addEventListener('touchend', handleTouchOutside, true);
+    document.addEventListener('click', handleClickOrTouchOutside, true);
+    document.addEventListener('touchend', handleClickOrTouchOutside, true);
   }, 100);
 }
 
